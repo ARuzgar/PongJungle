@@ -96,9 +96,7 @@ FrontEnd  ;
 			•	https://www.w3.org/WAI/WCAG22/quickref/?versions=2.0&showtechniques=125
 			•	https://webaim.org/standards/wcag/WCAG2Checklist.pdf
 
-
-
-Details About Modules ;
+•	Details About Modules ;
 	•	User Management 
 		•	Standard User Management (Major Mod. +1) :
 			•	Users should subscribe to the website in a secure way
