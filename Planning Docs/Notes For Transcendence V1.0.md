@@ -131,10 +131,9 @@ Details About Modules ;
 		•	Basically Pong \w API(Major Mod. +1):
 			•	It should provide enough resource and information to be played on web or CLI with the information has been given by the API.
 			•	CLI olarak çalışması için hangi return değerler gerekli
-
 FrontEnd  ; 
 	•	İşaretli kısım en aşağı geldiğinde pop’upların yukarı doğru çıkması, chat baloncukları aktif olunca baloncukların chat en soldaysa sağa en sağdaysa sola doğru açılması
-	![title](Images/Chat%20Box%20Collision%20Fix.pngChat Box Collision Fix.png)
+	![title](Images/Chat%20Box%20Collision%20Fix.png)
 	•	Geçişlerde yazıların taşması ve gözükmesi
 	![title](Images/Text%20Overlap%20With%20Bar%20Fix.png)
 	•	Geçişlerde barların kapanırken takılması, ve tam kapanmıyor olması.
