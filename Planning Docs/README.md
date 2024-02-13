@@ -59,15 +59,15 @@ Notes For Transcendence V1.0 for README Access
 
 	•	FrontEnd  ; 
 		•	İşaretli kısım en aşağı geldiğinde pop’upların yukarı doğru çıkması, chat baloncukları aktif olunca baloncukların chat en soldaysa sağa en sağdaysa sola doğru açılması
-		![title](Images/Chat%20Box%20Collision%20Fix.png)
+![title](Images/Chat%20Box%20Collision%20Fix.png)
 		•	Geçişlerde yazıların taşması ve gözükmesi
-		![title](Images/Text%20Overlap%20With%20Bar%20Fix.png)
+![title](Images/Text%20Overlap%20With%20Bar%20Fix.png)
 		•	Geçişlerde barların kapanırken takılması, ve tam kapanmıyor olması.
-		![title](Images/Bar's%20Closing%20Fix.png)
+![title](Images/Bar's%20Closing%20Fix.png)
 		•	Scroll bar hayalet scroll bar olsun, ya aşırı silik ya da gözükmesin, ya da küçük bir indikatör buton
-		![title](Images/Scroll%20Bar%20Fix.png)
+![title](Images/Scroll%20Bar%20Fix.png)
 		•	Chat balonunun responsivity için küçüldüğünde sol üstte statik bir şekilde durması ve tıklandığında bütün ekranı kaplaması(eski facebook app’inin chat gibi bir görüntü olabilir)
-		![title](Images/Chat%20Box%20Responsive%20Fix.png)
+![title](Images/Chat%20Box%20Responsive%20Fix.png)
 
 		•	Yazı geçişlerinde kare gradient yerine yazı karakterlerinin renklendirilmesi
 		•	Mouse üzerinden çıkıp geri gelmediği sürece chat box tıklandığında açılıp kapanmıyor.
