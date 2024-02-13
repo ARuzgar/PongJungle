@@ -1,6 +1,6 @@
 Notes For Transcendence V1.0 for README Access
 
-    •	General :
+    • General :
         •	List the Requirements of the project
         •	Database schemas should be created
         •	Websites mapping should be created
