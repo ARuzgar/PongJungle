@@ -58,7 +58,45 @@ Notes For Transcendence V1.0 for README Access
 		•	Common security practices
 		•	Does Django automatically handles JWT?
 
-Details About Modules ;
+•	FrontEnd  ; 
+	•	İşaretli kısım en aşağı geldiğinde pop’upların yukarı doğru çıkması, chat baloncukları aktif olunca baloncukların chat en soldaysa sağa en sağdaysa sola doğru açılması
+	![title](Images/Chat%20Box%20Collision%20Fix.png)
+	•	Geçişlerde yazıların taşması ve gözükmesi
+	![title](Images/Text%20Overlap%20With%20Bar%20Fix.png)
+	•	Geçişlerde barların kapanırken takılması, ve tam kapanmıyor olması.
+	![title](Images/Bar's%20Closing%20Fix.png)
+	•	Scroll bar hayalet scroll bar olsun, ya aşırı silik ya da gözükmesin, ya da küçük bir indikatör buton
+	![title](Images/Scroll%20Bar%20Fix.png)
+	•	Chat balonunun responsivity için küçüldüğünde sol üstte statik bir şekilde durması ve tıklandığında bütün ekranı kaplaması(eski facebook app’inin chat gibi bir görüntü olabilir)
+	![title](Images/Chat%20Box%20Responsive%20Fix.png)
+
+	•	Yazı geçişlerinde kare gradient yerine yazı karakterlerinin renklendirilmesi
+	•	Mouse üzerinden çıkıp geri gelmediği sürece chat box tıklandığında açılıp kapanmıyor.
+	•	Map
+		•	Intro
+		•	Games
+		•	Login/Logout
+		•	Profile
+		•	About Us
+		•	Ranking
+	•	Websites Features
+		•	Search Bar
+		•	Chat Button
+		•	Accessibility button
+		•	Top button will redirect to pong game
+		•	Accessibility Features
+		•	Dyslexic Font
+		•	Theater Mod
+		•	Font size up/down
+		•	Saturation - Contrast change
+		•	Light Dark Mod
+		•	The contrast range should be in the standards of W3
+		•	standards are here
+			•	https://www.w3.org/TR/2008/REC-WCAG20-20081211/ 
+			•	https://www.w3.org/WAI/WCAG22/quickref/?versions=2.0&showtechniques=125
+			•	https://webaim.org/standards/wcag/WCAG2Checklist.pdf
+
+•	Details About Modules ;
 	•	User Management 
 		•	Standard User Management (Major Mod. +1) :
 			•	Users should subscribe to the website in a secure way
@@ -131,40 +169,3 @@ Details About Modules ;
 		•	Basically Pong \w API(Major Mod. +1):
 			•	It should provide enough resource and information to be played on web or CLI with the information has been given by the API.
 			•	CLI olarak çalışması için hangi return değerler gerekli
-FrontEnd  ; 
-	•	İşaretli kısım en aşağı geldiğinde pop’upların yukarı doğru çıkması, chat baloncukları aktif olunca baloncukların chat en soldaysa sağa en sağdaysa sola doğru açılması
-	![title](Images/Chat%20Box%20Collision%20Fix.png)
-	•	Geçişlerde yazıların taşması ve gözükmesi
-	![title](Images/Text%20Overlap%20With%20Bar%20Fix.png)
-	•	Geçişlerde barların kapanırken takılması, ve tam kapanmıyor olması.
-	![title](Images/Bar's%20Closing%20Fix.png)
-	•	Scroll bar hayalet scroll bar olsun, ya aşırı silik ya da gözükmesin, ya da küçük bir indikatör buton
-	![title](Images/Scroll%20Bar%20Fix.png)
-	•	Chat balonunun responsivity için küçüldüğünde sol üstte statik bir şekilde durması ve tıklandığında bütün ekranı kaplaması(eski facebook app’inin chat gibi bir görüntü olabilir)
-	![title](Images/Chat%20Box%20Responsive%20Fix.png)
-
-	•	Yazı geçişlerinde kare gradient yerine yazı karakterlerinin renklendirilmesi
-	•	Mouse üzerinden çıkıp geri gelmediği sürece chat box tıklandığında açılıp kapanmıyor.
-	•	Map
-		•	Intro
-		•	Games
-		•	Login/Logout
-		•	Profile
-		•	About Us
-		•	Ranking
-	•	Websites Features
-		•	Search Bar
-		•	Chat Button
-		•	Accessibility button
-		•	Top button will redirect to pong game
-		•	Accessibility Features
-		•	Dyslexic Font
-		•	Theater Mod
-		•	Font size up/down
-		•	Saturation - Contrast change
-		•	Light Dark Mod
-		•	The contrast range should be in the standards of W3
-		•	standards are here
-			•	https://www.w3.org/TR/2008/REC-WCAG20-20081211/ 
-			•	https://www.w3.org/WAI/WCAG22/quickref/?versions=2.0&showtechniques=125
-			•	https://webaim.org/standards/wcag/WCAG2Checklist.pdf
