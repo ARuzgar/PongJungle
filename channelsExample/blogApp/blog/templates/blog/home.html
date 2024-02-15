@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-lg-12 text-center">
+            <h1 class="mt-5">Hoşgeldin yavrum</h1>
+            <p class="lead">Masa tenisi, hız, beceri ve stratejiyi birleştiren heyecan verici bir oyundur.</p>
+            <img src="{% static 'blog/data/resim2.jpeg' %}" alt="Ping Pong" class="img-fluid mt-3">
+            <p class="mt-3">Ping pong, iki veya dört oyuncu tarafından oynanabilen, küçük bir topun rakipler arasında hızla değiş tokuş edildiği popüler bir oyundur. Oyunun amacı, rakibin hata yapmasını sağlayacak şekilde topu masanın üzerindeki file üzerinden geçirmektir. Oyuncular, topa vurmak için raketler kullanır ve puan kazanmak için topun rakip tarafında masaya değmesini sağlamalıdır.</p>
+            <p>Oyun, refleksleri, göz-el koordinasyonunu ve dayanıklılığı geliştirir. Aynı zamanda stratejik düşünme ve hızlı karar verme becerilerini de test eder. Ping pong, tüm yaş grupları ve yetenek seviyeleri için uygundur, bu yüzden herkes tarafından keyifle oynanabilir.</p>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

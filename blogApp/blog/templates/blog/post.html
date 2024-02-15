@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block content %}
+{% if user.is_authenticated %}
+<form action="" method="POST">
+	{% csrf_token %}
+	{{ form.as_p }}
+	<button type="submit">Save</button>
+</form>
+{% else %}
+<p>Bu sayfayı görüntülemek için giriş yapmalısınız.</p>
+<p>Henüz bir hesabınız yoksa, <a href="{% url 'login' %}">giriş yapın</a> veya <a
+		href="{% url 'register' %}">kaydolun</a>.</p>
+{% endif %}
+{% endblock %}
