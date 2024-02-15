@@ -72,72 +72,86 @@
 	
 							<!-- Contact -->
 							<article id="login">
-								<h2 class="major">Login</h2>
-								<form method="post" action="/api/login/">
-									<div class="fields">
-										<div class="field">
-											<label for="email">Username</label>
-											<input type="text" name="username" id="username" />
-										</div>
-										<div class="field">
-											<label for="password">Password</label>
-											<input type="password" name="password" id="password" />
+								<div class="row">
+									<div class="col-4 switch-login"><h4>login</h3></div>
+									<div class="col-4">
+										<div class="checkbox_item citem_2">
+											<label class="checkbox_wrap">
+												<input type="checkbox" onclick="flip()" name="checkbox" class="checkbox_inp" id="loginSwitch">
+												<span class="checkbox_mark"></span>
+											</label>
 										</div>
 									</div>
-									<ul class="actions">
-										<li class="loginbuttons"><button type="submit" class="button login">Login</button></li>
-										<li class="loginbuttons"><a href="#" onclick="openIntro('signup')" class="button primary login">Sign Up</a></li>
-									</ul>
-									<ul class="actions stacked">
-										<li class=""><a href="{% url 'auth' %}" class="button primary apibutton"><img src="{% static 'blog/images/42icon.png'%}" width="20vh"></a></li>
-										<li class=""><a href="#" class="button primary apibutton">Google</a></li>
-									</ul>
-								</form>
-							</article>
-							<article id="signup">
-								<h2 class="major">Sign Up</h2>
-								<form method="post" action="/api/signup/" id="signupForm">
-									<div class="field">
-										<label for="email">Name</label>
+									<div class="col-4 switch-signup"><h4>sign up</h3></div>
+								</div>
+								<div class="cardLogin" id="cardLogin">
+									<div class="login-card cardLogin__face cardLogin__face--front">
+										<h2 class="major">Login</h2>
+										<form method="post" action="/api/login/">
+											<div class="fields">
+												<div class="field">
+													<label for="email">Username</label>
+													<input type="text" name="username" id="username" />
+												</div>
+												<div class="field">
+													<label for="password">Password</label>
+													<input type="password" name="password" id="password" />
+												</div>
+											</div>
+											<ul class="actions">
+												<li class="loginbuttons"><button type="submit" class="button primary login">Login</button></li>											</ul>
+											<ul class="actions stacked">
+												<li class=""><a href="{% url 'auth' %}" class="button primary apibutton login"><img src="{% static 'blog/images/42icon.png'%}" width="20vh"></a></li>
+												<li class=""><a href="#" class="button primary apibutton login">Google</a></li>
+											</ul>
+										</form>
+									</div>
+									<div class="register-card cardLogin__face cardLogin__face--back">
+										<h2 class="major">Sign Up</h2>
 										<form method="post" action="/api/signup/" id="signupForm">
-										<input type="text" name="username" id="username" />
+											<div class="field">
+												<label for="email">Name</label>
+												<form method="post" action="/api/signup/" id="signupForm">
+												<input type="text" name="username" id="username" />
+											</div>
+											<div class="fields">
+												<div class="field">
+													<label for="email">Email</label>
+													<input type="text" name="email" id="email" />
+												</div>
+												<div class="field">
+													<label for="password">Password</label>
+													<input type="password" name="password" id="password" />
+												</div>
+											</div>
+											<ul class="actions">
+												<li class="loginbuttons"><button type="submit" class="button primary login">Sign Up</button></li>
+											</ul>
+											<ul class="actions stacked">
+												<li class=""><a href="#" class="button primary apibutton"><img src="{% static 'blog/images/42icon.png'%}" width="20vh"></a></li>
+												<li class=""><a href="#" class="button primary apibutton">Google</a></li>
+											</ul>
+											<div class="modal" tabindex="-1" role="dialog" id="errorModal">
+												<div class="modal-dialog" role="document">
+												  <div class="modal-content">
+													<div class="modal-header">
+													  <h5 class="modal-title">Error</h5>
+													  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+														<span aria-hidden="true">&times;</span>
+													  </button>
+													</div>
+													<div class="modal-body">
+													  <p id="errorMessage" style="color: black;"></p>
+													</div>
+													<div class="modal-footer">
+													  <button type="button" onclick="$('#errorModal').hide();" class="btn btn-secondary" data-dismiss="modal">Close</button>
+													</div>
+												  </div>
+												</div>
+											  </div>
+										</form>
 									</div>
-									<div class="fields">
-										<div class="field">
-											<label for="email">Email</label>
-											<input type="text" name="email" id="email" />
-										</div>
-										<div class="field">
-											<label for="password">Password</label>
-											<input type="password" name="password" id="password" />
-										</div>
-									</div>
-									<ul class="actions">
-										<li class="loginbuttons"><button type="submit" class="button primary login">Sign Up</button></li>
-									</ul>
-									<ul class="actions stacked">
-										<li class=""><a href="#" class="button primary apibutton"><img src="{% static 'blog/images/42icon.png'%}" width="20vh"></a></li>
-										<li class=""><a href="#" class="button primary apibutton">Google</a></li>
-									</ul>
-									<div class="modal" tabindex="-1" role="dialog" id="errorModal">
-										<div class="modal-dialog" role="document">
-										  <div class="modal-content">
-											<div class="modal-header">
-											  <h5 class="modal-title">Error</h5>
-											  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-												<span aria-hidden="true">&times;</span>
-											  </button>
-											</div>
-											<div class="modal-body">
-											  <p id="errorMessage" style="color: black;"></p>
-											</div>
-											<div class="modal-footer">
-											  <button type="button" onclick="$('#errorModal').hide();" class="btn btn-secondary" data-dismiss="modal">Close</button>
-											</div>
-										  </div>
-										</div>
-									  </div>
-								</form>
+								
 								<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 								<script>
 								$(document).ready(function() {
@@ -434,6 +448,18 @@ print 'It took ' + i + ' iterations to sort the deck.';</code></pre>
 			<div id="bg"></div>
 
 		<!-- Scripts -->
+			<script>
+				function flip(){
+					card.classList.toggle('is-flipped');
+					console.log("isflipped");
+				}
+				var loginSwitch = document.getElementById("loginSwitch");
+				var card = document.getElementById("cardLogin");
+				checkbox.addEventListener('change', (event) => {
+					card.classList.toggle('is-flipped');
+					console.log("isflipped")
+				})
+			</script>
 			<script src="{% static 'blog/assets/js/jquery.min.js'%}"></script>
 			<script src="{% static 'blog/assets/js/browser.min.js'%}"></script>
 			<script src="{% static 'blog/assets/js/breakpoints.min.js'%}"></script>
