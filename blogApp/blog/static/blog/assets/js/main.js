@@ -145,7 +145,7 @@ function openIntro(block) {
 				maxHeight: '0em',
 				opacity: 0,
 				easing: 'easeInOutQuad',
-				duration: 400
+				duration: 300
 			});
 			setTimeout(function () {
 				$activated.removeClass("active");
@@ -159,9 +159,9 @@ function openIntro(block) {
 				targets: "#" + block,
 				opacity: 1,
 				maxHeight: '30em',
-				easing: 'easeInOutQuad'
+				easing: 'easeInOutQuad',
 			});
- 
+
 			$activated.removeClass("active");
 			$activated.hide();
 			$article.addClass("active");
@@ -244,7 +244,7 @@ function openIntro(block) {
 				if ($wrapper.prop('scrollHeight') > $window.height())
 					$wrapper.css('height', 'auto');
 				else
-					$wrapper.css('height', '100vh');
+					$wrapper.css('height', '0em');
 
 			}, 250);
 

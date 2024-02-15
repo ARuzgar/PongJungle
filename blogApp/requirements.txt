@@ -1,2 +1,13 @@
+<<<<<<< HEAD
 django
 psycopg[binary]
+=======
+django==4.2.10
+psycopg[binary]
+channels==4.0.0
+daphne==4.1.0
+djangorestframework==3.14.0
+django-filter
+markdown==3.5.2
+requests
+>>>>>>> 3500f072a33d771e490297253bfc4c7688ce36a1

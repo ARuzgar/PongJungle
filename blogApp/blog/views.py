@@ -1,3 +1,7 @@
+<<<<<<< HEAD
+=======
+#!/usr/bin/env python3
+>>>>>>> 3500f072a33d771e490297253bfc4c7688ce36a1
 from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth import authenticate,login
@@ -11,6 +15,10 @@ from django.contrib.auth.models import User
 from rest_framework.views import APIView
 from rest_framework import status
 from django.http import JsonResponse
+<<<<<<< HEAD
+=======
+from django.http import HttpResponse
+>>>>>>> 3500f072a33d771e490297253bfc4c7688ce36a1
 from rest_framework.response import Response
 from django.urls import reverse_lazy
 from .serializers import UserSerializer
@@ -20,6 +28,59 @@ from django.urls import reverse
 from django.contrib import messages
 from rest_framework import generics
 from .serializers import UserSerializer
+<<<<<<< HEAD
+=======
+from django.views import View
+import time
+import requests
+import json
+
+UID = "u-s4t2ud-272a7d972a922c63919b4411aff1da6abf64ec93eb38804b51427a0c0fbf86ea"
+SECRET = "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"
+REDIRECT_URI = "http://127.0.0.1:8000"
+
+def get_access_token(code):
+    url = "https://api.intra.42.fr/oauth/token"
+    payload = {
+        "grant_type": "authorization_code",
+        "client_id": UID,
+        "client_secret": SECRET,
+        "code": code,
+        "redirect_uri": REDIRECT_URI
+    }
+    try:
+        response = requests.post(url, data=payload)
+        response.raise_for_status()
+        return response.json().get("access_token")
+    except requests.exceptions.RequestException as e:
+        print(f"Failed to retrieve access token: {e}")
+        return None
+
+def get_user_info(access_token):
+    url = "https://api.intra.42.fr/v2/me"
+    headers = {
+        "Authorization": f"Bearer {access_token}"
+    }
+    try:
+        response = requests.get(url, headers=headers)
+        response.raise_for_status()
+        return response.json()
+    except requests.exceptions.RequestException as e:
+        print(f"Failed to retrieve user information: {e}")
+        return None
+
+def getUserInfo(auth_code):
+    access_token = get_access_token(auth_code)
+    if access_token:
+        user_info = get_user_info(access_token)
+        if user_info:
+            return user_info
+        else:
+            return "Failed to retrieve user information."
+    else:
+        return "Failed to obtain access token."
+        
+>>>>>>> 3500f072a33d771e490297253bfc4c7688ce36a1
 
 class ChatPageView(TemplateView):
     template_name = 'blog/chat.html'
@@ -30,11 +91,27 @@ class ChatPageView(TemplateView):
         return context
 
 class HomePageView(TemplateView):
+<<<<<<< HEAD
     template_name = "blog/index.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         return context
+=======
+    template_name = "blog/index.html"    
+
+    # def get_context_data(self, **kwargs):
+    #     context = super().get_context_data(**kwargs)
+    #     return context
+    
+
+    def get(self, request, *args, **kwargs):
+
+        code = request.GET.get('code', None)
+        user_info = getUserInfo(code)
+        requests.post('http://127.0.0.1:8000/api/signup/', json=user_info)
+        return render(request, self.template_name, self.get_context_data())
+>>>>>>> 3500f072a33d771e490297253bfc4c7688ce36a1
 
 
 class UserLoginView(LoginView):
@@ -111,6 +188,10 @@ class UserSignUpAPIView(APIView):
     serializer_class = UserSerializer
     
     def post(self, request, *args, **kwargs):
+<<<<<<< HEAD
+=======
+        data = json.loads(request.body)
+>>>>>>> 3500f072a33d771e490297253bfc4c7688ce36a1
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -121,3 +202,43 @@ class UserSignUpAPIView(APIView):
                 for error in field_errors:
                     error_messages.append(error)
             return JsonResponse({'error': 'Bad Request : ' + ' '.join(error_messages)}, status=400)
+<<<<<<< HEAD
+=======
+
+
+# ----------------- 42 API -----------------
+
+# class AuthView(requests.View):
+# 	#template_name = "https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-272a7d972a922c63919b4411aff1da6abf64ec93eb38804b51427a0c0fbf86ea&redirect_uri=http%3A%2F%2F10.11.29.3%3A8000&response_type=code"
+# 	def get(self, request):
+#         # GET parametrelerini al
+#         parametre1 = request.GET.get('parametre1', None)
+#         parametre2 = request.GET.get('parametre2', None)
+
+#         # Parametreleri kullanarak bir şeyler yap
+#         cevap_metni = f'Parametre 1: {parametre1}, Parametre 2: {parametre2}'
+
+#         return HttpResponse(cevap_metni)
+#     # def get(request):
+#         # Do any additional processing if needed
+        
+#         # Redirect the user to the specified URL
+# 		# pass
+
+class CallbackView(View):
+    def get(self, request):
+        # GET parametrelerini oku
+        code = request.GET.get('code', None)
+        # Parametreleri kullanarak bir şeyler yap
+        # ...
+        print('zart')
+        print(code)
+        print('zort')
+        return HttpResponse('Success!')
+    
+class AuthView(View):
+    def get(self, request):
+        # istediğiniz URL'ye yönlendirme yapın
+        return redirect('https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-272a7d972a922c63919b4411aff1da6abf64ec93eb38804b51427a0c0fbf86ea&redirect_uri=http%3A%2F%2F127.0.0.1%3A8000&response_type=code')
+    
+>>>>>>> 3500f072a33d771e490297253bfc4c7688ce36a1

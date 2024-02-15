@@ -25,7 +25,11 @@ SECRET_KEY = 'django-insecure-h7s(cy+pc2u+qahn4%a4r1f=!q9cj20#jebnmdic^#(ynt*hox
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+<<<<<<< HEAD
 ALLOWED_HOSTS = ['localhost']
+=======
+ALLOWED_HOSTS = ['10.11.29.1', 'localhost', '127.0.0.1']
+>>>>>>> 3500f072a33d771e490297253bfc4c7688ce36a1
 # ALLOWED_HOSTS = ['*']
 
 ASGI_APPLICATION = 'chat.asgi.application'
