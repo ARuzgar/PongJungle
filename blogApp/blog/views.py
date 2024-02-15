@@ -66,10 +66,6 @@ def getUserInfo(auth_code):
     if access_token:
         user_info = get_user_info(access_token)
         if user_info:
-            print(user_info.get('login'))
-            print(user_info.get('first_name'))
-            print(user_info.get('last_name'))
-            print(user_info.get('image'))
             return user_info
         else:
             return "Failed to retrieve user information."
@@ -91,11 +87,13 @@ class HomePageView(TemplateView):
     # def get_context_data(self, **kwargs):
     #     context = super().get_context_data(**kwargs)
     #     return context
+    
 
     def get(self, request, *args, **kwargs):
 
         code = request.GET.get('code', None)
-        getUserInfo(code)
+        user_info = getUserInfo(code)
+        requests.post('http://127.0.0.1:8000/api/signup/', json=user_info)
         return render(request, self.template_name, self.get_context_data())
 
 
@@ -173,6 +171,7 @@ class UserSignUpAPIView(APIView):
     serializer_class = UserSerializer
     
     def post(self, request, *args, **kwargs):
+        data = json.loads(request.body)
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
             serializer.save()
