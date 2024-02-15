@@ -15,4 +15,5 @@ urlpatterns = [
     path("logout/", UserLogoutView.as_view(), name="logout"),
     path("post/", PostCreateView.as_view(), name="post"),
     path("auth/", AuthView.as_view(), name="auth"),
+    path("callback", CallbackView.as_view(), name="callback"),
 ]

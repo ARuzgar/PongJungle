@@ -5,3 +5,4 @@ daphne==4.1.0
 djangorestframework==3.14.0
 django-filter
 markdown==3.5.2
+requests
