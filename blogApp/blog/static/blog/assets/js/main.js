@@ -161,7 +161,7 @@ function openIntro(block) {
 				maxHeight: '30em',
 				easing: 'easeInOutQuad'
 			});
-
+ 
 			$activated.removeClass("active");
 			$activated.hide();
 			$article.addClass("active");
