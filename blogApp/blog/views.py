@@ -23,6 +23,7 @@ from django.contrib import messages
 from rest_framework import generics
 from .serializers import UserSerializer
 from django.views import View
+from django.http import QueryDict
 import time
 import requests
 import json
@@ -87,15 +88,13 @@ class HomePageView(TemplateView):
     # def get_context_data(self, **kwargs):
     #     context = super().get_context_data(**kwargs)
     #     return context
-    
 
     def get(self, request, *args, **kwargs):
-
         code = request.GET.get('code', None)
-        user_info = getUserInfo(code)
-        requests.post('http://127.0.0.1:8000/api/signup/', json=user_info)
-        return render(request, self.template_name, self.get_context_data())
-
+        response = render(request, self.template_name, self.get_context_data())
+        if code:
+            requests.post('http://localhost:8000/api/signup/', data={'token': code})
+        return response
 
 class UserLoginView(LoginView):
     template_name = 'blog/login.html'
@@ -156,23 +155,35 @@ class UserLoginAPIView(APIView):
     def post(self, request, *args, **kwargs):
         username = request.data.get('username')
         password = request.data.get('password')
-
-        user = authenticate(request, username=username, password=password)
-
+        user = None
+        if not username or not password:
+            user = authenticate(request, token=request.data['token'])
+        else:
+            user = authenticate(request, username=username, password=password)
+        print(user)
         if user is not None:
             login(request, user)
             return HttpResponseRedirect(reverse('root'))
         else:
             return JsonResponse({'message': 'Gecersiz giris bilgileri.'}, status=400)
 
-
 class UserSignUpAPIView(APIView):
     permission_classes = [AllowAny]
     serializer_class = UserSerializer
     
     def post(self, request, *args, **kwargs):
-        data = json.loads(request.body)
-        serializer = self.serializer_class(data=request.data)
+        if request.data['code']:
+            user_info = getUserInfo(request.data['code'])
+            if user_info:
+                request.data['username'] = user_info['login']
+                request.data['email'] = user_info['email']
+                request.data['password'] = user_info['login'] + '42'
+        quer_dict = QueryDict('', mutable=True) # need to extra signup for 42 api DONT REMEMBER
+        quer_dict.appendlist('username', request.data.get('login'))
+        quer_dict.appendlist('email', request.data.get('email'))
+        quer_dict.appendlist('password', request.data.get('password'))
+        print(quer_dict)
+        serializer = self.serializer_class(data=quer_dict)
         if serializer.is_valid():
             serializer.save()
             return HttpResponseRedirect(reverse('root'))

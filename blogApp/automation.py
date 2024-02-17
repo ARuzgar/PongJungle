@@ -1,7 +1,7 @@
 import os
 import sys
 
-os.system('pip install virtualenv')
+os.system('pip3 install virtualenv')
 os.system('virtualenv .venv')
 os.system('source .venv/bin/activate')
 os.system('python3 -m pip install -r requirements.txt')
