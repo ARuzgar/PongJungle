@@ -8,24 +8,23 @@ from django.views.generic.edit import CreateView
 from rest_framework.permissions import AllowAny
 from django.views.generic.list import ListView
 from django.shortcuts import render, redirect
+from rest_framework.response import Response
+from django.http import HttpResponseRedirect
 from django.contrib.auth.models import User
 from rest_framework.views import APIView
-from rest_framework import status
+from .serializers import UserSerializer
 from django.http import JsonResponse
 from django.http import HttpResponse
-from rest_framework.response import Response
 from django.urls import reverse_lazy
-from .serializers import UserSerializer
-from .models import Post
-from django.http import HttpResponseRedirect
-from django.urls import reverse
 from django.contrib import messages
 from rest_framework import generics
-from .serializers import UserSerializer
-from django.views import View
+from rest_framework import status
 from django.http import QueryDict
-import time
+from django.urls import reverse
+from django.views import View
+from .models import Post
 import requests
+import time
 import json
 
 UID = "u-s4t2ud-272a7d972a922c63919b4411aff1da6abf64ec93eb38804b51427a0c0fbf86ea"
