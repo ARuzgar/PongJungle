@@ -171,19 +171,42 @@ class UserSignUpAPIView(APIView):
     serializer_class = UserSerializer
     
     def post(self, request, *args, **kwargs):
-        if request.data['code']:
-            user_info = getUserInfo(request.data['code'])
+        if request.data['token']:
+            user_info = getUserInfo(request.data['token'])
             if user_info:
-                request.data['username'] = user_info['login']
-                request.data['email'] = user_info['email']
-                request.data['password'] = user_info['login'] + '42'
-        quer_dict = QueryDict('', mutable=True) # need to extra signup for 42 api DONT REMEMBER
-        quer_dict.appendlist('username', request.data.get('login'))
-        quer_dict.appendlist('email', request.data.get('email'))
-        quer_dict.appendlist('password', request.data.get('password'))
-        print(quer_dict)
+                if not user_info['login'].strip():
+                    return JsonResponse({'error': 'User login is empty or contains only whitespace.'}, status=400)
+                print(User.objects.filter(username__iexact=user_info['login'].strip()).query)
+                
+                login_info = user_info['login'] + '42'
+                
+                existing_username = User.objects.filter(username__iexact=user_info['login'].strip()).exists()
+                existing_email = User.objects.filter(email__iexact=user_info['email'].strip()).exists()
+                
+                if existing_username or existing_email:
+                    
+                    request.session['signup_username'] = user_info['login'].strip()
+                    request.session['signup_email'] = user_info['email'].strip()
+                    
+                    print("User already exists. Redirecting to login page.")
+                    return HttpResponseRedirect(reverse('api_login'))
+                
+                quer_dict = QueryDict('', mutable=True)
+                quer_dict.appendlist('username', login_info)
+                quer_dict.appendlist('email', user_info['email'])
+                quer_dict.appendlist('password', login_info)
+            else:
+                return JsonResponse({'error': 'Failed to retrieve user information.'}, status=400)
+        else:
+            quer_dict = QueryDict('', mutable=True)
+            quer_dict.appendlist('username', request.data.get('login'))
+            quer_dict.appendlist('email', request.data.get('email'))
+            quer_dict.appendlist('password', request.data.get('password'))
+
         serializer = self.serializer_class(data=quer_dict)
+
         if serializer.is_valid():
+            print('-	-	-	-	Signup done	-	-	-	-')
             serializer.save()
             return HttpResponseRedirect(reverse('root'))
         else:
@@ -191,6 +214,9 @@ class UserSignUpAPIView(APIView):
             for field_errors in serializer.errors.values():
                 for error in field_errors:
                     error_messages.append(error)
+            print('-	-	-	-	Signup ERRORRR	-	-	-	-')
+            print(serializer.errors)
+            print(quer_dict)
             return JsonResponse({'error': 'Bad Request : ' + ' '.join(error_messages)}, status=400)
 
 
@@ -219,9 +245,7 @@ class CallbackView(View):
         code = request.GET.get('code', None)
         # Parametreleri kullanarak bir şeyler yap
         # ...
-        print('zart')
         print(code)
-        print('zort')
         return HttpResponse('Success!')
     
 class AuthView(View):
