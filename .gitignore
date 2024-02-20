@@ -3,3 +3,4 @@ blogApp/.venv
 blogApp/.vscode
 blogApp/.DS_Store
 blogApp/db.sqlite3
+.idea
