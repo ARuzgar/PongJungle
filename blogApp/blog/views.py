@@ -8,23 +8,23 @@ from django.views.generic.edit import CreateView
 from rest_framework.permissions import AllowAny
 from django.views.generic.list import ListView
 from django.shortcuts import render, redirect
+from rest_framework.response import Response
+from django.http import HttpResponseRedirect
 from django.contrib.auth.models import User
 from rest_framework.views import APIView
-from rest_framework import status
+from .serializers import UserSerializer
 from django.http import JsonResponse
 from django.http import HttpResponse
-from rest_framework.response import Response
 from django.urls import reverse_lazy
-from .serializers import UserSerializer
-from .models import Post
-from django.http import HttpResponseRedirect
-from django.urls import reverse
 from django.contrib import messages
 from rest_framework import generics
-from .serializers import UserSerializer
+from rest_framework import status
+from django.http import QueryDict
+from django.urls import reverse
 from django.views import View
-import time
+from .models import Post
 import requests
+import time
 import json
 
 UID = "u-s4t2ud-272a7d972a922c63919b4411aff1da6abf64ec93eb38804b51427a0c0fbf86ea"
@@ -66,10 +66,6 @@ def getUserInfo(auth_code):
     if access_token:
         user_info = get_user_info(access_token)
         if user_info:
-            print(user_info.get('login'))
-            print(user_info.get('first_name'))
-            print(user_info.get('last_name'))
-            print(user_info.get('image'))
             return user_info
         else:
             return "Failed to retrieve user information."
@@ -93,11 +89,11 @@ class HomePageView(TemplateView):
     #     return context
 
     def get(self, request, *args, **kwargs):
-
         code = request.GET.get('code', None)
-        getUserInfo(code)
-        return render(request, self.template_name, self.get_context_data())
-
+        response = render(request, self.template_name, self.get_context_data())
+        if code:
+            requests.post('http://localhost:8000/api/signup/', data={'token': code})
+        return response
 
 class UserLoginView(LoginView):
     template_name = 'blog/login.html'
@@ -158,22 +154,35 @@ class UserLoginAPIView(APIView):
     def post(self, request, *args, **kwargs):
         username = request.data.get('username')
         password = request.data.get('password')
-
-        user = authenticate(request, username=username, password=password)
-
+        user = None
+        if not username or not password:
+            user = authenticate(request, token=request.data['token'])
+        else:
+            user = authenticate(request, username=username, password=password)
+        print(user)
         if user is not None:
             login(request, user)
             return HttpResponseRedirect(reverse('root'))
         else:
             return JsonResponse({'message': 'Gecersiz giris bilgileri.'}, status=400)
 
-
 class UserSignUpAPIView(APIView):
     permission_classes = [AllowAny]
     serializer_class = UserSerializer
     
     def post(self, request, *args, **kwargs):
-        serializer = self.serializer_class(data=request.data)
+        if request.data['code']:
+            user_info = getUserInfo(request.data['code'])
+            if user_info:
+                request.data['username'] = user_info['login']
+                request.data['email'] = user_info['email']
+                request.data['password'] = user_info['login'] + '42'
+        quer_dict = QueryDict('', mutable=True) # need to extra signup for 42 api DONT REMEMBER
+        quer_dict.appendlist('username', request.data.get('login'))
+        quer_dict.appendlist('email', request.data.get('email'))
+        quer_dict.appendlist('password', request.data.get('password'))
+        print(quer_dict)
+        serializer = self.serializer_class(data=quer_dict)
         if serializer.is_valid():
             serializer.save()
             return HttpResponseRedirect(reverse('root'))
