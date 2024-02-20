@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="4612423f-ed8e-49f3-9ae6-60b122a78ef8" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Makefile" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/Makefile" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/automation.sh" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/admin.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/apps.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/consumers.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/forms.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/main.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/migrations/0001_initial.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/migrations/0002_chatmessage.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/migrations/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/models.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/routing.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/serializers.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/static/blog/assets/bootstrap/css/bootstrap-grid.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/static/blog/assets/bootstrap/css/bootstrap-grid.css.map" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/static/blog/assets/bootstrap/css/bootstrap-grid.min.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/static/blog/assets/bootstrap/css/bootstrap-grid.min.css.map" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/static/blog/assets/bootstrap/css/bootstrap-grid.rtl.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/static/blog/assets/bootstrap/css/bootstrap-grid.rtl.css.map" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/static/blog/assets/bootstrap/css/bootstrap-grid.rtl.min.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/static/blog/assets/bootstrap/css/bootstrap-grid.rtl.min.css.map" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/static/blog/assets/bootstrap/css/bootstrap-reboot.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/static/blog/assets/bootstrap/css/bootstrap-reboot.css.map" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/static/blog/assets/bootstrap/css/bootstrap-reboot.min.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/static/blog/assets/bootstrap/css/bootstrap-reboot.min.css.map" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/static/blog/assets/bootstrap/css/bootstrap-reboot.rtl.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/static/blog/assets/bootstrap/css/bootstrap-reboot.rtl.css.map" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/static/blog/assets/bootstrap/css/bootstrap-reboot.rtl.min.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/static/blog/assets/bootstrap/css/bootstrap-reboot.rtl.min.css.map" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/static/blog/assets/bootstrap/css/bootstrap-utilities.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/static/blog/assets/bootstrap/css/bootstrap-utilities.css.map" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/static/blog/assets/bootstrap/css/bootstrap-utilities.min.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/static/blog/assets/bootstrap/css/bootstrap-utilities.min.css.map" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/static/blog/assets/bootstrap/css/bootstrap-utilities.rtl.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/static/blog/assets/bootstrap/css/bootstrap-utilities.rtl.css.map" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/static/blog/assets/bootstrap/css/bootstrap-utilities.rtl.min.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/static/blog/assets/bootstrap/css/bootstrap-utilities.rtl.min.css.map" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/static/blog/assets/bootstrap/css/bootstrap.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/static/blog/assets/bootstrap/css/bootstrap.css.map" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/static/blog/assets/bootstrap/css/bootstrap.min.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/static/blog/assets/bootstrap/css/bootstrap.min.css.map" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/static/blog/assets/bootstrap/css/bootstrap.rtl.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/static/blog/assets/bootstrap/css/bootstrap.rtl.css.map" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/static/blog/assets/bootstrap/css/bootstrap.rtl.min.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/static/blog/assets/bootstrap/css/bootstrap.rtl.min.css.map" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/static/blog/assets/bootstrap/js/bootstrap.bundle.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/static/blog/assets/bootstrap/js/bootstrap.bundle.js.map" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/static/blog/assets/bootstrap/js/bootstrap.bundle.min.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/static/blog/assets/bootstrap/js/bootstrap.bundle.min.js.map" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/static/blog/assets/bootstrap/js/bootstrap.esm.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/static/blog/assets/bootstrap/js/bootstrap.esm.js.map" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/static/blog/assets/bootstrap/js/bootstrap.esm.min.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/static/blog/assets/bootstrap/js/bootstrap.esm.min.js.map" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/static/blog/assets/bootstrap/js/bootstrap.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/static/blog/assets/bootstrap/js/bootstrap.js.map" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/static/blog/assets/bootstrap/js/bootstrap.min.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/static/blog/assets/bootstrap/js/bootstrap.min.js.map" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/static/blog/assets/css/font-awesome.min.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/static/blog/assets/css/main.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/static/blog/assets/css/noscript.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/static/blog/assets/fonts/FontAwesome.otf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/static/blog/assets/fonts/fontawesome-webfont.eot" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/static/blog/assets/fonts/fontawesome-webfont.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/static/blog/assets/fonts/fontawesome-webfont.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/static/blog/assets/fonts/fontawesome-webfont.woff" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/static/blog/assets/fonts/fontawesome-webfont.woff2" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/static/blog/assets/js/anime.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/static/blog/assets/js/anime.min.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/static/blog/assets/js/breakpoints.min.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/static/blog/assets/js/browser.min.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/static/blog/assets/js/jquery.min.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/static/blog/assets/js/main.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/static/blog/assets/js/util.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/static/blog/assets/sass/base/_page.scss" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/static/blog/assets/sass/base/_reset.scss" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/static/blog/assets/sass/base/_typography.scss" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/static/blog/assets/sass/components/_actions.scss" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/static/blog/assets/sass/components/_box.scss" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/static/blog/assets/sass/components/_button.scss" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/static/blog/assets/sass/components/_form.scss" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/static/blog/assets/sass/components/_icon.scss" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/static/blog/assets/sass/components/_icons.scss" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/static/blog/assets/sass/components/_image.scss" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/static/blog/assets/sass/components/_list.scss" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/static/blog/assets/sass/components/_table.scss" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/static/blog/assets/sass/layout/_bg.scss" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/static/blog/assets/sass/layout/_footer.scss" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/static/blog/assets/sass/layout/_header.scss" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/static/blog/assets/sass/layout/_main.scss" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/static/blog/assets/sass/layout/_wrapper.scss" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/static/blog/assets/sass/libs/_breakpoints.scss" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/static/blog/assets/sass/libs/_functions.scss" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/static/blog/assets/sass/libs/_mixins.scss" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/static/blog/assets/sass/libs/_vars.scss" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/static/blog/assets/sass/libs/_vendor.scss" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/static/blog/assets/sass/main.scss" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/static/blog/assets/sass/noscript.scss" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/static/blog/css/style.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/static/blog/data/resim.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/static/blog/data/resim2.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/static/blog/images/42icon.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/static/blog/images/Chat-Icon.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/static/blog/images/bg.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/static/blog/images/overlay.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/static/blog/images/penguin.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/static/blog/images/penguin_826963.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/static/blog/images/pic01.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/static/blog/images/pic02.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/static/blog/images/pic03.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/templates/blog/blog-id.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/templates/blog/blogs.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/templates/blog/details-user.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/templates/blog/home.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/templates/blog/home2.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/templates/blog/index.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/templates/blog/list.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/templates/blog/login.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/templates/blog/logout.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/templates/blog/post.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/templates/blog/user-register.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/tests.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/urls.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blog/views.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blogApp/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blogApp/asgi.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blogApp/settings.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blogApp/urls.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/blogApp/wsgi.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/manage.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/requirements.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blogApp/templates/base.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/git.py" beforeDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 3
+}]]></component>
+  <component name="ProjectId" id="2cdBMgNeNb4EIv1bV29k6ttZL8J" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "main",
+    "last_opened_file_path": "/Users/clas0512/Desktop/PongJungle",
+    "nodejs_package_manager_path": "npm",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-python-sdk-5a2391486177-2887949eec09-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-233.13763.11" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="4612423f-ed8e-49f3-9ae6-60b122a78ef8" name="Changes" comment="" />
+      <created>1708431530520</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1708431530520</updated>
+      <workItem from="1708431531629" duration="938000" />
+    </task>
+    <servers />
+  </component>
+</project>
