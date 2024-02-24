@@ -1,5 +1,5 @@
 .DS_Store
-blogApp/.venv
-blogApp/.vscode
-blogApp/.DS_Store
-blogApp/db.sqlite3
+.venv
+.vscode
+.DS_Store
+db.sqlite3
