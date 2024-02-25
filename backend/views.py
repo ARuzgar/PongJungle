@@ -78,7 +78,7 @@ class ChatPageView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['my_data'] = 'Bu veri home2.html içinde kullanılabilir.'
+        context['my_data'] = 'Bu veri home2.html içinde kullanilabilir.'
         return context
 
 class HomePageView(TemplateView):
@@ -87,7 +87,6 @@ class HomePageView(TemplateView):
     # def get_context_data(self, **kwargs):
     #     context = super().get_context_data(**kwargs)
     #     return context
-
     def get(self, request, *args, **kwargs):
         code = request.GET.get('code', None)
         response = render(request, self.template_name, self.get_context_data())
@@ -99,7 +98,6 @@ class UserLoginView(LoginView):
     template_name = '../frontend/templates/login.html'
     redirect_authenticated_user = True
     success_url = reverse_lazy('/')
-
 
 class UserLogoutView(LogoutView):
     template_name = '../frontend/templates/logout.html'
@@ -155,18 +153,12 @@ class UserSignUpAPIView(APIView):
     serializer_class = UserSerializer
     
     def post(self, request, *args, **kwargs):
-        if request.data['code']:
-            user_info = getUserInfo(request.data['code'])
-            if user_info:
-                request.data['username'] = user_info['login']
-                request.data['email'] = user_info['email']
-                request.data['password'] = user_info['login'] + '42'
-        quer_dict = QueryDict('', mutable=True) # need to extra signup for 42 api DONT REMEMBER
-        quer_dict.appendlist('username', request.data.get('login'))
-        quer_dict.appendlist('email', request.data.get('email'))
-        quer_dict.appendlist('password', request.data.get('password'))
-        print(quer_dict)
-        serializer = self.serializer_class(data=quer_dict)
+        data = {
+            'username': request.data.get('username'),
+            'email': request.data.get('email'),
+            'password': request.data.get('password'),
+        }
+        serializer = self.serializer_class(data=data)
         if serializer.is_valid():
             serializer.save()
             return HttpResponseRedirect(reverse('root'))
@@ -176,8 +168,30 @@ class UserSignUpAPIView(APIView):
                 for error in field_errors:
                     error_messages.append(error)
             return JsonResponse({'error': 'Bad Request : ' + ' '.join(error_messages)}, status=400)
+        
+class User42AuthSignUpAPIView(APIView):
+    permission_classes = [AllowAny]
+    serializer_class = UserSerializer
+    
+    def post(self, request, *args, **kwargs):
+        code = request.data.get('code')
+        if code:
+            user_info = getUserInfo(code)
+            if user_info:
+                data = {
+                    'username': user_info['login'],
+                    'email': user_info['email'],
+                    'password': user_info['login'] + '42',
+                }
+                serializer = self.serializer_class(data=data)
+                if serializer.is_valid():
+                    serializer.save()
+                    return HttpResponseRedirect(reverse('root'))
+        return JsonResponse({'error': 'Bad Request : Invalid code'}, status=400)
 
-
+class AuthView(View):
+    def get(self, request):
+        return redirect('https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-272a7d972a922c63919b4411aff1da6abf64ec93eb38804b51427a0c0fbf86ea&redirect_uri=http%3A%2F%2F127.0.0.1%3A8000&response_type=code')
 # ----------------- 42 API -----------------
 
 # class AuthView(requests.View):
@@ -208,7 +222,4 @@ class CallbackView(View):
         print('zort')
         return HttpResponse('Success!')
     
-class AuthView(View):
-    def get(self, request):
-        return redirect('https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-272a7d972a922c63919b4411aff1da6abf64ec93eb38804b51427a0c0fbf86ea&redirect_uri=http%3A%2F%2F127.0.0.1%3A8000&response_type=code')
     
