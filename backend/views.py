@@ -210,6 +210,5 @@ class CallbackView(View):
     
 class AuthView(View):
     def get(self, request):
-        # istediğiniz URL'ye yönlendirme yapın
         return redirect('https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-272a7d972a922c63919b4411aff1da6abf64ec93eb38804b51427a0c0fbf86ea&redirect_uri=http%3A%2F%2F127.0.0.1%3A8000&response_type=code')
     
