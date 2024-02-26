@@ -76,15 +76,11 @@ def getUserInfo(auth_code):
 class HomePageView(TemplateView):
     template_name = "../frontend/templates/index.html"    
 
-    print("Hello World")
     def get(self, request, *args, **kwargs):
         code = request.GET.get('code', None)
-        print(AAAAAAAAAAAAAAAAA)
-        print(code)
         response = render(request, self.template_name, self.get_context_data())
         if code:
-            logging.info(f"GET /?code={code} HTTP/1.1")
-            requests.post('http://localhost:8000/api/signup/', data={'token': code})
+            requests.post('http://localhost:8000/backend/api/42auth/', data={'code': code})
         return response
 
 class UserLoginView(LoginView):
@@ -118,10 +114,9 @@ class UserSignUpAPIView(APIView):
                     error_messages.append(error)
             return JsonResponse({'error': 'Bad Request : ' + ' '.join(error_messages)}, status=400)
         
-class User42AuthSignUpAPIView(APIView):
+class User42AuthSignUpAPIView(APIView): 
     permission_classes = [AllowAny]
     serializer_class = UserSerializer
-    
     def post(self, request, *args, **kwargs):
         code = request.data.get('code')
         if code:
@@ -130,12 +125,18 @@ class User42AuthSignUpAPIView(APIView):
                 data = {
                     'username': user_info['login'],
                     'email': user_info['email'],
-                    'password': user_info['login'] + '42',
+                    'image': user_info['image'],
                 }
                 serializer = self.serializer_class(data=data)
                 if serializer.is_valid():
                     serializer.save()
-                    return HttpResponseRedirect(reverse('root'))
+                    # After saving the user, make a POST request to UserLoginAPIView
+                    login_response = requests.post('http://localhost:8000/api42/api/login', data={'username': data['username'], 'password': data['password']})
+                    if login_response.status_code == status.HTTP_200_OK:
+                        return HttpResponseRedirect(reverse('root'))
+                    else:
+                        return JsonResponse({'error': 'Failed to login after signup.'}, status=400)
+                print(serializer.errors)
         return JsonResponse({'error': 'Bad Request : Invalid code'}, status=400)
 
 class AuthView(View):
