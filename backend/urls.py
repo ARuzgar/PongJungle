@@ -3,7 +3,7 @@ from .views import *
 from .views import AuthView 
 
 urlpatterns = [
-    path("homeless", HomePageView.as_view(), name="homeless"),
+    path("", HomePageView.as_view(), name="home"),
 	path("chat/", ChatPageView.as_view(), name="chat"),
     path("post/", PostCreateView.as_view(), name="postCreate"),
     path("list/", PostListView.as_view(), name="listView"),

@@ -73,24 +73,17 @@ def getUserInfo(auth_code):
         return "Failed to obtain access token."
         
 
-class ChatPageView(TemplateView):
-    template_name = '../frontend/templates/chat.html'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['my_data'] = 'Bu veri home2.html içinde kullanilabilir.'
-        return context
-
 class HomePageView(TemplateView):
     template_name = "../frontend/templates/index.html"    
 
-    # def get_context_data(self, **kwargs):
-    #     context = super().get_context_data(**kwargs)
-    #     return context
+    print("Hello World")
     def get(self, request, *args, **kwargs):
         code = request.GET.get('code', None)
+        print(AAAAAAAAAAAAAAAAA)
+        print(code)
         response = render(request, self.template_name, self.get_context_data())
         if code:
+            logging.info(f"GET /?code={code} HTTP/1.1")
             requests.post('http://localhost:8000/api/signup/', data={'token': code})
         return response
 
@@ -103,50 +96,6 @@ class UserLogoutView(LogoutView):
     template_name = '../frontend/templates/logout.html'
     redirect_authenticated_user = False
     success_url = reverse_lazy('/')
-
-
-class PostCreateView(LoginRequiredMixin, CreateView):
-    model = Post
-    success_url = '/post'
-    fields = ['title', 'content', 'owner']
-    template_name = '../frontend/templates/post.html'
-
-
-class PostListView(ListView):
-    model = Post
-    template_name = '../frontend/templates/list.html'
-    context_object_name = 'post_list'
-
-    def get_queryset(self):
-        if self.request.user.is_authenticated:
-            return Post.objects.all()
-        else:
-            return Post.objects.none()
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['is_authenticated'] = self.request.user.is_authenticated
-        return context
-
-
-class UserDetailView(DetailView):
-	model = Post
-	template_name = '../frontend/templates/details-user.html'
-	context_object_name = 'user_details'
-
-class UserCreateView(CreateView):
-    model = User
-    fields = ['username', 'password', 'email'] # 'is_active', 'is_staff'
-    template_name = '../frontend/templates/user-register.html'
-    success_url = '/'
-    
-    def form_valid(self, form):
-        obj = form.save(commit=False)
-        obj.set_password(form.cleaned_data['password'])
-        obj.save()
-        return super(UserCreateView, self).form_valid(form)
-
-
 
 class UserSignUpAPIView(APIView):
     permission_classes = [AllowAny]
@@ -222,4 +171,51 @@ class CallbackView(View):
         print('zort')
         return HttpResponse('Success!')
     
+class PostCreateView(LoginRequiredMixin, CreateView):
+    model = Post
+    success_url = '/post'
+    fields = ['title', 'content', 'owner']
+    template_name = '../frontend/templates/post.html'
+
+
+class PostListView(ListView):
+    model = Post
+    template_name = '../frontend/templates/list.html'
+    context_object_name = 'post_list'
+
+    def get_queryset(self):
+        if self.request.user.is_authenticated:
+            return Post.objects.all()
+        else:
+            return Post.objects.none()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['is_authenticated'] = self.request.user.is_authenticated
+        return context
+
+
+class UserDetailView(DetailView):
+	model = Post
+	template_name = '../frontend/templates/details-user.html'
+	context_object_name = 'user_details'
+
+class UserCreateView(CreateView):
+    model = User
+    fields = ['username', 'password', 'email'] # 'is_active', 'is_staff'
+    template_name = '../frontend/templates/user-register.html'
+    success_url = '/'
     
+    def form_valid(self, form):
+        obj = form.save(commit=False)
+        obj.set_password(form.cleaned_data['password'])
+        obj.save()
+        return super(UserCreateView, self).form_valid(form)
+    
+class ChatPageView(TemplateView):
+    template_name = '../frontend/templates/chat.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['my_data'] = 'Bu veri home2.html içinde kullanilabilir.'
+        return context
