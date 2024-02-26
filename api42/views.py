@@ -35,11 +35,13 @@ class UserLoginAPIView(APIView):
         user = None
         if not username or not password:
             user = authenticate(request, token=request.data['token'])
+            print('User is authenticated')
         else:
             user = authenticate(request, username=username, password=password)
-        print(user)
+            print('User is NOT authenticated')
         if user is not None:
             login(request, user)
+            print('User is logged in')
             return HttpResponseRedirect(reverse('root'))
         else:
             return JsonResponse({'message': 'Gecersiz giris bilgileri.'}, status=400)
