@@ -76,14 +76,10 @@ def getUserInfo(auth_code):
 class HomePageView(TemplateView):
     template_name = "../frontend/templates/index.html"    
 
-    print("Hello World")
     def get(self, request, *args, **kwargs):
         code = request.GET.get('code', None)
-        print(AAAAAAAAAAAAAAAAA)
-        print(code)
         response = render(request, self.template_name, self.get_context_data())
         if code:
-            logging.info(f"GET /?code={code} HTTP/1.1")
             requests.post('http://localhost:8000/api/signup/', data={'token': code})
         return response
 
