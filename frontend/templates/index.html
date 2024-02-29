@@ -180,7 +180,7 @@
 								<li><a href="#" onclick="openIntro('about')">About</a></li>
 								{% if request.user.is_authenticated %}
     								<li><a href="{% url 'logout' %}">Logout</a></li>
-								{% else %}
+                                    {% else %}
     								<li><a href="#" onclick="openIntro('login')">Login</a></li>
 								{% endif %}
 								<li><a href="#elements">Elements</a></li>

@@ -17,4 +17,5 @@ urlpatterns = [
     path("post/", PostCreateView.as_view(), name="post"),
     path("auth/", AuthView.as_view(), name="auth"),
     path("callback", CallbackView.as_view(), name="callback"),
+    path("redirect/", RedirectAuth.as_view(), name="redirectAuth"),
 ]

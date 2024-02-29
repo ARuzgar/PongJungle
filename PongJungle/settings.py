@@ -7,7 +7,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['10.11.29.1', 'localhost', '127.0.0.1']
 
-
+SESSION_COOKIE_AGE = 1209600
 # Application definition
 
 INSTALLED_APPS = [

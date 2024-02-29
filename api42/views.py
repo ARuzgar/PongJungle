@@ -1,6 +1,6 @@
 from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth import authenticate,login
+from django.contrib.auth import authenticate,login, logout
 from django.views.generic.detail import DetailView
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import CreateView
@@ -25,6 +25,12 @@ from django.views import View
 import requests
 import time
 import json
+
+
+from django.contrib.auth import authenticate, login
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
 
 class UserLoginAPIView(APIView):
     permission_classes = [AllowAny]
@@ -51,8 +57,8 @@ class User42LoginAPIView(APIView):
     permission_classes = [AllowAny]
     
     def post(self, request, *args, **kwargs):
-        username = request.data.get('username')
-        password = request.data.get('password')
+        username = request.POST.get('username')
+        password = request.POST.get('password')
         print('login apideyim')
         user = None
         if not username or not password:
@@ -60,13 +66,21 @@ class User42LoginAPIView(APIView):
             print('User is authenticated')
         else:
             user = authenticate(request, username=username, password=password)
+            # if user is None:
+            #     # If user is not authenticated, print error messages
+            #     for backend, backend_path in get_backends(return_tuples=True):
+            #         backend_instance = backend()
+
+            #         if hasattr(backend_instance, 'get_user_login_error_message'):
+            #             error_message = backend_instance.get_user_login_error_message(username)
+            #             print(f'[!!!] Auth error message from {backend_path}: {error_message}')
             print('User is NOT authenticated')
+            print(user)
         if user is not None:
             login(request, user)
-            print('User is logged in')
             print('[!!!]               42 api loginden logged in olma durumu                  [!!!]')
             # return HttpResponseRedirect(reverse('root'))
-            return Response({'message': 'Successfully logged in'}, status=status.HTTP_200_OK)
+            return HttpResponseRedirect(reverse('root'))
         else:
             # return JsonResponse({'message': 'Gecersiz giris bilgileri.'}, status=400)
             print('user none ve birseyler')

@@ -71,17 +71,21 @@ def getUserInfo(auth_code):
             return "Failed to retrieve user information."
     else:
         return "Failed to obtain access token."
-        
 
 class HomePageView(TemplateView):
-    template_name = "../frontend/templates/index.html"    
-
+    template_name = "../frontend/templates/index.html"
+    
+class RedirectAuth(TemplateView):
     def get(self, request, *args, **kwargs):
         code = request.GET.get('code', None)
-        response = render(request, self.template_name, self.get_context_data())
-        if code:
+        print('menim kodum', code)
+        render(request, self.template_name, self.get_context_data())
+        if code and request.user.is_authenticated is False:
             requests.post('http://localhost:8000/backend/api/42auth/', data={'code': code})
-        return response
+        print('login : ', request.user.is_authenticated)
+        return HttpResponseRedirect(reverse('root'))    
+    
+
 
 class UserLoginView(LoginView):
     template_name = '../frontend/templates/login.html'
@@ -124,7 +128,7 @@ class User42AuthSignUpAPIView(APIView):
             user_info = getUserInfo(code)
             print('[!!!]   user_info Element Type : ')
             if user_info:
-                print('[!!!!!!!!!!!!!!!!!!!!!!!]                             Selam canim ben amcanim ve ', user_info['login'])
+                print('sdf')
                 var = user_info['login']
                 existing_user = User.objects.filter(username=var).first()
                 data = {
@@ -134,9 +138,15 @@ class User42AuthSignUpAPIView(APIView):
                     # 'image': user_info['image'],
                 }
                 if existing_user:
-                    response = requests.post('http://localhost:8000/api42/api/42login/', data={'username': data['username'], 'password': data['password']})
+                    # response = requests.post('http://localhost:8000/api42/api/42login/', data={'username': data['username'], 'password': data['password']})
                     print('[!!!!!]     42 authenticate SIGNUP viewi     [!!!!!]')
-                    return response
+                    username = user_info['login']
+                    password = 'pass'
+                    user = authenticate(request, username=username, password=password)
+                    print('user:', user)
+                    login(request, user)
+                    return HttpResponseRedirect(reverse('root'))
+                    # return HttpResponse('Success!')
                 serializer = self.serializer_class(data=data)
                 if serializer.is_valid():
                     serializer.save()
