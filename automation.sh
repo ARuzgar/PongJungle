@@ -3,7 +3,7 @@
 python3 -m pip install --upgrade pip
 pip3 install virtualenv
 python3 -m virtualenv .venv
-source .venv/bin/activate
+source .venv/bin/activate -y
 python3 -m pip install -r requirements.txt
 python3 manage.py makemigrations
 pip3 install requests
