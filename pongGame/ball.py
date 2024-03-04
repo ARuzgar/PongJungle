@@ -10,6 +10,7 @@ class Ball:
         self.radius = radius
         self.x_vel = self.VEL
         self.y_vel = 0
+        self.winner = 0
 
     def draw(self, win):
         pygame.draw.circle(win, self.COLOR, (self.x, self.y), self.radius)
@@ -22,16 +23,15 @@ class Ball:
         self.x = self.original_x
         self.y = self.original_y
         self.VEL = 5
-        match direction:
-            case "left":
-                self.x_vel = self.VEL
-                self.y_vel = 0
-            case "right":
-                self.x_vel = -self.VEL
-                self.y_vel = 0
-            case "up":
-                self.x_vel = 0
-                self.y_vel = self.VEL
-            case "down":
-                self.x_vel = 0
-                self.y_vel = -self.VEL
+        if direction == "left":
+            self.x_vel = self.VEL
+            self.y_vel = 0
+        elif direction == "right":
+            self.x_vel = -self.VEL
+            self.y_vel = 0
+        elif direction == "up":
+            self.x_vel = 0
+            self.y_vel = self.VEL
+        elif direction == "down":
+            self.x_vel = 0
+            self.y_vel = -self.VEL

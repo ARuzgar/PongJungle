@@ -14,7 +14,7 @@ WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 PADDLE_WIDTH, PADDLE_HEIGHT = 20, 100
 BALL_RADIUS = 7
-
+WINNING_SCORE = 11
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -25,10 +25,22 @@ except socket.error as e:
     str(e)
 
 s.listen(2)
+player_count = 0
+valid_inputs = ["2", "4"]
+player_count = input("2 players or 4 players: ")
+while player_count not in valid_inputs:
+    print("Invalid input. Please enter '2' or '4'.")
+    player_count = input("2 players or 4 players: ")
+player_count = int(player_count)
 print("Waiting for a connection, Server Started")
 
+two_player_objects = [
+    Player(10, HEIGHT // 2 - PADDLE_HEIGHT // 2, PADDLE_WIDTH, PADDLE_HEIGHT, WHITE),
+    Player(WIDTH - 10 - PADDLE_WIDTH, (HEIGHT // 2) - (PADDLE_HEIGHT // 2), PADDLE_WIDTH, PADDLE_HEIGHT, WHITE),
+    Ball(WIDTH // 2, HEIGHT // 2, BALL_RADIUS)
+]
 
-objects_to_send = [
+four_player_objects = [
     Player(10, HEIGHT//2 - PADDLE_HEIGHT//2, PADDLE_WIDTH, PADDLE_HEIGHT,WHITE),
     Player(WIDTH-10-PADDLE_WIDTH, (HEIGHT//2) - (PADDLE_HEIGHT//2), PADDLE_WIDTH, PADDLE_HEIGHT,WHITE),
     Player(WIDTH//2 - PADDLE_HEIGHT//2, 10, PADDLE_HEIGHT, PADDLE_WIDTH, WHITE),
@@ -36,44 +48,62 @@ objects_to_send = [
     Ball(WIDTH // 2, HEIGHT // 2, BALL_RADIUS)
 ]
 
+if player_count == 2:
+    objects_to_send = two_player_objects
+else:
+    objects_to_send = four_player_objects
+
 def score(player):
-    match player:
-        case "left":
-            objects_to_send[0].score += 1
-        case "right":
-            objects_to_send[1].score += 1
-        case "up":
-            objects_to_send[2].score += 1
-        case "down":
-            objects_to_send[3].score += 1
+    if player == "left":
+        objects_to_send[0].score += 1
+        if objects_to_send[0].score >= WINNING_SCORE:
+            objects_to_send[player_count].winner = 1
+    elif player == "right":
+        objects_to_send[1].score += 1
+        if objects_to_send[1].score >= WINNING_SCORE:
+            objects_to_send[player_count].winner = 2
+    elif player == "up":
+        objects_to_send[2].score += 1
+        if objects_to_send[2].score >= WINNING_SCORE:
+            objects_to_send[player_count].winner = 3
+    elif player == "down":
+        objects_to_send[3].score += 1
+        if objects_to_send[3].score >= WINNING_SCORE:
+            objects_to_send[player_count].winner = 4
 
-def handle_collision(ball, left_paddle, right_paddle, upper_paddle, lower_paddle):
+
+def handle_collision(ball, left_paddle, right_paddle, upper_paddle=None, lower_paddle=None):
     global scorer
-    if ball.y_vel < 0:
-        if ball.x >= upper_paddle.x and ball.x <= upper_paddle.x + upper_paddle.width:
-            if ball.y - ball.radius <= upper_paddle.y + upper_paddle.height:
-                scorer = "up"
-                ball.y_vel *= -1
-                if ball.y_vel <= 20:
-                    ball.y_vel += 0.5
-                middle_x = upper_paddle.x + upper_paddle.width / 2
-                difference_in_x = middle_x - ball.x
-                reduction_factor = (upper_paddle.width / 2) / ball.VEL
-                x_vel = difference_in_x / reduction_factor
-                ball.x_vel = -1 * x_vel
+    if upper_paddle is not None:
+        if ball.y_vel < 0:
+            if ball.x >= upper_paddle.x and ball.x <= upper_paddle.x + upper_paddle.width:
+                if ball.y - ball.radius <= upper_paddle.y + upper_paddle.height:
+                    scorer = "up"
+                    ball.y_vel *= -1
+                    if ball.y_vel <= 20:
+                        ball.y_vel += 0.5
+                    middle_x = upper_paddle.x + upper_paddle.width / 2
+                    difference_in_x = middle_x - ball.x
+                    reduction_factor = (upper_paddle.width / 2) / ball.VEL
+                    x_vel = difference_in_x / reduction_factor
+                    ball.x_vel = -1 * x_vel
+        else:
+            if ball.x >= lower_paddle.x and ball.x <= lower_paddle.x + lower_paddle.width:
+                if ball.y + ball.radius >= lower_paddle.y:
+                    scorer = "down"
+                    if ball.x_vel <= 20:
+                        ball.x_vel += 0.5
+                    ball.y_vel *= -1
+                    middle_x = lower_paddle.x + lower_paddle.width / 2
+                    difference_in_x = middle_x - ball.x
+                    reduction_factor = (lower_paddle.width / 2) / ball.VEL
+                    x_vel = difference_in_x / reduction_factor
+                    ball.x_vel = -1 * x_vel
     else:
-        if ball.x >= lower_paddle.x and ball.x <= lower_paddle.x + lower_paddle.width:
-            if ball.y + ball.radius >= lower_paddle.y:
-                scorer = "down"
-                if ball.x_vel <= 20:
-                    ball.x_vel += 0.5
-                ball.y_vel *= -1
-                middle_x = lower_paddle.x + lower_paddle.width / 2
-                difference_in_x = middle_x - ball.x
-                reduction_factor = (lower_paddle.width / 2) / ball.VEL
-                x_vel = difference_in_x / reduction_factor
-                ball.x_vel = -1 * x_vel
-
+        if ball.y + ball.radius >= HEIGHT:
+            ball.y_vel *= -1
+        elif ball.y - ball.radius <= 0:
+            ball.y_vel *= -1
     if ball.x_vel < 0:
         if ball.y >= left_paddle.y and ball.y <= left_paddle.y + left_paddle.height:
             if ball.x - ball.radius <= left_paddle.x + left_paddle.width:
@@ -109,7 +139,7 @@ def threaded_client(conn, player):
                 print("Disconnected")
                 break
             else:
-                ball = objects_to_send[4]
+                ball = objects_to_send[player_count]
                 if player < 2:
                     if data[0] == "up":
                         objects_to_send[player].move(-1)
@@ -120,8 +150,11 @@ def threaded_client(conn, player):
                         objects_to_send[player].move_sideways(-1)
                     if data[0] == "right":
                         objects_to_send[player].move_sideways(1)
-                objects_to_send[4].move()
-                handle_collision(objects_to_send[4],objects_to_send[0],objects_to_send[1],objects_to_send[2],objects_to_send[3])
+                ball.move()
+                if player_count == 4:
+                    handle_collision(ball,objects_to_send[0],objects_to_send[1],objects_to_send[2],objects_to_send[3])
+                else:
+                    handle_collision(ball,objects_to_send[0],objects_to_send[1])
                 if ball.x < 0:
                     ball.reset("left")
                     score(scorer)
