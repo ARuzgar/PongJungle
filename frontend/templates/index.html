@@ -117,7 +117,7 @@
 							<div class="login-card cardLogin__face cardLogin__face--front">
 								<h2 class="major">Login</h2>
 								<!-- <form method="post" action="api42/api/login"></form> -->
-								<form method="post" action="http://peng.com.tr/api42/auth/login/">
+								<form method="post" action="https://peng.com.tr/api42/auth/login/">
 									<div class="fields">
 										<div class="field">
 											<label for="username">Username</label>
@@ -135,7 +135,7 @@
 									</ul>
 									<ul class="actions stacked">
 										<li class="">
-											<a href="http://peng.com.tr/api42/auth/login/"
+											<a href="https://peng.com.tr/api42/auth/login/"
 												class="button primary apibutton login">
 												<img src="/static/images/42icon.png" width="20vh"> 42 Buton
 											</a>
@@ -148,7 +148,7 @@
 							</div>
 							<div class="register-card cardLogin__face cardLogin__face--back">
 								<h2 class="major">Sign Up</h2>
-								<form method="post" action="http://peng.com.tr/api42/auth/signup/" id="signupForm">
+								<form method="post" action="https://peng.com.tr/api42/auth/signup/" id="signupForm">
 									<div class="field">
 										<label for="email">Name</label>
 										<input type="text" name="username" id="username" />
@@ -201,7 +201,7 @@
 										e.preventDefault();
 										$.ajax({
 											type: 'POST',
-											url: 'backend/api/signup/',
+											url: 'https://peng.com.tr/api42/auth/signup/',
 											data: $(this).serialize(),
 											success: function (response) {
 												window.location.href = '/';
@@ -510,7 +510,7 @@ print 'It took ' + i + ' iterations to sort the deck.';</code></pre>
 
 		// document.addEventListener("onload", (e) => function(){
 		// 	if(window.location.pathname != "#")
-		// 		window.location.href = "http://peng.com.tr/404";
+		// 		window.location.href = "https://peng.com.tr/404";
 		// });
 	</script>
 	<script src="/static/assets/js/jquery.min.js"></script>

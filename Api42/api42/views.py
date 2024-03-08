@@ -65,55 +65,31 @@ def getUserInfo(auth_code):
         return "Failed to obtain access token."
         
 
-# class User42LoginAPIView(APIView):
-#     """
-#     A view that returns the count of active users in JSON.
-#     """
-#     renderer_classes = [JSONRenderer]
-
-#     de f post(self, request):
-#         JsonResponse()
-#         return HttpResponseRedirect("http://peng.com.tr/")
-    
-# class User42LoginAPIView(APIView):
-#     permission_classes = [AllowAny]
-#     renderer_classes = [JSONRenderer]
-
-#     def get(self, request, *args, **kwargs):
-#         print('ZOOORTT ', request.data.get('username'))
-#         # username = request.data.get('username')
-#         # password = request.data.get('password')
-#         username = 'binam'
-#         password = '123'
-#         user = None
-#         if not username or not password:
-#             user = authenticate(request, token=request.data['token'])
-#         else:
-#             user = authenticate(request, username=username, password=password)
-#         if user is not None:
-#             login(request, user)
-#             return Response({'message': 'Successfully logged in'}, status=status.HTTP_202_ACCEPTED)
-#         else:
 
 def JsonProvider(success, **kwargs):
-    d = None
-    if kwargs['data'] is not None:
+    if 'data' in kwargs and kwargs['data'] is not None:
         d = {
-			'success' : success,
-			'data' : kwargs['data'],
-			'error' : None
-		}
+            'success': success,
+            'data': kwargs['data'],
+            'error': None
+        }
+    elif 'error' in kwargs and kwargs['error'] is not None:
+        d = {
+            'success': success,
+            'data': None,
+            'error': kwargs['error']
+        }
     else:
         d = {
-			'success' : success,
-			'data' : None,
-			'error' : kwargs['error']
-		}
+            'success': success,
+            'data': None,
+            'error': None
+        }
     return json.dumps(d)
+
 
 class User42LoginAPIView(APIView):
     permission_classes = [AllowAny]
-    # serializer_class = UserSerializer
 
     def post(self, request, *args, **kwargs):
 
@@ -137,27 +113,44 @@ class User42LoginAPIView(APIView):
 
             
             
-class signUpAPIView(APIView): 
+class SignUpAPIView(APIView):
     permission_classes = [AllowAny]
     serializer_class = UserSerializer
     def post(self, request, *args, **kwargs):
-        user_data = request.data.get('code')
-        if user_data:
-            user_serialized_data = getUserInfo(user_data)
-            if user_serialized_data:
-                
-        
-        
+        username = request.data.get('username')
+        email = request.data.get('email')
+        password = request.data.get('password')
+
+        if username and email and password:
+            existing_user = User.objects.filter(username=username).first()
+            
+            if existing_user is not None:
+                return Response(JsonProvider(False, error = {'message' : 'user already exist'}), status=HTTP_400_BAD_REQUEST)
+
+            data = {
+                'email' : email,
+                'username' : username,
+                'password' : password,
+            }
+
+            serializer = self.serializer_class(data=data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(JsonProvider(True, data = {'message' : 'user registered'}), status=HTTP_200_OK)
+            else:
+                return Response(JsonProvider(False, error = {'message' : 'unknown failed'}), status=HTTP_400_BAD_REQUEST)
+        else:
+            return Response(JsonProvider(False, error = {'message' : 'user informations are missing'}), status=HTTP_400_BAD_REQUEST)
+
+
 class User42AuthSignUpAPIView(APIView):
     permission_classes = [AllowAny]
-serializer_class = UserSerializer
+    serializer_class = UserSerializer
     def post(self, request, *args, **kwargs):
         code = request.data.get('code')
         if code:
             user_info = getUserInfo(code)
-            print('[!!!]   user_info Element Type : ')
             if user_info:
-                print('[!!!!!!!!!!!!!!!!!!!!!!!]Selam canim ben amcanim ve ', user_info['login'])
                 var = user_info['login']
                 existing_user = User.objects.filter(username=var).first()
                 data = {
@@ -166,7 +159,6 @@ serializer_class = UserSerializer
                 }
                 if existing_user:
                     response = requests.post('http://localhost:8000/api42/api/42login/', data={'username': data['username'], 'password': data['password']})
-                    print('[!!!!!]     42 authenticate SIGNUP viewi     [!!!!!]')
                     return response
                 serializer = self.serializer_class(data=data)
                 if serializer.is_valid():

@@ -5,7 +5,7 @@ SECRET_KEY = 'django-insecure-fzk(@6r0o8m)(pc&2rba664w)vp9d7fpcns^-a5^!ww#h(-q-k
 
 DEBUG = True
 
-ALLOWED_HOSTS = ['185.249.202.33', 'peng.com.tr', 'localhost']
+ALLOWED_HOSTS = ['185.249.202.33', 'peng.com.tr', 'localhost', 'backend', 'api42']
 
 INSTALLED_APPS = [
     'back',
@@ -52,7 +52,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'pong',
-        'USER': 'berke',
+        'USER': 'berke' os.getENV(DB_USER),
         'PASSWORD': '123',
         'HOST': 'db',
         'PORT': '5432',
