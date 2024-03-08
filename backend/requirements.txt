@@ -3,3 +3,4 @@ psycopg[binary]
 daphne==4.1.0
 djangorestframework==3.14.0
 requests
+uvicorn

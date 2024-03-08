@@ -117,32 +117,38 @@
 							<div class="login-card cardLogin__face cardLogin__face--front">
 								<h2 class="major">Login</h2>
 								<!-- <form method="post" action="api42/api/login"></form> -->
-								<form method="post" action="/api42/login"></form>
-								<div class="fields">
-									<div class="field">
-										<label for="email">Username</label>
-										<input type="text" name="username" id="username" />
+								<form method="post" action="http://peng.com.tr/api42/auth/login/">
+									<div class="fields">
+										<div class="field">
+											<label for="username">Username</label>
+											<input type="text" name="username" id="username" />
+										</div>
+										<div class="field">
+											<label for="password">Password</label>
+											<input type="password" name="password" id="password" />
+										</div>
 									</div>
-									<div class="field">
-										<label for="password">Password</label>
-										<input type="password" name="password" id="password" />
-									</div>
-								</div>
-								<ul class="actions">
-									<li class="loginbuttons"><button type="submit"
-											class="button primary login">Loginnnn</button></li>
-								</ul>
-								<ul class="actions stacked">
-									<li class=""><a href="http://peng.com.tr/api42/login/"
-											class="button primary apibutton login"><img src="/static/images/42icon.png"
-												width="20vh">42 Buton</a></li>
-									<li class=""><a href="#" class="button primary apibutton login">Google</a></li>
-								</ul>
+									<ul class="actions">
+										<li class="loginbuttons">
+											<button type="submit" class="button primary login">Login</button>
+										</li>
+									</ul>
+									<ul class="actions stacked">
+										<li class="">
+											<a href="http://peng.com.tr/api42/auth/login/"
+												class="button primary apibutton login">
+												<img src="/static/images/42icon.png" width="20vh"> 42 Buton
+											</a>
+										</li>
+										<li class="">
+											<a href="#" class="button primary apibutton login">Google</a>
+										</li>
+									</ul>
 								</form>
 							</div>
 							<div class="register-card cardLogin__face cardLogin__face--back">
 								<h2 class="major">Sign Up</h2>
-								<form method="post" action="backend/api/signup/" id="signupForm">
+								<form method="post" action="http://peng.com.tr/api42/auth/signup/" id="signupForm">
 									<div class="field">
 										<label for="email">Name</label>
 										<input type="text" name="username" id="username" />
@@ -501,6 +507,11 @@ print 'It took ' + i + ' iterations to sort the deck.';</code></pre>
 			card.classList.toggle('is-flipped');
 			console.log("isflipped")
 		})
+
+		// document.addEventListener("onload", (e) => function(){
+		// 	if(window.location.pathname != "#")
+		// 		window.location.href = "http://peng.com.tr/404";
+		// });
 	</script>
 	<script src="/static/assets/js/jquery.min.js"></script>
 	<script src="/static/assets/js/browser.min.js"></script>

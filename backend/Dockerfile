@@ -13,9 +13,9 @@ RUN apt-get update && apt-get install -y postgresql-client
 
 # Bağımlılıkları kur
 COPY requirements.txt .
+
 RUN pip install --upgrade pip && \
-    pip install --no-cache-dir -r requirements.txt && \
-    pip install requests psycopg2-binary djangorestframework
+    pip install --no-cache-dir -r requirements.txt
 
 # Uygulama kodunu kopyala
 COPY . .
@@ -25,6 +25,3 @@ RUN python3 manage.py makemigrations
 
 # Uygulama için gerekli portu aç
 EXPOSE 9191
-
-# Django uygulamasını başlatma komutu
-CMD ["python3", "manage.py", "runserver", "0.0.0.0:9191"]

@@ -5,7 +5,7 @@ SECRET_KEY = 'django-insecure-fzk(@6r0o8m)(pc&2rba664w)vp9d7fpcns^-a5^!ww#h(-q-k
 
 DEBUG = True
 
-ALLOWED_HOSTS = ['185.249.202.33', 'peng.com.tr', 'localhost']
+ALLOWED_HOSTS = ['185.249.202.33', 'peng.com.tr']
 
 INSTALLED_APPS = [
     'back',
@@ -48,6 +48,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'backend.wsgi.application'
 
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
@@ -58,6 +59,9 @@ DATABASES = {
         'PORT': '5432',
     }
 }
+
+
+# Password validation
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -74,6 +78,8 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# settings.py
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -88,6 +94,8 @@ LOGGING = {
     },
 }
 
+# Internationalization
+
 LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'
@@ -96,8 +104,13 @@ USE_I18N = True
 
 USE_TZ = True
 
+
 SECURE_SSL_REDIRECT = True
 
+# Static files (CSS, JavaScript, Images)
+
 STATIC_URL = 'https://peng.com.tr/static/'
+
+# Default primary key field type
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

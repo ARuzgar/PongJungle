@@ -31,7 +31,7 @@ ALLOWED_HOSTS = ['185.249.202.33', 'peng.com.tr', 'localhost']
 # Application definition
 
 INSTALLED_APPS = [
-    'chat',
+    'chat42',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

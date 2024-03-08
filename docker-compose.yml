@@ -6,20 +6,20 @@ networks:
 
 services:
   api42:
-    networks:
-      - nw
     container_name: api42
     build: ./Api42
-    command: python manage.py runserver 0.0.0.0:8080
+    command: uvicorn ApiMain.asgi:application --host 0.0.0.0 --port 8080 --reload
     volumes:
       - ./Api42:/code
     ports:
       - "8080:8080"
+    networks:
+      - nw
 
   chat:
     build: ./Chat
     container_name: chat
-    command: python manage.py runserver 0.0.0.0:9090
+    command: uvicorn Chat.asgi:application --host 0.0.0.0 --port 9090 --reload
     volumes:
       - ./Chat:/code
     ports:
@@ -29,7 +29,7 @@ services:
 
   backend:
     build: ./backend
-    command: python manage.py runserver 0.0.0.0:9191
+    command: uvicorn backend.asgi:application --host 0.0.0.0 --port 9191 --reload
     container_name: backend
     volumes:
       - ./backend:/code
@@ -43,7 +43,7 @@ services:
   game:
     build: ./Game
     container_name: game
-    command: python manage.py runserver 0.0.0.0:5050
+    command: uvicorn Game.asgi:application --host 0.0.0.0 --port 5050 --reload
     volumes:
       - ./Game:/code
     ports:
@@ -54,28 +54,35 @@ services:
   nginx:
     build: ./frontend
     container_name: frontend
+    command: /bin/sh -c "nginx -g 'daemon off;'"
     ports:
       - "80:80"
+      - "443:443"
     volumes:
       - ./frontend/nginx.conf:/etc/nginx/nginx.conf:ro
+      - /etc/letsencrypt/ssl/fullchain.pem:/etc/nginx/ssl/fullchain.pem
+      - /etc/letsencrypt/ssl/privkey.pem:/etc/nginx/ssl/privkey.pem
     depends_on:
       - api42
       - chat
       - backend
+      - game
     networks:
       - nw
 
   db:
-    build: ./postgres
+    image: postgres:latest
     container_name: db
+    command: postgres -c config_file=/etc/postgresql/postgresql.conf
     environment:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
-      - postgres-data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data
+      - ./postgres/postgresql.conf:/etc/postgresql/postgresql.conf
     ports:
       - "5432:5432"
     networks:
       - nw
 
 volumes:
-  postgres-data:
+  postgres_data:

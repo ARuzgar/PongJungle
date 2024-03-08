@@ -9,18 +9,13 @@ ENV PYTHONUNBUFFERED=1 \
 WORKDIR /app
 
 # Önce requirements.txt ve automation.sh dosyasını kopyala
-COPY requirements.txt automation.sh ./
+COPY requirements.txt ./
 
 # Bağımlılıkları kur ve automation.sh betiğini çalıştır
-RUN pip install --no-cache-dir -r requirements.txt \
-    && chmod +x automation.sh \
-    && ./automation.sh
+RUN pip install --no-cache-dir -r requirements.txt 
 
 # Uygulama kodunu kopyala
 COPY . .
 
 # Uygulama için gerekli portu aç
 EXPOSE 5050
-
-# Uygulamayı çalıştırma komutu
-CMD ["python3", "manage.py", "runserver", "0.0.0.0:5050"]

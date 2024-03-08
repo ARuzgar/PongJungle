@@ -12,18 +12,13 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y postgresql-client
 
 # Önce requirements.txt ve automation.sh dosyasını kopyala
-COPY requirements.txt automation.sh ./
+COPY requirements.txt ./
 
 # Bağımlılıkları kur ve automation.sh betiğini çalıştır
-RUN pip install --no-cache-dir -r requirements.txt \
-    && chmod +x automation.sh \
-    && ./automation.sh
+RUN pip install --no-cache-dir -r requirements.txt 
 
 # Uygulama kodunu kopyala
 COPY . .
 
 # Uygulama için gerekli portu aç
 EXPOSE 9090
-
-# Uygulamayı çalıştırma komutu
-CMD ["python3", "manage.py", "runserver", "0.0.0.0:9090"]

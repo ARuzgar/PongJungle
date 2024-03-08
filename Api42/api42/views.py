@@ -11,11 +11,17 @@ from .serializers import *
 from rest_framework import status
 from django.urls import reverse
 from django.views import View
+import json
 import requests
+
+from rest_framework.renderers import JSONRenderer
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework.status import HTTP_200_OK, HTTP_400_BAD_REQUEST
 
 UID = "u-s4t2ud-272a7d972a922c63919b4411aff1da6abf64ec93eb38804b51427a0c0fbf86ea"
 SECRET = "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"
-REDIRECT_URI = "http://127.0.0.1:8000"
+REDIRECT_URI = "http://frontend:80"
 
 def get_access_token(code):
     url = "https://api.intra.42.fr/oauth/token"
@@ -59,43 +65,92 @@ def getUserInfo(auth_code):
         return "Failed to obtain access token."
         
 
+# class User42LoginAPIView(APIView):
+#     """
+#     A view that returns the count of active users in JSON.
+#     """
+#     renderer_classes = [JSONRenderer]
+
+#     de f post(self, request):
+#         JsonResponse()
+#         return HttpResponseRedirect("http://peng.com.tr/")
+    
+# class User42LoginAPIView(APIView):
+#     permission_classes = [AllowAny]
+#     renderer_classes = [JSONRenderer]
+
+#     def get(self, request, *args, **kwargs):
+#         print('ZOOORTT ', request.data.get('username'))
+#         # username = request.data.get('username')
+#         # password = request.data.get('password')
+#         username = 'binam'
+#         password = '123'
+#         user = None
+#         if not username or not password:
+#             user = authenticate(request, token=request.data['token'])
+#         else:
+#             user = authenticate(request, username=username, password=password)
+#         if user is not None:
+#             login(request, user)
+#             return Response({'message': 'Successfully logged in'}, status=status.HTTP_202_ACCEPTED)
+#         else:
+
+def JsonProvider(success, **kwargs):
+    d = None
+    if kwargs['data'] is not None:
+        d = {
+			'success' : success,
+			'data' : kwargs['data'],
+			'error' : None
+		}
+    else:
+        d = {
+			'success' : success,
+			'data' : None,
+			'error' : kwargs['error']
+		}
+    return json.dumps(d)
 
 class User42LoginAPIView(APIView):
     permission_classes = [AllowAny]
-    
+    # serializer_class = UserSerializer
+
     def post(self, request, *args, **kwargs):
-        return HttpResponseRedirect(reverse('http://peng.com.tr'))
+
         username = request.data.get('username')
         password = request.data.get('password')
-        print('login apideyim')
+        
         user = None
         if not username or not password:
-            user = authenticate(request, token=request.data['token'])
-            print('User is authenticated')
+            user = authenticate(request, token=request.query_params.get('token'))
+            if user is not None:
+                return Response(JsonProvider(True, data = {'message' : 'successfull login'}), status=HTTP_200_OK)
+            else:
+                return Response(JsonProvider(False, error = {'message' : 'user not found'}), status=HTTP_400_BAD_REQUEST)
         else:
             user = authenticate(request, username=username, password=password)
-            print('User is NOT authenticated')
-        if user is not None:
-            login(request, user)
-            print('User is logged in')
-            print('[!!!]               42 api loginden logged in olma durumu                  [!!!]')
-            # return HttpResponseRedirect(reverse('root'))
-            return Response({'message': 'Successfully logged in'}, status=status.HTTP_200_OK)
-        else:
-            # return JsonResponse({'message': 'Gecersiz giris bilgileri.'}, status=400)
-            print('user none ve birseyler')
-            login_response = requests.post('http://localhost:8000/api42/api/42login/', data={'data': data})
-
-            if login_response.status_code == status.HTTP_200_OK:
-                # Return a successful Response
-                return Response({'message': 'Successfully logged in'}, status=status.HTTP_200_OK)
+            print(user)
+            if user is not None:
+                return Response(JsonProvider(True, data = {'message' : 'successfull login'}), status=HTTP_200_OK)
             else:
-                # Return an error Response based on the external API response
-                return Response({'message': 'Failed to log in', 'error_details': login_response.text}, status=login_response.status_code)
+                return Response(JsonProvider(False, error = {'message' : 'user not found'}), status=HTTP_400_BAD_REQUEST)
+
             
-class User42AuthSignUpAPIView(APIView): 
+            
+class signUpAPIView(APIView): 
     permission_classes = [AllowAny]
     serializer_class = UserSerializer
+    def post(self, request, *args, **kwargs):
+        user_data = request.data.get('code')
+        if user_data:
+            user_serialized_data = getUserInfo(user_data)
+            if user_serialized_data:
+                
+        
+        
+class User42AuthSignUpAPIView(APIView):
+    permission_classes = [AllowAny]
+serializer_class = UserSerializer
     def post(self, request, *args, **kwargs):
         code = request.data.get('code')
         if code:
@@ -107,9 +162,7 @@ class User42AuthSignUpAPIView(APIView):
                 existing_user = User.objects.filter(username=var).first()
                 data = {
                     'username': user_info['login'],
-                    # 'email': user_info['email'],
                     'password': 'pass',
-                    # 'image': user_info['image'],
                 }
                 if existing_user:
                     response = requests.post('http://localhost:8000/api42/api/42login/', data={'username': data['username'], 'password': data['password']})
@@ -119,7 +172,7 @@ class User42AuthSignUpAPIView(APIView):
                 if serializer.is_valid():
                     serializer.save()
                     # After saving the user, make a POST request to UserLoginAPIView
-                    login_response = requests.post('http://localhost:8000/api42/api/login', data={'username': data['username'], 'password': data['password']})
+                    login_response = requests.post('http://peng.com.tr/api42/api/login', data={'username': data['username'], 'password': data['password']})
                     if login_response.status_code == status.HTTP_200_OK:
                         return HttpResponseRedirect(reverse('root'))
                     else:
