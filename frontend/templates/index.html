@@ -1,35 +1,33 @@
 <!DOCTYPE HTML>
-{% load static %}
-
 <html>
 	<head>
 		<title>Dimension by HTML5 UP</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-		<link rel="stylesheet" href="{% static '../static/assets/bootstrap/css/bootstrap.min.css'%}" />
-		<noscript><link rel="stylesheet" href="{% static '../static/assets/css/noscript.css'%}" /></noscript>
-		<script src= "{% static '../static/assets/js/anime.js'%}" ></script>
-		<script src=  "{% static '../static/assets/bootstrap/js/bootstrap.min.js' %}"></script>
-		<link rel="stylesheet" href="{% static '../static/assets/css/main.css' %}"/>
+		<link rel="stylesheet" href="/static/assets/bootstrap/css/bootstrap.min.css" />
+		<noscript><link rel="stylesheet" href="/static/assets/css/noscript.css" /></noscript>
+		<script src= "/static/assets/js/anime.js" ></script>
+		<script src=  "/static/assets/bootstrap/js/bootstrap.min.js"></script>
+		<link rel="stylesheet" href="/static/assets/css/main.css"/>
 		<script type="text/javascript">
-			var penguinImagePath = "{% static '../static/images/penguin_826963.png' %}";
-			var penguin2ImagePath = "{% static '../static/images/penguin.png' %}";
+			var penguinImagePath = "/static/images/penguin_826963.png";
+			var penguin2ImagePath = "/static/images/penguin.png";
 		</script>
-		
+
 	</head>
 	<body class="is-preload">
 		<!-- Messages -->
-		{% for message in messages %}
+		<!-- {% for message in messages %}
 			{% if 'signup' in message.tags %}
 				<div class="alert alert-{{ message.tags }}">
 					{{ message }}
 				</div>
 			{% endif %}
-		{% endfor %}
+		{% endfor %} -->
 		<!-- Wrapper -->
 			<div id="wrapper">
 				<div class="chat row" id="chat">
-					<button type="button" class="btn btn-info chatMain" id="chatMain"><img class="img-fluid" style="pointer-events: none;" src="{% static '../static/images/Chat-Icon.png' %}"></button>
+					<button type="button" class="btn btn-info chatMain" id="chatMain"><img class="img-fluid" style="pointer-events: none;" src="/static/images/Chat-Icon.png"></button>
 				</div>
 				<!-- Header -->
 					<header id="header">
@@ -52,13 +50,13 @@
 								</article>
 								<article id="intro">
 									<h2 class="major animationText">Intro</h2>
-									<span class="image main"><img src="{% static '../static/images/pic01.jpg'%}" alt="" /></span>
+									<span class="image main"><img src="/static/images/pic01.jpg" alt="" /></span>
 									<p class="animationText">Aenean ornare velit lacus, ac varius enim ullamcorper eu. Proin aliquam facilisis ante interdum congue. Integer mollis, nisl amet convallis, porttitor magna ullamcorper, amet egestas mauris. Ut magna finibus nisi nec lacinia. Nam maximus erat id euismod egestas. By the way, check out my <a href="#work">awesome work</a>.</p>
 									<p class="animationText">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis dapibus rutrum facilisis. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Etiam tristique libero eu nibh porttitor fermentum. Nullam venenatis erat id vehicula viverra. Nunc ultrices eros ut ultricies condimentum. Mauris risus lacus, blandit sit amet venenatis non, bibendum vitae dolor. Nunc lorem mauris, fringilla in aliquam at, euismod in lectus. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. In non lorem sit amet elit placerat maximus. Pellentesque aliquam maximus risus, vel sed vehicula.</p>
 								</article>
 								<article id="work">
 									<h2 class="major">Work</h2>
-									<span class="image main"><img src="{% static '../static/images/pic02.jpg'%}" alt="" /></span>
+									<span class="image main"><img src="/static/images/pic02.jpg" alt="" /></span>
 									<p>Adipiscing magna sed dolor elit. Praesent eleifend dignissim arcu, at eleifend sapien imperdiet ac. Aliquam erat volutpat. Praesent urna nisi, fringila lorem et vehicula lacinia quam. Integer sollicitudin mauris nec lorem luctus ultrices.</p>
 									<p>Nullam et orci eu lorem consequat tincidunt vivamus et sagittis libero. Mauris aliquet magna magna sed nunc rhoncus pharetra. Pellentesque condimentum sem. In efficitur ligula tate urna. Maecenas laoreet massa vel lacinia pellentesque lorem ipsum dolor. Nullam et orci eu lorem consequat tincidunt. Vivamus et sagittis libero. Mauris aliquet magna magna sed nunc rhoncus amet feugiat tempus.</p>
 								</article>
@@ -66,7 +64,7 @@
 							<!-- About -->
 								<article id="about">
 									<h2 class="major">About</h2>
-									<span class="image main"><img src="{% static '../static/images/pic03.jpg'%}" alt="" /></span>
+									<span class="image main"><img src="/static/images/pic03.jpg" alt="" /></span>
 									<p>Lorem ipsum dolor sit amet, consectetur et adipiscing elit. Praesent eleifend dignissim arcu, at eleifend sapien imperdiet ac. Aliquam erat volutpat. Praesent urna nisi, fringila lorem et vehicula lacinia quam. Integer sollicitudin mauris nec lorem luctus ultrices. Aliquam libero et malesuada fames ac ante ipsum primis in faucibus. Cras viverra ligula sit amet ex mollis mattis lorem ipsum dolor sit amet.</p>
 								</article>
 	
@@ -101,7 +99,7 @@
 											<ul class="actions">
 												<li class="loginbuttons"><button type="submit" class="button primary login">Login</button></li>											</ul>
 											<ul class="actions stacked">
-												<li class=""><a href="{% url 'auth' %}" class="button primary apibutton login"><img src="{% static '../static/images/42icon.png'%}" width="20vh"></a></li>
+												<li class=""><a href="{% url 'auth'}" class="button primary apibutton login"><img src="/static/images/42icon.png" width="20vh"></a></li>
 												<li class=""><a href="#" class="button primary apibutton login">Google</a></li>
 											</ul>
 										</form>
@@ -127,7 +125,7 @@
 												<li class="loginbuttons"><button type="submit" class="button primary login">Sign Up</button></li>
 											</ul>
 											<ul class="actions stacked">
-												<li class=""><a href="#" class="button primary apibutton"><img src="{% static '../static/images/42icon.png'%}" width="20vh"></a></li>
+												<li class=""><a href="#" class="button primary apibutton"><img src="/static/images/42icon.png" width="20vh"></a></li>
 												<li class=""><a href="#" class="button primary apibutton">Google</a></li>
 											</ul>
 											<div class="modal" tabindex="-1" role="dialog" id="errorModal">
@@ -178,11 +176,11 @@
 								<li><a href="#" onclick="openIntro('intro')">Intro</a></li>
 								<li><a href="#" onclick="openIntro('work')">Work</a></li>
 								<li><a href="#" onclick="openIntro('about')">About</a></li>
-								{% if request.user.is_authenticated %}
-    								<li><a href="{% url 'logout' %}">Logout</a></li>
-                                    {% else %}
+								<!-- {% if request.user.is_authenticated %}
+    								<li><a href="{% url 'logout'">Logout</a></li>
+								{% else %}
     								<li><a href="#" onclick="openIntro('login')">Login</a></li>
-								{% endif %}
+								{% endif %} -->
 								<li><a href="#elements">Elements</a></li>
 							</ul>
 						</nav>
@@ -458,11 +456,11 @@ print 'It took ' + i + ' iterations to sort the deck.';</code></pre>
 					console.log("isflipped")
 				})
 			</script>
-			<script src="{% static '../static/assets/js/jquery.min.js'%}"></script>
-			<script src="{% static '../static/assets/js/browser.min.js'%}"></script>
-			<script src="{% static '../static/assets/js/breakpoints.min.js'%}"></script>
-			<script src="{% static '../static/assets/js/util.js'%}"></script>
-			<script src="{% static '../static/assets/js/main.js'%}"></script>
+			<script src="/static/assets/js/jquery.min.js"></script>
+			<script src="/static/assets/js/browser.min.js"></script>
+			<script src="/static/assets/js/breakpoints.min.js"></script>
+			<script src="/static/assets/js/util.js"></script>
+			<script src="/static/assets/js/main.js"></script>
 
 	</body>
 </html>

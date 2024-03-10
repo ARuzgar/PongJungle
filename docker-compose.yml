@@ -1,0 +1,76 @@
+version: '3'
+
+networks:
+  nw:
+    driver: bridge
+
+services:
+  api42:
+    networks:
+      - nw
+    build: ./Api42
+    command: python manage.py runserver 0.0.0.0:8080
+    volumes:
+      - ./Api42:/code
+    ports:
+      - "8080:8080"
+
+  chat:
+    build: ./Chat
+    command: python manage.py runserver 0.0.0.0:9090
+    volumes:
+      - ./Chat:/code
+    ports:
+      - "9090:9090"
+    networks:
+      - nw
+
+  backend:
+    build: ./backend
+    command: python manage.py runserver 0.0.0.0:9191
+    volumes:
+      - ./backend:/code
+    ports:
+      - "9191:9191"
+    depends_on:
+      - db
+    networks:
+      - nw
+
+  game:
+    build: ./Game
+    command: python manage.py runserver 0.0.0.0:5050
+    volumes:
+      - ./Game:/code
+    ports:
+      - "5050:5050"
+    networks:
+      - nw
+
+  nginx:
+    build: ./frontend
+    container_name: frontend
+    ports:
+      - "80:80"
+    volumes:
+      - ./frontend/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - api42
+      - chat
+      - backend
+    networks:
+      - nw
+
+  db:
+    build: ./postgres
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - nw
+
+volumes:
+  postgres-data:
