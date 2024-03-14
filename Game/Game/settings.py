@@ -25,12 +25,13 @@ SECRET_KEY = 'django-insecure-^0=3_l=_j-n_j%mm%4kuvp_b7!xluhwt*z05@&46i_7b-gzf0r
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['185.249.202.33', 'peng.com.tr', 'localhost']
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    'ponggame',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -73,12 +74,12 @@ WSGI_APPLICATION = 'Game.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
 
 
 # Password validation

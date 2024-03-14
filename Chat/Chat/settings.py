@@ -25,12 +25,13 @@ SECRET_KEY = 'django-insecure-0d%p^+w&)nf0s2r(*s5kg6jr30q#r=0*4f0f5$9%q3d6c!&t83
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['185.249.202.33', 'peng.com.tr', 'localhost']
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    'chat42',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

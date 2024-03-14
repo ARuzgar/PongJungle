@@ -13,6 +13,13 @@ until PGPASSWORD="${POSTGRES_PASSWORD}" psql -h "127.0.0.1" -U "$user" -d "$db" 
   sleep 1
 done
 
+if [ $? -ne 0 ]; then
+  echo "Database veya tablo bulunamadı. Skript sonlandırılıyor."
+  exit 1
+else
+  echo "Postgres bağlantısı başarılı."
+fi
+
 >&2 echo "Postgres is up - executing command"
 
 # Migrasyonları çalıştır

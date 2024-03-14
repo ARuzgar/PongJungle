@@ -1,27 +1,21 @@
-# Dockerfile for a Django backend project
-
-# Base image olarak Python 3.9 slim sürümünü kullan. Slim sürüm, boyutu azaltılmış ve gereksiz paketler çıkarılmıştır.
+# Base image olarak Python 3.9 slim sürümünü kullan
 FROM python:3.9-slim
 
 # Ortam değişkenlerini ayarla
-ENV PYTHONUNBUFFERED 1
-ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1
 
 # Çalışma dizinini oluştur ve ayarla
 WORKDIR /app
 
-COPY requirements.txt .
-COPY automation.sh .
+# Önce requirements.txt ve automation.sh dosyasını kopyala
+COPY requirements.txt ./
+
+# Bağımlılıkları kur ve automation.sh betiğini çalıştır
+RUN pip install --no-cache-dir -r requirements.txt 
 
 # Uygulama kodunu kopyala
 COPY . .
 
-RUN pip install --no-cache-dir -r requirements.txt \
-    && chmod +x automation.sh \
-    && bash automation.sh
-
-#(Django için genelde 8000 kullanılır ama bizim yaml dosyasında 5050)
+# Uygulama için gerekli portu aç
 EXPOSE 5050
-
-# Uygulamayı çalıştırma komutu
-CMD ["python3", "manage.py", "runserver", "0.0.0.0:5050"]

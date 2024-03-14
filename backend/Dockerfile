@@ -1,26 +1,27 @@
-# Dockerfile for a Django backend project
-
+# Base image olarak Python 3.9 slim sürümünü kullan
 FROM python:3.9-slim
 
 # Ortam değişkenlerini ayarla
-ENV PYTHONUNBUFFERED 1
-ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1
 
+# Çalışma dizinini oluştur
 WORKDIR /app
 
-# Uygulama kodunu kopyala
-COPY . /app
+# PostgreSQL client'ı kur
 RUN apt-get update && apt-get install -y postgresql-client
 
-RUN pip install --no-cache-dir -r requirements.txt \
-    && chmod +x automation.sh \
-    && bash automation.sh
+# Bağımlılıkları kur
+COPY requirements.txt .
 
-# Entrypoint scripti kopyala ve çalıştırılabilir yap
-#COPY entrypoint.sh /entrypoint.sh
-#RUN chmod +x /entrypoint.sh
+RUN pip install --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt
 
+# Uygulama kodunu kopyala
+COPY . .
+
+# Veritabanı migrasyonlarını yap
+RUN python3 manage.py makemigrations
+
+# Uygulama için gerekli portu aç
 EXPOSE 9191
-
-#ENTRYPOINT ["/entrypoint.sh"]
-CMD ["python3", "manage.py", "runserver", "0.0.0.0:9191"]
