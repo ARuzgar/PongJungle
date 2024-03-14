@@ -15,14 +15,14 @@ from django.urls import reverse
 from django.views import View
 from .serializers import UserSerializer
 from .models import Post
+from django.contrib.auth.models import User
 import requests
+import json
 
 class HomePageView(TemplateView):
-    print('======================================================================================================================== homepage viewwwww ========================================================================================================================')
     template_name = "../../frontend/templates/index.html"    
 
     def get(self, request, *args, **kwargs):
-        print('======================================================================================================================== homepage viewwwww ========================================================================================================================')
         code = request.GET.get('code', None)
         response = render(request, self.template_name, self.get_context_data())
         if code:
@@ -72,3 +72,45 @@ class CallbackView(View):
         print(code)
         print('zort')
         return HttpResponse('Success!')
+
+
+# =============================  QUERY SECTION  ============================= #
+
+
+def JsonProvider(success, **kwargs):
+    d = {"success": success, "data": None, "error": None}
+    if "data" in kwargs and kwargs["data"] is not None:
+        d.update({"data": kwargs["data"]})
+    elif "error" in kwargs and kwargs["error"] is not None:
+        d.update({"error": kwargs["error"]})
+    return json.dumps(d)
+
+
+# class User_Informations(APIView):
+#     def general_informations(request):
+#         user = User.objects.get(username=request)
+#         if user.is_authenticated:
+            
+
+
+
+
+
+
+
+
+
+
+# =========================================================================== #
+
+
+
+
+
+
+
+
+
+
+
+

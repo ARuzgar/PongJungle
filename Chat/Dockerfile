@@ -6,7 +6,7 @@ ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1
 
 # Çalışma dizinini oluştur ve ayarla
-WORKDIR /app
+WORKDIR /code
 
 # PostgreSQL client'ı kur
 RUN apt-get update && apt-get install -y postgresql-client

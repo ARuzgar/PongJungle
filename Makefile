@@ -1,6 +1,9 @@
-all:
+all: clean re
 
-git :
+clean:
+	clear
+
+git:
 	@python3 git.py
 
 build:
@@ -12,15 +15,27 @@ up:
 down:
 	sudo docker compose down
 
-logs:
-	sudo docker compose logs -f
-
 ps:
 	sudo docker compose ps
 
-re:
-	make down
-	make build
-	make up
+re: down build up
 
-.PHONY: build up down logs ps git
+logs:
+	sudo docker compose logs -f
+
+logs-backend:
+	sudo docker logs --tail 100 -f backend
+
+logs-api42:
+	sudo docker logs --tail 100 -f api42
+
+logs-game:
+	sudo docker logs --tail 100 -f game
+
+logs-frontend:
+	sudo docker logs --tail 100 -f frontend
+
+logs-chat:
+	sudo docker logs --tail 100 -f chat
+
+.PHONY: all clean git build up down logs ps logs-backend logs-api42 logs-game logs-frontend logs-chat

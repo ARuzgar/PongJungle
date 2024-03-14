@@ -60,14 +60,8 @@ def get_user_info(access_token):
 
 def getUserInfo(auth_code):
     access_token = get_access_token(auth_code)
-    print("#" * 50)
-    print("access_token", access_token)
-    print("#" * 50)
     if access_token:
         user_info = get_user_info(access_token)
-        print("#" * 50)
-        print(user_info)
-        print("#" * 50)
         if user_info:
             return user_info
         else:
@@ -164,15 +158,6 @@ class SignUpAPIView(APIView):
             )
 
 
-# ==================================  GET USER INFORMATIONS  ================================== #
-
-# class GetUserInformations()
-# {
-	
-# }
-
-
-# ============================================================================================= #
 
 class FtLoginAuthView(APIView):
     permission_classes = [AllowAny]
@@ -186,9 +171,6 @@ class FtLoginAuthView(APIView):
             code = current_url.split("https://peng.com.tr/?code=", 1)
             if len(code) == 2 and code[1]:
                 user_info = getUserInfo(code[1])
-                print("#" * 50)
-                print(user_info)
-                print("#" * 50)
                 if user_info and user_info["login"]:
                     var = user_info["login"]
                     existing_user = User.objects.filter(username=var).first()

@@ -6,7 +6,7 @@ ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1
 
 # Çalışma dizinini oluştur ve ayarla
-WORKDIR /app
+WORKDIR /code
 
 # Önce requirements.txt ve automation.sh dosyasını kopyala
 COPY requirements.txt ./
