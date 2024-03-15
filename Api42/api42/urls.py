@@ -6,5 +6,5 @@ urlpatterns = [
     path('ft_auth/', FtLoginAuthView.as_view(), name='ftSignup'),
     path('login/', User42LoginAPIView.as_view(), name='login'),
     path('signup/', SignUpAPIView.as_view(), name='signup'),
-    path('apistrt/', AuthView.as_view(), name='apiStart'),
+    path('ft_api/', AuthView.as_view(), name='apiStart'),
 ]

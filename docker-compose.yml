@@ -28,11 +28,11 @@ services:
       - nw
 
   backend:
-    build: ./backend
-    command: uvicorn backend.asgi:application --host 0.0.0.0 --port 9191 --reload
-    container_name: backend
+    build: ./Backend
+    command: uvicorn Backend.asgi:application --host 0.0.0.0 --port 9191 --reload
+    container_name: Backend
     volumes:
-      - ./backend:/code
+      - ./Backend:/code
     ports:
       - "9191:9191"
     depends_on:

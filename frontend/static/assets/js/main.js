@@ -1,3 +1,61 @@
+$(document).ready(function () {
+	$('#loginForm').on('submit', function (e) {
+		e.preventDefault();
+
+    	var formData = {
+			username: document.getElementById('username').value,
+			password: document.getElementById('password').value
+		};
+		console.log(formData);
+		fetch('https://peng.com.tr/api42/auth/login/', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+        	body: JSON.stringify(formData),
+		})
+		.then(response => {
+			if (response.ok) {
+			return response.json();
+		} else {
+			console.log('Response message:', response.data.message);
+		}
+		}).then(data => {
+			console.log('Response message:', response.data.message);
+		}).catch(function(error) {
+			console.error('Error:', error);
+		});
+	});
+
+	$('#signupForm').on('submit', function (e) {
+		e.preventDefault();
+
+    	var formData = {
+			username: document.getElementById('username').value,
+			username: document.getElementById('email').value,
+			password: document.getElementById('password').value
+		};
+		fetch('https://peng.com.tr/api42/auth/signup/', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+        	body: JSON.stringify(formData),
+		})
+		.then(response => {
+			if (response.ok) {
+			return response.json();
+		} else {
+			throw new Error('Network response was not ok');
+		}
+		}).then(data => {
+			console.log('Response message:', data.message);
+		}).catch(function(error) {
+			console.error('Error:', error);
+		});
+	});
+});
+
 class chatUser {
 	constructor(id, name, pp, lobby) {
 		this.id = id;
@@ -9,6 +67,7 @@ class chatUser {
 dragElement();
 createChatUsers();
 
+
 function createChatUsers() {
 	const chat = document.querySelector("#chat");
 
@@ -18,7 +77,7 @@ function createChatUsers() {
 	];
 
 	Users.forEach(User => {
-		chat.innerHTML += ("<button type='button' class='btn btn-info chatUser' id='User" + User.id + "'><img class='img-fluid' style='pointer-events: none;' src='" + User.pp + "'></button>");
+		chat.innerHTML += ("<button type='button' class='btn btn-info chatUser' id='User" + User.id + " onclick='openChatRoom()'><img class='img-fluid' style='pointer-events: none;' src='" + User.pp + "'></button>");
 	});
 }
 

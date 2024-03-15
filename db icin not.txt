@@ -1,0 +1,17 @@
+when system running;
+
+sudo docker exec -it db sh
+
+psql -U postgres
+\l for databse check
+CREATE DATABASE pong;
+CREATE USER berke WITH PASSWORD '123';
+GRANT ALL PRIVILEGES ON DATABASE pong TO berke;
+ALTER ROLE berke WITH SUPERUSER;
+ALTER ROLE berke WITH CREATEROLE;
+\q
+
+and after we will now make migrations 
+sudo docker exec -it backend sh
+python3 manage.py makemigrations
+python3 manage.py migrate
