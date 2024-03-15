@@ -3,37 +3,70 @@ $(document).ready(function () {
 		e.preventDefault();
 
     	var formData = {
-			username: document.getElementById('username').value,
-			password: document.getElementById('password').value
+			username: document.getElementById('usernameLogin').value,
+			password: document.getElementById('passwordLogin').value
 		};
-		console.log(formData);
-		fetch('https://peng.com.tr/api42/auth/login/', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-        	body: JSON.stringify(formData),
-		})
-		.then(response => {
-			if (response.ok) {
-			return response.json();
-		} else {
-			console.log('Response message:', response.data.message);
-		}
-		}).then(data => {
-			console.log('Response message:', response.data.message);
-		}).catch(function(error) {
-			console.error('Error:', error);
-		});
+	// 	console.log(formData);
+	// 	fetch('https://peng.com.tr/api42/auth/login/', {
+	// 		method: 'POST',
+	// 		headers: {
+	// 			'Content-Type': 'application/json'
+	// 		},
+    //     	body: JSON.stringify(formData),
+	// 	})
+	// 	.then(response => {
+	// 		if (response.ok) {
+	// 			return response.json();
+	// 		} else {
+	// 			throw new Error('Network response was not ok.');
+	// 		}
+	// 	})
+	// 	.then(data => {
+	// 		// Gelen veriyi kontrol et
+	// 		if (data && data.message) {
+	// 			console.log('Response message:', data.message);
+	// 		} else {
+	// 			console.log('No message found in response data.');
+	// 		}
+	// 	})
+	// 	.catch(error => {
+	// 		console.error('Error:', error);
+	// 	});
+	console.log(formData);
+fetch('https://peng.com.tr/api42/auth/login/', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(formData),
+})
+.then(response => {
+    if (response.ok) {
+        return response.json();
+    } else {
+        throw new Error('Network response was not ok.');
+    }
+})
+.then(data => {
+    // Gelen veriyi kontrol et
+    if (data && data.message) {
+        console.log('Response message:', data.message);
+    } else {
+        console.log('No message found in response data.');
+    }
+})
+.catch(error => {
+    console.error('Error:', error);
+});
 	});
 
 	$('#signupForm').on('submit', function (e) {
 		e.preventDefault();
 
     	var formData = {
-			username: document.getElementById('username').value,
-			username: document.getElementById('email').value,
-			password: document.getElementById('password').value
+			username: document.getElementById('usernameRegister').value,
+			email: document.getElementById('email').value,
+			password: document.getElementById('passwordRegister').value
 		};
 		fetch('https://peng.com.tr/api42/auth/signup/', {
 			method: 'POST',
@@ -46,7 +79,7 @@ $(document).ready(function () {
 			if (response.ok) {
 			return response.json();
 		} else {
-			throw new Error('Network response was not ok');
+			console.log('Response message:', data.message);
 		}
 		}).then(data => {
 			console.log('Response message:', data.message);
@@ -67,6 +100,11 @@ class chatUser {
 dragElement();
 createChatUsers();
 
+function openChatRoom(){
+	var room = e.target.id;
+	console.log(room);
+
+}
 
 function createChatUsers() {
 	const chat = document.querySelector("#chat");

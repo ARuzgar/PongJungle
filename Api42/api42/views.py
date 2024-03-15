@@ -13,7 +13,9 @@ from rest_framework import status
 from django.urls import reverse
 from django.views import View
 import json
+from django.http import JsonResponse
 import requests
+
 
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
@@ -71,12 +73,13 @@ def getUserInfo(auth_code):
 
 
 def JsonProvider(success, **kwargs):
-    d = {"success": success, "data": None, "error": None}
-    if "data" in kwargs and kwargs["data"] is not None:
-        d.update({"data": kwargs["data"]})
+    d = {"success": success, "message": None, "error": None}
+    if "message" in kwargs and kwargs["message"] is not None:
+        d.update({"message": kwargs["message"]})
+        return d
     elif "error" in kwargs and kwargs["error"] is not None:
         d.update({"error": kwargs["error"]})
-    return json.dumps(d)
+        return d
 
 
 class User42LoginAPIView(APIView):
@@ -90,29 +93,27 @@ class User42LoginAPIView(APIView):
         user = None
         if not username or not password:
             user = authenticate(request, token=request.query_params.get("token"))
-            print("#" * 50)
-            print(User.username)
-            print("#" * 50)
             if user is not None:
                 return Response(
-                    JsonProvider(True, data={"message": "successfull login api"}),
+                    JsonProvider(True, message="success login :D"),
                     status=HTTP_200_OK,
                 )
             return Response(
-                JsonProvider(False, error={"message": "user not found"}),
+                JsonProvider(True, data={"message": "failed login"}),
                 status=HTTP_400_BAD_REQUEST,
             )
         else:
             user = authenticate(request, username=username, password=password)
             if user is not None:
                 return Response(
-                    JsonProvider(True, data={"message": "successfull login api"}),
+                    JsonProvider(True, message="success login :D"),
                     status=HTTP_200_OK,
                 )
-            return Response(
-                JsonProvider(False, error={"message": "user not found"}),
-                status=HTTP_400_BAD_REQUEST,
-            )
+            else:
+                return Response(
+                    JsonProvider(True, data={"message": "failed login"}),
+                    status=HTTP_400_BAD_REQUEST,
+                )
 
 
 class SignUpAPIView(APIView):
@@ -143,20 +144,19 @@ class SignUpAPIView(APIView):
             if serializer.is_valid():
                 serializer.save()
                 return Response(
-                    JsonProvider(True, data={"message": "user registered"}),
+                    JsonProvider(True, data="user registered"),
                     status=HTTP_200_OK,
                 )
             else:
                 return Response(
-                    JsonProvider(False, error={"message": "unknown failed"}),
+                    JsonProvider(False, error="unknown failed"),
                     status=HTTP_400_BAD_REQUEST,
                 )
         else:
             return Response(
-                JsonProvider(False, error={"message": "user informations are missing"}),
+                JsonProvider(False, error="user informations are missing"),
                 status=HTTP_400_BAD_REQUEST,
             )
-
 
 
 class FtLoginAuthView(APIView):
@@ -164,57 +164,46 @@ class FtLoginAuthView(APIView):
     serializer_class = UserSerializer
 
     def post(self, request, *args, **kwargs):
-        data = json.loads(request.body)
-        current_url = data.get("currentURL", "")
-
-        if current_url:
-            code = current_url.split("https://peng.com.tr/?code=", 1)
-            if len(code) == 2 and code[1]:
-                user_info = getUserInfo(code[1])
-                if user_info and user_info["login"]:
-                    var = user_info["login"]
-                    existing_user = User.objects.filter(username=var).first()
-                    data = {
-                        "username": user_info["login"],
-                        "password": "pass",
-                    }
-                    if existing_user:
-                        login(request, existing_user)
-                        return Response(
-                            JsonProvider(True, data={"message": "logged in"}),
-                            status=HTTP_200_OK,
-                        )
-                    serializer = self.serializer_class(data=data)
-                    if serializer.is_valid():
-                        serializer.save()
-                        # login(request, self.user)
-                        return Response(
-                            JsonProvider(True, data={"message": "user registered"}),
-                            status=HTTP_200_OK,
-                        )
+        code = request.data.get("code")
+        if code:
+            user_info = getUserInfo(code)
+            print(user_info)
+            if user_info and user_info["login"]:
+                var = user_info["login"]
+                existing_user = User.objects.filter(username=var).first()
+                data = {
+                    "username": user_info["login"],
+                    "password": "pass",
+                }
+                if existing_user:
+                    login(request, existing_user)
                     return Response(
-                        JsonProvider(False, error={"message": "serializer error"}),
-                        status=HTTP_400_BAD_REQUEST,
+                        JsonProvider(True, data={"message": "logged in"}),
+                        status=HTTP_200_OK,
                     )
-                else:
+                serializer = self.serializer_class(data=data)
+                if serializer.is_valid():
+                    serializer.save()
+                    # login(request, self.user)
                     return Response(
-                        JsonProvider(False, error={"message": "42 api error"}),
-                        status=HTTP_400_BAD_REQUEST,
+                        JsonProvider(True, data={"message": "user registered"}),
+                        status=HTTP_200_OK,
                     )
-                    # After saving the user, make a POST request to UserLoginAPIView
-                    # login_response = requests.post('http://peng.com.tr/api42/api/login', data={'username': data['username'], 'password': data['password']})
-                    # if login_response.status_code == status.HTTP_200_OK:
-                    #     return HttpResponseRedirect(reverse('root'))
-                    # else:
-                    #     return JsonResponse({'error': 'Failed to login after signup.'}, status=400)
+                return Response(
+                    JsonProvider(False, error={"message": "serializer error"}),
+                    status=HTTP_400_BAD_REQUEST,
+                )
             else:
                 return Response(
-                    JsonProvider(
-                        False,
-                        error={"error": "Bad Request"},
-                        status=HTTP_400_BAD_REQUEST,
-                    )
+                    JsonProvider(False, error={"message": "42 api error"}),
+                    status=HTTP_400_BAD_REQUEST,
                 )
+                # After saving the user, make a POST request to UserLoginAPIView
+                # login_response = requests.post('http://peng.com.tr/api42/api/login', data={'username': data['username'], 'password': data['password']})
+                # if login_response.status_code == status.HTTP_200_OK:
+                #     return HttpResponseRedirect(reverse('root'))
+                # else:
+                #     return JsonResponse({'error': 'Failed to login after signup.'}, status=400)
         return Response(
             JsonProvider(
                 False, error={"error": "Bad Request"}, status=HTTP_400_BAD_REQUEST
@@ -224,9 +213,6 @@ class FtLoginAuthView(APIView):
 
 class AuthView(View):
     def get(self, request):
-        print(
-            "======================================================================================================================== auth viewwwww ========================================================================================================================"
-        )
         return redirect(
             "https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-272a7d972a922c63919b4411aff1da6abf64ec93eb38804b51427a0c0fbf86ea&redirect_uri=https%3A%2F%2Fpeng.com.tr%2Fbackend%2F&response_type=code"
         )

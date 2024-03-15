@@ -59,8 +59,6 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - ./frontend/templates:/usr/share/nginx/html/templates:rw
-      - ./frontend/static:/usr/share/nginx/html/static:rw
       - ./frontend/nginx.conf:/etc/nginx/nginx.conf:ro
       - /etc/letsencrypt/ssl/fullchain.pem:/etc/nginx/ssl/fullchain.pem
       - /etc/letsencrypt/ssl/privkey.pem:/etc/nginx/ssl/privkey.pem

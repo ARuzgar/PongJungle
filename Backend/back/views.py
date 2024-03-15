@@ -1,9 +1,11 @@
 import json
 import requests
 from django.shortcuts import render
-from rest_framework.views import APIView
+from rest_framework.views import APIView, View
 from rest_framework.response import Response
 from django.views.generic.base import TemplateView
+from django.http import HttpResponseRedirect
+
 
 
 # Create your views here.
@@ -15,12 +17,10 @@ def JsonProvider(success, **kwargs):
         d.update({"error": kwargs["error"]})
     return json.dumps(d)
 
-class HomeRedirectView(TemplateView):
-    template_name = "../../frontend/templates/index.html"
 
+class HomeRedirectView(View):
     def get(self, request, *args, **kwargs):
         code = request.GET.get('code', None)
-        response = render(request, self.template_name, self.get_context_data())
         if code:
             requests.post('https://peng.com.tr/api42/auth/ft_auth/', data={'code': code})
-        return response
+        return HttpResponseRedirect('https://peng.com.tr/')  # Burada yönlendirilecek URL'i belirtin
