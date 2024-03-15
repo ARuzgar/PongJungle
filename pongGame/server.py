@@ -25,13 +25,22 @@ except socket.error as e:
     str(e)
 
 s.listen(2)
-player_count = 0
-valid_inputs = ["2", "4"]
-player_count = input("2 players or 4 players: ")
-while player_count not in valid_inputs:
-    print("Invalid input. Please enter '2' or '4'.")
+remote = input("Press 'r' for remote and 'l' for local: ")
+while remote not in ('r', 'l'):
+    print("Invalid input. Please enter 'r' or 'l'.")
+    remote = input("Press 'r' for remote and 'l' for local: ")
+print(f"You selected: {remote}")
+
+if remote == "r":
+    player_count = 0
+    valid_inputs = ["2", "4"]
     player_count = input("2 players or 4 players: ")
-player_count = int(player_count)
+    while player_count not in valid_inputs:
+        print("Invalid input. Please enter '2' or '4'.")
+        player_count = input("2 players or 4 players: ")
+    player_count = int(player_count)
+else:
+    player_count = 2
 print("Waiting for a connection, Server Started")
 
 two_player_objects = [
@@ -140,16 +149,29 @@ def threaded_client(conn, player):
                 break
             else:
                 ball = objects_to_send[player_count]
-                if player < 2:
-                    if data[0] == "up":
-                        objects_to_send[player].move(-1)
-                    if data[0] == "down":
-                        objects_to_send[player].move(1)
+                if remote == "l":
+                    for key in data:
+                        if key == "up":
+                            objects_to_send[1].move(-1)
+                        elif key == "down":
+                            objects_to_send[1].move(1)
+                        if key == "w":
+                            objects_to_send[0].move(-1)
+                        elif key == "s":
+                            objects_to_send[0].move(1)
                 else:
-                    if data[0] == "left":
-                        objects_to_send[player].move_sideways(-1)
-                    if data[0] == "right":
-                        objects_to_send[player].move_sideways(1)
+                    if player < 2:
+                        for key in data:
+                            if key == "up":
+                                objects_to_send[player].move(-1)
+                            elif key == "down":
+                                objects_to_send[player].move(1)
+                    else:
+                        for key in data:
+                            if key == "left":
+                                objects_to_send[player].move_sideways(-1)
+                            elif key == "right":
+                                objects_to_send[player].move_sideways(1)
                 ball.move()
                 if player_count == 4:
                     handle_collision(ball,objects_to_send[0],objects_to_send[1],objects_to_send[2],objects_to_send[3])
@@ -183,6 +205,7 @@ while True:
     conn, addr = s.accept()
     print("Connected to:", addr)
 
-    start_new_thread(threaded_client, (conn, currentPlayer))
+    if (remote == "r" and currentPlayer < player_count) or (remote == "l" and currentPlayer < 1):
+        start_new_thread(threaded_client, (conn, currentPlayer))
     currentPlayer += 1
 

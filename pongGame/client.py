@@ -45,20 +45,24 @@ def main():
     player_count = len(n.pnb) - 1
     while run:
         clock.tick(60)
-        tosend = ["none"]
+        tosend = [] 
         keys = pygame.key.get_pressed()
-        if keys[pygame.K_UP] and keys[pygame.K_DOWN]:
+
+        if keys[pygame.K_UP]:
+            tosend.append("up")
+        if keys[pygame.K_DOWN]:
+            tosend.append("down")
+        if keys[pygame.K_LEFT]:
+            tosend.append("left")
+        if keys[pygame.K_RIGHT]:
+            tosend.append("right")
+        if keys[pygame.K_w]:
+            tosend.append("w")
+        if keys[pygame.K_s]:
+            tosend.append("s")
+        if not tosend:
             tosend = ["none"]
-        elif keys[pygame.K_UP]:
-            tosend = ["up"]
-        elif keys[pygame.K_DOWN]:
-            tosend = ["down"]
-        if keys[pygame.K_LEFT] and keys[pygame.K_RIGHT]:
-            tosend = ["none"]
-        elif keys[pygame.K_LEFT]:
-            tosend = ["left"]
-        elif keys[pygame.K_RIGHT]:
-            tosend = ["right"]
+
         print(tosend)
         data = n.send(tosend)
         for event in pygame.event.get():
