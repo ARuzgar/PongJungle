@@ -1,4 +1,113 @@
 $(document).ready(function () {
+	var chatLocation =localStorage['chatPosition'];
+	if(chatLocation){
+		var chatPosition=JSON.parse(chatLocation);
+		const container = document.querySelector("#chat");
+		container.style.left = chatPosition["chatPositionX"];
+		container.style.top = chatPosition["chatPositionY"];
+	}
+	var lastLocation = localStorage['lastLocation'];
+	if(lastLocation)
+	{
+		var Location = JSON.parse(lastLocation);
+		openIntro(Location["lastLocation"]);
+	}
+	else{
+		openIntro("home");
+	}
+	var activeUser = localStorage['activeUser'];
+	if(activeUser)
+	{
+		var t_activeUser = JSON.parse(activeUser);
+		loginSuccess(t_activeUser["username"]);
+	}
+	var auth42 = localStorage["42auth"];
+	if(auth42)
+	{
+		var t_auth42 = JSON.parse(auth42);
+		if(t_auth42["42auth"] )
+		{
+			fetch('https://peng.com.tr/api42/auth/query/')  // UserInfoAPI'den veri çekmek için belirlenen API URL'sini kullanabilirsiniz
+    		.then(response => response.json())
+    		.then(data => {
+    		    console.log(data);
+				if(data.success=="true")
+    		    	loginSuccess(data.username);
+				else if(activeUser)
+					localStorage.removeItem("activeUser");
+
+
+    		    // Verileri kullanmak için burada işlemler yapabilirsiniz
+    		})
+    		.catch(error => {
+    		    console.error('Veri alınamadı: ', error);
+    		});
+			localStorage.removeItem("42auth");
+		}
+	}
+	$("#logOut").on('click',function(e){
+		localStorage.removeItem("activeUser");
+		openIntro("login");
+		login_menu=document.getElementById("menuLogin");
+		login_menu.innerHTML="<a href='#' onclick=\"openIntro('login')\">Login</a>"
+		fetch('https://peng.com.tr/api42/auth/logout/', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+		})
+		.then(response => {
+			if (response.ok) {
+				return response.json();
+			} else {
+				throw new Error('Network response was not ok.');
+			}
+		})
+		.then(data => {
+			// Gelen veriyi kontrol et
+			if (data && data.message) {
+				console.log('No message found in response data.');
+				//loginSuccess(username);
+			} else {
+				console.log('No message found in response data.');
+			}
+		})
+		.catch(error => {
+			console.error('Error:', error);
+		});
+
+	});
+	$("#logDeneme").on('click',function(e){
+		fetch('https://peng.com.tr/api42/auth/deneme/', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+		})
+		.then(response => {
+			if (response.ok) {
+				return response.json();
+			} else {
+				throw new Error('Network response was not ok.');
+			}
+		})
+		.then(data => {
+			// Gelen veriyi kontrol et
+			if (data && data.message) {
+				console.log('No message found in response data.');
+				//loginSuccess(username);
+			} else {
+				console.log('No message found in response data.');
+			}
+		})
+		.catch(error => {
+			console.error('Error:', error);
+		});
+
+	});
+	$("#login42").on('click',function(e){
+		localStorage["42auth"] = JSON.stringify({"42auth": true});;
+	});
 	$('#loginForm').on('submit', function (e) {
 		e.preventDefault();
 
@@ -6,180 +115,222 @@ $(document).ready(function () {
 			username: document.getElementById('usernameLogin').value,
 			password: document.getElementById('passwordLogin').value
 		};
-	// 	console.log(formData);
-	// 	fetch('https://peng.com.tr/api42/auth/login/', {
-	// 		method: 'POST',
-	// 		headers: {
-	// 			'Content-Type': 'application/json'
-	// 		},
-    //     	body: JSON.stringify(formData),
-	// 	})
-	// 	.then(response => {
-	// 		if (response.ok) {
-	// 			return response.json();
-	// 		} else {
-	// 			throw new Error('Network response was not ok.');
-	// 		}
-	// 	})
-	// 	.then(data => {
-	// 		// Gelen veriyi kontrol et
-	// 		if (data && data.message) {
-	// 			console.log('Response message:', data.message);
-	// 		} else {
-	// 			console.log('No message found in response data.');
-	// 		}
-	// 	})
-	// 	.catch(error => {
-	// 		console.error('Error:', error);
-	// 	});
-	console.log(formData);
-fetch('https://peng.com.tr/api42/auth/login/', {
-    method: 'POST',
-    headers: {
-        'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(formData),
-})
-.then(response => {
-    if (response.ok) {
-        return response.json();
-    } else {
-        throw new Error('Network response was not ok.');
-    }
-})
-.then(data => {
-    // Gelen veriyi kontrol et
-    if (data && data.message) {
-        console.log('Response message:', data.message);
-    } else {
-        console.log('No message found in response data.');
-    }
-})
-.catch(error => {
-    console.error('Error:', error);
-});
-	});
-
-	$('#signupForm').on('submit', function (e) {
-		e.preventDefault();
-
-    	var formData = {
-			username: document.getElementById('usernameRegister').value,
-			email: document.getElementById('email').value,
-			password: document.getElementById('passwordRegister').value
-		};
-		fetch('https://peng.com.tr/api42/auth/signup/', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-        	body: JSON.stringify(formData),
+		fetch('https://peng.com.tr/api42/auth/login/', {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify(formData),
 		})
 		.then(response => {
-			if (response.ok) {
+		if (response.ok) {
 			return response.json();
 		} else {
-			console.log('Response message:', data.message);
+			if (response.status === 400) {
+				showErrorMessage('Invalid username or password.');
+			}
+			throw new Error('Network response was not ok.');
 		}
-		}).then(data => {
-			console.log('Response message:', data.message);
-		}).catch(function(error) {
-			console.error('Error:', error);
+		})
+		.then(data => {
+		// Gelen veriyi kontrol et
+		if (data && data.message) {
+			var username=data.message;
+			console.log(data);
+			// console.log(data.message);
+			// console.log(data.email);
+			// console.log(data.username);
+			loginSuccess(username);
+			openIntro("profile");
+		} else {
+			console.log('No message found in response data.');
+		}
+		})
+		.catch(error => {
+		console.error('Error:', error);
 		});
+	});
+
+	
+	document.getElementById("emailRegister").addEventListener("focusout", function() {
+		var email = document.getElementById("emailRegister").value;
+		var emailFormat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+		var errorEmail = document.getElementById("errorEmail");
+	
+		if (!email.match(emailFormat)) {
+			errorEmail.textContent = "Lütfen geçerli bir eposta adresi girin.";
+		} else {
+			errorEmail.textContent = "";
+		}
+	});
+	
+	document.getElementById("passwordRegister").addEventListener("focusout", function() {
+		var password = document.getElementById("passwordRegister").value;
+		var passwordFormat = /^(?=.*\d)(?=.*[a-zA-Z]).{8,}$/;
+		var errorPassword = document.getElementById("errorPassword");
+	
+		if (!password.match(passwordFormat)) {
+			errorPassword.textContent = "Parolanız en az 8 karakter uzunluğunda olmalı ve en az 1 harf ve 1 sayı içermelidir.";
+		} else {
+			errorPassword.textContent = "";
+		}
+	});
+	$('#signupForm').on('submit', function (e) {
+		e.preventDefault();
+		var errorEmail = document.getElementById("errorEmail");
+		var errorPassword = document.getElementById("errorPassword");
+		
+		if (errorEmail.textContent || errorPassword.textContent) {
+			alert("Lütfen formu doğru şekilde doldurun.");
+		}
+		else{
+			var formData = {
+				username: document.getElementById('usernameRegister').value,
+				//fullname: document.getElementById('fullnameRegister').value, 
+				email: document.getElementById('emailRegister').value,
+				password: document.getElementById('passwordRegister').value
+			};
+			fetch('https://peng.com.tr/api42/auth/signup/', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify(formData),
+			})
+			.then(response => {
+				if (response.ok) {
+					return response.json();
+				} else {
+					return response.json().then(data => {
+						throw new Error(data.error || 'Server error');
+					});
+				}
+			})
+			.then(data => {
+				if (data) {
+					console.log("başarılı",data.message);
+					$('#signupForm')[0].reset(); // jQuery ile formu resetleme
+					document.getElementById("loginSwitch").click();
+				}
+			})
+			.catch(error => {
+				console.error('Error:', error);
+			});
+		}
+    	
 	});
 });
 
-class chatUser {
-	constructor(id, name, pp, lobby) {
-		this.id = id;
-		this.name = name;
-		this.pp = pp;
-		this.lobby = lobby;
-	}
-}
 dragElement();
-createChatUsers();
 
-function openChatRoom(){
-	var room = e.target.id;
-	console.log(room);
 
+function showErrorMessage(message) {
+	const errorDiv = document.createElement('div');
+	errorDiv.innerHTML = "<h4 style='margin: 1rem 0 1rem 0;'>"+message+"</h4>";
+	errorDiv.classList.add('d-flex', 'justify-content-center', 'align-items-center','error-message');
+
+	const form = document.getElementById('loginForm');
+	form.insertBefore(errorDiv, form.firstChild);
 }
 
-function createChatUsers() {
-	const chat = document.querySelector("#chat");
-
-	let Users = [
-		new chatUser(0, "penguen", penguinImagePath, null),
-		new chatUser(1, "penguen2", penguin2ImagePath, null),
-	];
-
-	Users.forEach(User => {
-		chat.innerHTML += ("<button type='button' class='btn btn-info chatUser' id='User" + User.id + " onclick='openChatRoom()'><img class='img-fluid' style='pointer-events: none;' src='" + User.pp + "'></button>");
-	});
-}
-
-function chatExtend() {
-	const chat = document.querySelector("#chat");
-
-	let chatUserBlocks = document.getElementsByClassName("chatUser");
-	if (chatUserBlocks[0].style.opacity == 0) {
-		anime({
-			targets: chatUserBlocks,
-			translateY: function (el, i) {
-				return 4.5 * (1 + i++) + "em";
-			},
-			rotate: 360,
-			borderRadius: '25%',
-			duration: 1000,
-			delay: function (el, i, l) {
-				return i * 200;
-			},
-			opacity: 1,
-		});
+function loginSuccess(username){
+	data={"username":username}
+	localStorage['activeUser'] = JSON.stringify(data);
+	login_menu=document.getElementById("menuLogin");
+	profile_name=document.getElementById("profileName");
+	if(login){
+		login_menu.innerHTML="<a href='#' onclick=\"openIntro('profile')\">Profile</a>"
+		profile_name.innerHTML=username;
 	}
-	else {
-		anime({
-			targets: chatUserBlocks,
-			translateY: 0,
-			rotate: 0,
-			borderRadius: '50%',
-			duration: 1000,
-			delay: function (el, i, l) {
-				return i * 200;
-			},
-			opacity: 0,
-		});
+
+}
+
+
+let isChatExtended = false;
+
+function chatExtend(reverse = false) {
+	const chatMessages = document.querySelector(".notifications");
+	const chatChilds = chatMessages.querySelectorAll('*');
+	const chatElement = document.querySelector("#chat");
+   
+
+		if (reverse) {
+			anime({
+				targets: chatMessages,
+				translateY:-40,
+				scale:0,
+				opacity: {value:[1, 0],duration: 200},
+				easing: 'easeInOutQuad',
+				duration: 1000
+			});
+			anime({
+				targets: chatChilds,
+				opacity: [1, 0],
+				easing: 'easeInOutQuad',
+				duration: 1000,
+				delay: 200
+			});
+			
+			isChatExtended = false;
+		} else {
+			chatMessages.style.display = 'inline-block';
+			anime({
+				targets: chatMessages,
+				translateY:0,
+				scale:1,
+				opacity: [0, 1],
+				easing: 'easeInOutQuad',
+				duration: 1000
+			});
+			anime({
+				targets: chatChilds,
+				opacity: [0, 1],
+				easing: 'easeInOutQuad',
+				duration: 1000,
+				delay: 200
+			});
+			isChatExtended = true;
+		}
+	
+}
+
+function toggleChatAnimation() {
+	if (isChatExtended) {
+		chatExtend(true); // Tersine animasyonu başlat
+	} else {
+		chatExtend(); // Normal animasyonu başlat
 	}
 }
 
 function dragElement() {
 	const container = document.querySelector("#chat");
-	var myCache = localStorage['chatPosition'];
 	var isMoved = false;
-	if (myCache) {
-		var chatPosition = JSON.parse(myCache);
-		container.style.left = chatPosition["chatPositionX"];
-		container.style.top = chatPosition["chatPositionY"];
-	}
-	function onMouseDrag({ movementX, movementY }) {
-		isMoved = true;
-		let getContainerStyle = window.getComputedStyle(container);
-		let leftValue = parseInt(getContainerStyle.left);
-		let topValue = parseInt(getContainerStyle.top);
-		container.style.left = `${leftValue + movementX}px`;
-		container.style.top = `${topValue + movementY}px`;
-	}
-	container.addEventListener("mousedown", () => {
-		document.addEventListener("mousemove", onMouseDrag);
-	});
-	container.addEventListener("mouseup", () => {
-		if (!isMoved)
-			chatExtend();
-		document.removeEventListener("mousemove", onMouseDrag);
-		var Temp = { chatPositionX: container.style.left, chatPositionY: container.style.top };
-		localStorage['chatPosition'] = JSON.stringify(Temp);
+	
+	container.addEventListener("mousedown", (event) => {
 		isMoved = false;
+		//const initialX = event.clientX - container.getBoundingClientRect().left;
+		//const initialY = event.clientY - container.getBoundingClientRect().top;
+//
+		//function onMouseMove(event) {
+		//	isMoved = true;
+		//	container.style.left = event.clientX - initialX + 'px';
+		//	container.style.top = event.clientY - initialY + 'px';
+		//}
+
+		function onMouseUp() {
+			//document.removeEventListener('mousemove', onMouseMove);
+			document.removeEventListener('mouseup', onMouseUp);
+			
+			if (isMoved) {
+				var Temp = { chatPositionX: container.style.left, chatPositionY: container.style.top };
+				localStorage['chatPosition'] = JSON.stringify(Temp);
+			} else {
+				toggleChatAnimation();
+			}
+		}
+
+		//document.addEventListener('mousemove', onMouseMove);
+		document.addEventListener('mouseup', onMouseUp);
 	});
 }
 function showSentence(block) {
@@ -197,19 +348,20 @@ function showSentence(block) {
 }
 
 function titlesAnimation(titles) {
-	anime({
-		targets: titles,
-		background: [
-			{ value: "linear-gradient(90deg, rgba(180,58,173,1) 0%, rgba(131,58,180,1) 38%, rgba(29,33,253,1) 70%, rgba(115,113,124,0) 100%", duration: 300, delay: 500 },
-			{ value: "linear-gradient(90deg, rgba(180,58,173,1) 50%, rgba(131,58,180,1) 78%, rgba(29,33,253,1) 100%", duration: 300 },
-			{ value: "linear-gradient(90deg, rgba(180,58,173,1) 78%, rgba(131,58,180,1) 100%", duration: 0 },
-			{ value: "linear-gradient(270deg, rgba(180,58,173,1) 78%, rgba(131,58,180,1) 100%, rgba(115,113,124,0) 100%", duration: 0 },
-			{ value: "linear-gradient(270deg, rgba(180,58,173,1) 50%, rgba(131,58,180,1) 78%, rgba(115,113,124,0) 100%", duration: 200 },
-			{ value: "linear-gradient(270deg, rgba(180,58,173,1) 0%, rgba(131,58,180,1) 0%, rgba(115,113,124,0) 50%", duration: 200 },
-			{ value: "linear-gradient(270deg, rgba(180,58,173,1) 0%, rgba(131,58,180,1) 0%, rgba(115,113,124,0) 0%", duration: 200 }
-		],
-		easing: "easeInOutQuad"
-	});
+	
+	//anime({
+	//	targets: titles,
+	//	background: [
+	//		{ value: "linear-gradient(90deg, rgba(180,58,173,1) 0%, rgba(131,58,180,1) 38%, rgba(29,33,253,1) 70%, rgba(115,113,124,0) 100%", duration: 300, delay: 500 },
+	//		{ value: "linear-gradient(90deg, rgba(180,58,173,1) 50%, rgba(131,58,180,1) 78%, rgba(29,33,253,1) 100%", duration: 300 },
+	//		{ value: "linear-gradient(90deg, rgba(180,58,173,1) 78%, rgba(131,58,180,1) 100%", duration: 0 },
+	//		{ value: "linear-gradient(270deg, rgba(180,58,173,1) 78%, rgba(131,58,180,1) 100%, rgba(115,113,124,0) 100%", duration: 0 },
+	//		{ value: "linear-gradient(270deg, rgba(180,58,173,1) 50%, rgba(131,58,180,1) 78%, rgba(115,113,124,0) 100%", duration: 200 },
+	//		{ value: "linear-gradient(270deg, rgba(180,58,173,1) 0%, rgba(131,58,180,1) 0%, rgba(115,113,124,0) 50%", duration: 200 },
+	//		{ value: "linear-gradient(270deg, rgba(180,58,173,1) 0%, rgba(131,58,180,1) 0%, rgba(115,113,124,0) 0%", duration: 200 }
+	//	],
+	//	easing: "easeInOutQuad"
+	//});
 	anime({
 		targets: titles,
 		color: [
@@ -230,6 +382,18 @@ function openIntro(block) {
 		$article = $main_articles.filter('#' + block),
 		$activated = $(".active");
 	var time = 10;
+	var activeUser = localStorage['activeUser'];
+	if(block =="login" && activeUser){
+		openIntro("profile");
+		return;
+	}
+	if(block == "profile"  && !activeUser){
+		openIntro("login");
+		return;
+	}
+
+	data={"lastLocation":block}
+	localStorage['lastLocation'] = JSON.stringify(data);
 
 	$content.removeClass('animation');
 	if (!$article[0].classList.contains("active")) {
@@ -240,7 +404,7 @@ function openIntro(block) {
 			anime({
 				targets: ".active",
 				maxHeight: '0em',
-				opacity: 0,
+				opacity: {value:0,duration:200},
 				easing: 'easeInOutQuad',
 				duration: 400
 			});
@@ -267,39 +431,6 @@ function openIntro(block) {
 	}
 
 }
-/*function openIntro(block){
-	var	$window = $(window),
-		$body = $('body'),
-		$inner =$('#inner'),
-		$content =$('#content'),
-		$main = $('#main'),
-		$main_articles = $main.children('article'),
-		$article = $main_articles.filter('#' + block);
-	var $actives = $(".active");
-	console.log($actives);
-
-	$inner.hide();
-	$content.removeClass('animation');
-
-	setTimeout(function(){
-		
-		$actives.removeClass("active").addClass("deactive");
-		$main.removeClass('hide').addClass('animation');
-	},100);
-	
-	setTimeout(function(){
-		$article.removeClass("deactive").addClass('active');
-		
-		$article.show();
-	},100);
-	setTimeout(function(){
-		$content.addClass('animation');
-
-	},400);
-		
-		
-		
-}*/
 (function ($) {
 
 	var $window = $(window),
@@ -377,7 +508,6 @@ function openIntro(block) {
 	// Hide main, articles.
 	//$main.hide();
 	$main_articles.hide();
-	openIntro("home");
 
 
 	// Initial article.

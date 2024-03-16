@@ -1,5 +1,8 @@
 all: clean re
 
+cloudfree:
+	sh cloudflare_cache_clear.sh
+
 clean:
 	clear
 
@@ -18,7 +21,7 @@ down:
 ps:
 	sudo docker compose ps
 
-re: down build up
+re: cloudfree down build up
 
 logs:
 	sudo docker compose logs -f
@@ -38,4 +41,4 @@ logs-frontend:
 logs-chat:
 	sudo docker logs --tail 100 -f chat
 
-.PHONY: all clean git build up down logs ps logs-backend logs-api42 logs-game logs-frontend logs-chat
+.PHONY: all clean git build up down logs ps logs-backend logs-api42 logs-game logs-frontend logs-chat cloudfree

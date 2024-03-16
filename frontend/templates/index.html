@@ -2,7 +2,7 @@
 <html>
 
 <head>
-	<title>Dimension by HTML5 UP</title>
+	<title>PongJungle</title>
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -32,8 +32,29 @@
 	<!-- Wrapper -->
 	<div id="wrapper">
 		<div class="chat row" id="chat">
-			<button type="button" class="btn btn-info chatMain" id="chatMain"><img class="img-fluid"
-					style="pointer-events: none;" src="https://peng.com.tr/static/images/Chat-Icon.png"></button>
+			
+			<div class="dropdown">
+				<button type="button" class="btn btn-info chatMain" id="chatMain"><img class="img-fluid"
+					style="pointer-events: none;" src="https://peng.com.tr/static/images/Chat-Icon.png">
+				</button>
+				
+				<ul class="dropdown-menu notifications" style="opacity: 0;" role="menu" aria-labelledby="dLabel">
+				  
+				  <div class="notification-heading"><h4 class="menu-title">Bildirimler</h4>
+				  </div>
+				  <li class="divider"></li>
+				 <div class="notifications-wrapper">
+				   <a class="content" href="#">
+					
+					 <div class="notification-item">
+					  <h4 class="item-title">Evaluation Deadline 1 · day ago</h4>
+					  <p class="item-info">Marketing 101, Video Assignment</p>
+					</div>
+					 
+				  </a>
+				 </div>
+				
+			  </div>
 		</div>
 		<!-- Header -->
 		<header id="header">
@@ -44,7 +65,7 @@
 			<div class="content">
 				<div id="main">
 					<article id="home">
-						<h1 class="animationText">Dimension</h1>
+						<h1 class="animationText" >Dimension</h1>
 						<ul>
 							<li class="animationText">Biz</li>
 							<li class="animationText">Pong</li>
@@ -100,8 +121,8 @@
 					<article id="login">
 						<div class="container">
 							<div class="row d-flex justify-content-center">
-								<div class="col-4 d-flex justify-content-end"><h2>Login</h2></div>
-								<div class="col-3">
+								<div class="col-4 d-flex justify-content-center"><h2>Login</h2></div>
+								<div class="col-4" style="max-width: 10em;">
 									<div class="checkbox_item citem_2">
 										<label class="checkbox_wrap">
 											<input type="checkbox" name="checkbox" class="checkbox_inp" id="loginSwitch">
@@ -109,7 +130,7 @@
 										</label>
 									</div>
 								</div>
-								<div class="col-4 d-flex justify-content-start"><h2>Register</h2></div>
+								<div class="col-4 d-flex justify-content-center"><h2>Register</h2></div>
 							</div>
 						</div>
 						<div class="container">
@@ -118,28 +139,27 @@
 									<div class="card " id="cardLogin">
 										<div class="login-card card__face card__face--front">
 											<div class="row d-flex justify-content-center">
-												<div class="col-12 d-flex justify-content-center"><h2 class="major">Login</h2></div>
+												<div class="col-12 d-flex justify-content-center"><h2 class="major">Giriş Yap</h2></div>
 												<div class="col-12">
 													<form id="loginForm">
 														<div class="fields">
 															<div class="field">
-																<label for="email">username</label>
+																<label for="email">Kullanıcı Adı</label>
 																<input type="text" name="username" id="usernameLogin" />
 															</div>
 															<div class="field">
-																<label for="password">Password</label>
+																<label for="password">Şifre</label>
 																<input type="password" name="password" id="passwordLogin" />
 															</div>
 														</div>
 														<ul class="actions">
 															<li class="loginbuttons">
 																<input type="submit" value="Login" class="button login">
-																<a href="#" class="button primary login">Forgot Password</a>
+																<a href="#" class="button primary login">Şifreni mi unuttun?</a>
 															</li>
 														</ul>
 														<ul class="actions stacked">
-															<li class=""><a href="https://peng.com.tr/api42/auth/ft_api/" class="button primary apibutton"><img src="https://peng.com.tr/static/images/42icon.png" width="20vh"></a></li>
-															<li class=""><a href="#" class="button primary apibutton">Google</a></li>
+															<li class=""><a href="https://peng.com.tr/api42/auth/ft_api/" class="button primary apibutton" id="login42"><img src="https://peng.com.tr/static/images/42icon.png" width="20vh"></a></li>
 														</ul>
 													</form>
 												</div>
@@ -156,12 +176,18 @@
 																<input type="text" name="username" id="usernameRegister" />
 															</div>
 															<div class="field">
+																<label for="email">İsim Soyisim</label>
+																<input type="text" name="fullname" id="fullnameRegister" />
+															</div>
+															<div class="field">
 																<label for="email">Email</label>
-																<input type="text" name="email" id="email" />
+																<input type="text" name="email" id="emailRegister" />
+																<div id="errorEmail" class="error-message"></div>
 															</div>
 															<div class="field">
 																<label for="password">Password</label>
 																<input type="password" name="password" id="passwordRegister" />
+																<div id="errorPassword" class="error-message"></div>
 															</div>
 														</div>
 														<ul class="actions">
@@ -180,6 +206,36 @@
 							</div>
 						</div>
 					</article>
+					<article id="profile">
+						<div class="container">
+							<div class="row d-flex align-items-center">
+								<div class="col-md-6">
+									<img src="/static/images/Default Profile Picture.jpg" width="200px" class="img-fluid rounded-circle" id="profilePicture" alt="Profil Resmi">
+									
+								</div>
+								<div class="col-md-6" id="profileContent">
+									<h4 id="profileName">Ad Soyad</h4>
+									<ul class="alt">
+										<li>Turnuvalar: 0/0</li>
+										<li>Maçlar: 0/0</li>
+										<li>Arkadaş Sayısı: 0</li>
+										<li><ul class="actions stacked"><button type="submit" class="button primary login">Arkadaş Ekle</button></ul></li>
+										<li>
+											<ul class="actions stacked">
+											<li class="loginbuttons">
+												<button type="submit" value="Settings" class="button primary login">Ayarlar</button>
+												<button type="submit" id="logOut" value="Logout" class="button login">Çıkış Yap</button>
+												<button type="submit" id="logDeneme" value="Deneme" class="button login">deneme</button>
+	
+											</li>
+	
+										</ul></li>
+									</ul>
+								</div>
+								
+							</div>
+						</div>
+					</article>
 				</div>
 			</div>
 			<nav>
@@ -187,8 +243,8 @@
 					<li><a href="#" onclick="openIntro('intro')">Intro</a></li>
 					<li><a href="#" onclick="openIntro('work')">Work</a></li>
 					<li><a href="#" onclick="openIntro('about')">About</a></li>
-					<li><a href="#" onclick="openIntro('logout')">Logout</a></li>
-					<li><a href="#" onclick="openIntro('login')">Login</a></li>
+					<li id="menuLogin"><a href="#" onclick="openIntro('login')">Login</a></li>
+					<!--<li><a href="#" onclick="openIntro('profile')">profile</a></li>-->
 
 					<li><a href="#elements">Elements</a></li>
 				</ul>
@@ -470,8 +526,8 @@ print 'It took ' + i + ' iterations to sort the deck.';</code></pre>
 		var card = document.getElementById("cardLogin");
 		loginSwitch.addEventListener('change', (event) => {
 			card.classList.toggle('is-flipped');
-			console.log("isflipped")
-		})
+})
+	
 
 		// document.addEventListener("onload", (e) => function(){
 		// 	if(window.location.pathname != "#")
