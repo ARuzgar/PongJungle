@@ -15,7 +15,7 @@ SCORE_FONT = pygame.font.SysFont("timesnewroman", 50)
 
 
 def redrawWindow(win,ball,player, player2,player3=None,player4=None):
-    if ball.winner == 0:
+    if ball.winner == -1:
         win.fill((0, 0, 0))
         player.draw(win)
         player2.draw(win)

@@ -10,7 +10,7 @@ class Ball:
         self.radius = radius
         self.x_vel = self.VEL
         self.y_vel = 0
-        self.winner = 0
+        self.winner = -1
 
     def draw(self, win):
         pygame.draw.circle(win, self.COLOR, (self.x, self.y), self.radius)

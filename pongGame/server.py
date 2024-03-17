@@ -6,7 +6,7 @@ import pickle
 
 
 server = socket.gethostbyname('localhost')
-scorer = "none"
+scorer = -1
 port = 5556
 
 WIDTH, HEIGHT = 700, 500
@@ -62,24 +62,22 @@ if player_count == 2:
 else:
     objects_to_send = four_player_objects
 
-def score(player):
-    if player == "left":
-        objects_to_send[0].score += 1
-        if objects_to_send[0].score >= WINNING_SCORE:
-            objects_to_send[player_count].winner = 1
-    elif player == "right":
-        objects_to_send[1].score += 1
-        if objects_to_send[1].score >= WINNING_SCORE:
-            objects_to_send[player_count].winner = 2
-    elif player == "up":
-        objects_to_send[2].score += 1
-        if objects_to_send[2].score >= WINNING_SCORE:
-            objects_to_send[player_count].winner = 3
-    elif player == "down":
-        objects_to_send[3].score += 1
-        if objects_to_send[3].score >= WINNING_SCORE:
-            objects_to_send[player_count].winner = 4
-
+def score(last_to_touch, outside):
+    global scorer
+    if last_to_touch == -1:
+        if outside == 0 or outside == 2:
+            winner = outside + 1
+        elif outside == 1 or outside == 3:
+            winner = outside - 1
+    else:
+        winner = last_to_touch
+    if outside == last_to_touch:
+        objects_to_send[last_to_touch].score -= 1
+    else:
+        objects_to_send[winner].score += 1
+        if objects_to_send[winner].score >= WINNING_SCORE:
+            objects_to_send[player_count].winner = last_to_touch
+    scorer = -1
 
 def handle_collision(ball, left_paddle, right_paddle, upper_paddle=None, lower_paddle=None):
     global scorer
@@ -87,7 +85,7 @@ def handle_collision(ball, left_paddle, right_paddle, upper_paddle=None, lower_p
         if ball.y_vel < 0:
             if ball.x >= upper_paddle.x and ball.x <= upper_paddle.x + upper_paddle.width:
                 if ball.y - ball.radius <= upper_paddle.y + upper_paddle.height:
-                    scorer = "up"
+                    scorer = 2
                     ball.y_vel *= -1
                     if ball.y_vel <= 20:
                         ball.y_vel += 0.5
@@ -99,7 +97,7 @@ def handle_collision(ball, left_paddle, right_paddle, upper_paddle=None, lower_p
         else:
             if ball.x >= lower_paddle.x and ball.x <= lower_paddle.x + lower_paddle.width:
                 if ball.y + ball.radius >= lower_paddle.y:
-                    scorer = "down"
+                    scorer = 3
                     if ball.x_vel <= 20:
                         ball.x_vel += 0.5
                     ball.y_vel *= -1
@@ -116,7 +114,7 @@ def handle_collision(ball, left_paddle, right_paddle, upper_paddle=None, lower_p
     if ball.x_vel < 0:
         if ball.y >= left_paddle.y and ball.y <= left_paddle.y + left_paddle.height:
             if ball.x - ball.radius <= left_paddle.x + left_paddle.width:
-                scorer = "left"
+                scorer = 0
                 ball.x_vel *= -1
                 if ball.x_vel <= 20:
                     ball.x_vel += 0.5
@@ -128,7 +126,7 @@ def handle_collision(ball, left_paddle, right_paddle, upper_paddle=None, lower_p
     else:
         if ball.y >= right_paddle.y and ball.y <= right_paddle.y + right_paddle.height:
             if ball.x + ball.radius >= right_paddle.x:
-                scorer = "right"
+                scorer = 1
                 if ball.x_vel <= 20:
                     ball.x_vel += 0.5
                 ball.x_vel *= -1
@@ -140,6 +138,7 @@ def handle_collision(ball, left_paddle, right_paddle, upper_paddle=None, lower_p
 
 
 def threaded_client(conn, player):
+    global scorer
     conn.send(pickle.dumps(objects_to_send))
     while True:
         try:
@@ -177,18 +176,19 @@ def threaded_client(conn, player):
                     handle_collision(ball,objects_to_send[0],objects_to_send[1],objects_to_send[2],objects_to_send[3])
                 else:
                     handle_collision(ball,objects_to_send[0],objects_to_send[1])
+                
                 if ball.x < 0:
                     ball.reset("left")
-                    score(scorer)
+                    score(scorer, 0)
                 elif ball.x > WIDTH:
                     ball.reset("right")
-                    score(scorer)
+                    score(scorer, 1)
                 elif ball.y < 0:
                     ball.reset("up")
-                    score(scorer)
+                    score(scorer, 2)
                 elif ball.y > HEIGHT:
                     ball.reset("down")
-                    score(scorer)
+                    score(scorer, 3)
 
                 print("Received: ", data)
                 print("Sending : ", objects_to_send)
