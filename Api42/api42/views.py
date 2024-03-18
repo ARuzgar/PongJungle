@@ -1,3 +1,4 @@
+from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_framework.authentication import SessionAuthentication
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -17,16 +18,19 @@ from django.shortcuts import redirect
 from rest_framework import status
 from django.views import View
 from .serializers import *
-from urllib.parse import (
-    urlparse,
-    parse_qs
-)
-from django.http import HttpResponseRedirect
+from urllib.parse import urlparse, parse_qs
+from django.http import HttpResponseRedirect, HttpResponse
 from django.http import JsonResponse
 from django.urls import reverse
-import requests, json
+import requests
+import json
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
+from rest_framework_simplejwt.tokens import RefreshToken
+from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractBaseUser
+from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework.permissions import IsAuthenticated
 
 
 UID = "u-s4t2ud-272a7d972a922c63919b4411aff1da6abf64ec93eb38804b51427a0c0fbf86ea"
@@ -77,53 +81,144 @@ def getUserInfo(auth_code):
 
 
 class Providers:
-    def JsonProviderBasic(success, **kwargs):
+    def JsonProviderBasic(success, message, **kwargs):
         d = {
             "success": success,
-            "message": None,
+            "data": None,
+            "message": message,
             "error": None,
         }
-        if "message" in kwargs and kwargs["message"] is not None:
-            d.update({"message": kwargs["message"]})
-            return d
-        elif "error" in kwargs and kwargs["error"] is not None:
+        if "data" in kwargs and kwargs["data"] is not None:
+            d.update({"data": kwargs["data"]})
+        if "error" in kwargs and kwargs["error"] is not None:
             d.update({"error": kwargs["error"]})
-            return d
+        return d
 
-    def JsonProviderUserData(username, email, message, **kwargs):
+    def JsonProviderUserData(success, message, data, **kwargs):
         d = {
+            "success": success,
+            "data": data,
             "message": message,
-            "username": username,
-            "email": email,
-            "phone": None,
-            "photo": None,
+            "error": None,
         }
-        if "photo" in kwargs and "phone" in kwargs:
-            d.update({"photo": kwargs["photo"]})
-            d.update({"phone": kwargs["phone"]})
+        if "error" in kwargs and kwargs["error"] is not None:
+            d.update({"error": kwargs["error"]})
         return d
 
 
-@method_decorator(csrf_exempt, name='dispatch')
+# =========================== NEW DRF APIs ===========================
+
+
+class UserRegisterView(APIView):
+    serializer_class = UserSerializer
+
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+
+        if serializer.is_valid():
+            account = serializer.save()
+            return Response(
+                Providers.JsonProviderBasic(
+                    success="True",
+                    message="User registeration successfull",
+                ),
+                status=HTTP_200_OK,
+            )
+        else:
+            return Response(
+                Providers.JsonProviderBasic(
+                    success="False",
+                    message=serializer.error_messages,
+                ),
+                status=HTTP_400_BAD_REQUEST,
+            )
+
+
+class UserLoginView(APIView):
+    serializer_class = UserSerializer
+
+    def post(self, request):
+        username = request.data["username"]
+        password = request.data["password"]
+
+        user = User.objects.filter(username=username).first()
+
+        if user is not None:
+            user = authenticate(request, username=username, password=password)
+
+            if user is not None:
+                refresh = RefreshToken.for_user(user)
+                data = {
+                    "token": {
+                        "refresh": str(refresh),
+                        "access": str(refresh.access_token),
+                    },
+                    "fullname": user.fullname,
+                    "email": user.email,
+                }
+                return Response(
+                    Providers.JsonProviderUserData(
+                        success=True,
+                        message="User login successfull",
+                        data=data,
+                    ),
+                    status=HTTP_200_OK,
+                )
+            else:
+                print("user logi nfail")
+                return Response(
+                    Providers.JsonProviderBasic(
+                        success=False,
+                        message="User login fail",
+                        error="User login fail",
+                    ),
+                    status=HTTP_400_BAD_REQUEST,
+                )
+        else:
+            print("user logi nfailedededed")
+            return Response(
+                Providers.JsonProviderBasic(
+                    success=False,
+                    message="User not found",
+                    error="User not found",
+                ),
+                status=HTTP_400_BAD_REQUEST,
+            )
+
+
+class MyProtectedView(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        if user is not None:
+            return Response(
+                Providers.JsonProviderBasic(
+                    success=True,
+                    message="deneme okayy :D",
+                ),
+                status=HTTP_200_OK,
+            )
+        else:
+            return Response(
+                Providers.JsonProviderBasic(
+                    success=False,
+                    message="deneme asdasdasdasdasdasdasd D:",
+                ),
+                status=HTTP_200_OK,
+            )
+
+
+# ====================================================================
+
+
+@method_decorator(csrf_exempt, name="dispatch")
 class UserLogoutAPIView(APIView):
     permission_classes = [AllowAny]
     authentication_classes = [SessionAuthentication]
 
     def post(self, request):
-        print("=*=" * 25)
-        print(
-            "logout view and user is authenticated: .ASDGASJDGK;SA: ",
-            request.user.is_authenticated,
-        )
-        print("=*=" * 25)
-        user = request.user
-        # user = User.objects.filter(username=request.user.get_username()).first()
-        print("ZATTIRI ZORT ZORT: ", self.request.user)
-        print('#' * 20)
-        print('melihin yarragi logoutdan once', request.session.get('melihinyarragi'))
-        logout(request)
-        print('melihin yarragi logoutdan sonra', request.session.get('melihinyarragi'))
-        print('#' * 20)
         return Response(
             Providers.JsonProviderBasic(True, message="success logout"),
             status=HTTP_200_OK,
@@ -132,41 +227,38 @@ class UserLogoutAPIView(APIView):
         #     return Response(
         #         Providers.JsonProviderBasic(False, message="fail logout"),
         #         status=HTTP_400_BAD_REQUEST,
-            # )
+        # )
 
-@method_decorator(csrf_exempt, name='dispatch')
+
+@method_decorator(csrf_exempt, name="dispatch")
 class UserLogDenemeAPIView(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request):
-        print('0000===0000 ' * 10 )
-        print('request username: ', request.user)
-        print('0000===0000 ' * 10 )
         return Response(
-                Providers.JsonProviderBasic(True, message="null"),
-                status=HTTP_200_OK,
-            )
+            Providers.JsonProviderBasic(True, message="null"),
+            status=HTTP_200_OK,
+        )
 
-from rest_framework.authtoken.views import ObtainAuthToken
-from rest_framework.authtoken.models import Token
-from rest_framework.response import Response
-from rest_framework import status
 
 class CustomAuthToken(ObtainAuthToken):
     def post(self, request, *args, **kwargs):
-        print('ZATTIRI ZORT ZORT ZAAAARTTTTT', request.user)
-        serializer = self.serializer_class(data=request.data, context={'request': request})
+        print("ZATTIRI ZORT ZORT ZAAAARTTTTT", request.user)
+        serializer = self.serializer_class(
+            data=request.data, context={"request": request}
+        )
         serializer.is_valid(raise_exception=True)
-        user = serializer.validated_data['user']
+        user = serializer.validated_data["user"]
         token, created = Token.objects.get_or_create(user=user)
         return Response(
-                    Providers.JsonProviderUserData(
-                        'ademberke', 'ademberke@hotmail.com', "Success Login"
-                    ),
-                    status=HTTP_200_OK,
-                )
+            Providers.JsonProviderUserData(
+                "ademberke", "ademberke@hotmail.com", "Success Login"
+            ),
+            status=HTTP_200_OK,
+        )
 
-@method_decorator(csrf_exempt, name='dispatch')
+
+@method_decorator(csrf_exempt, name="dispatch")
 class User42LoginAPIView(APIView):
     permission_classes = [AllowAny]
 
@@ -177,49 +269,19 @@ class User42LoginAPIView(APIView):
 
         user = None
 
-        if not username or not password:
-            user = authenticate(request, token=request.query_params.get("token"))
-            if user is not None:
-                login(request, user)
-                request.session['melihinyarragi'] = '40km'
-                return Response(
-                    Providers.JsonProviderUserData(
-                        user.username, user.email, "Success Login"
-                    ),
-                    status=HTTP_200_OK,
-                )
-            # return HttpResponseRedirect('https://peng.com.tr/')
-            return Response(
-                Providers.JsonProviderBasic(True, message="failed login"),
-                status=HTTP_400_BAD_REQUEST,
-            )
-        else:
-            user = authenticate(request, username=username, password=password)
-            if user is not None:
-                print("-*-" * 20)
-                print("-*-" * 20)
-                login(request, user)
-                print("request user logini control: ", request.user.username, request.user.is_authenticated, request.user.is_active)
-                # return HttpResponseRedirect('https://peng.com.tr/')
-                return Response(
-                    Providers.JsonProviderUserData(
-                        user.username, user.email, "Success Login"
-                    ),
-                    status=HTTP_200_OK,
-                )
-            else:
-                if User.objects.filter().first() is None:
-                    return Response(
-                        Providers.JsonProviderBasic(True, message="user not found :/"),
-                        status=HTTP_400_BAD_REQUEST,
-                    )
-                else:
-                    return Response(
-                        Providers.JsonProviderBasic(True, message="wrong password D:"),
-                        status=HTTP_400_BAD_REQUEST,
-                    )
+        print("*" * 50)
+        token = 1234
+        print(f"{username}, {password}, {token}")
+        print("*" * 50)
+        return Response(
+            Providers.JsonProviderBasic(
+                True, message={"token": token, "username": username}
+            ),
+            status=HTTP_200_OK,
+        )
 
-@method_decorator(csrf_exempt, name='dispatch')
+
+@method_decorator(csrf_exempt, name="dispatch")
 class SignUpAPIView(APIView):
     permission_classes = [AllowAny]
     serializer_class = UserSerializer
@@ -269,7 +331,8 @@ class SignUpAPIView(APIView):
                 status=HTTP_400_BAD_REQUEST,
             )
 
-@method_decorator(csrf_exempt, name='dispatch')
+
+@method_decorator(csrf_exempt, name="dispatch")
 class QueryUserData(APIView):
     permission_classes = [AllowAny]
 
@@ -292,7 +355,8 @@ class QueryUserData(APIView):
                 status=HTTP_400_BAD_REQUEST,
             )
 
-@method_decorator(csrf_exempt, name='dispatch')
+
+@method_decorator(csrf_exempt, name="dispatch")
 class FtLoginAuthView(APIView):
     permission_classes = [AllowAny]
     serializer_class = UserSerializer

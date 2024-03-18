@@ -19,7 +19,7 @@ $(document).ready(function () {
 	if(activeUser)
 	{
 		var t_activeUser = JSON.parse(activeUser);
-		loginSuccess(t_activeUser["username"]);
+		loginSuccess(t_activeUser["username"],t_activeUser["email"]);
 	}
 	var auth42 = localStorage["42auth"];
 	if(auth42)
@@ -30,9 +30,8 @@ $(document).ready(function () {
 			fetch('https://peng.com.tr/api42/auth/query/')  // UserInfoAPI'den veri çekmek için belirlenen API URL'sini kullanabilirsiniz
     		.then(response => response.json())
     		.then(data => {
-    		    console.log(data);
 				if(data.success=="true")
-    		    	loginSuccess(data.username);
+    		    	loginSuccess(data.username,data.email);
 				else if(activeUser)
 					localStorage.removeItem("activeUser");
 
@@ -78,9 +77,13 @@ $(document).ready(function () {
 
 	});
 	$("#logDeneme").on('click',function(e){
-		fetch('https://peng.com.tr/api42/auth/deneme/', {
-			method: 'POST',
+		const token = localStorage.getItem('token');
+		const activeUserData = JSON.parse(localStorage.getItem('activeUser'));
+		console.log('deneme', activeUserData.token);
+		fetch('https://peng.com.tr/api42/auth/newdeneme/', {
+			method: 'GET',
 			headers: {
+				'Authorization': "Bearer " + activeUserData.token,
 				'Content-Type': 'application/json'
 			},
 		})
@@ -94,7 +97,7 @@ $(document).ready(function () {
 		.then(data => {
 			// Gelen veriyi kontrol et
 			if (data && data.message) {
-				console.log('No message found in response data.');
+				console.log('data:', data);
 				//loginSuccess(username);
 			} else {
 				console.log('No message found in response data.');
@@ -108,14 +111,15 @@ $(document).ready(function () {
 	$("#login42").on('click',function(e){
 		localStorage["42auth"] = JSON.stringify({"42auth": true});;
 	});
-	$('#loginForm').on('submit', function (e) {
+	
+	$('#loginForm').on('submit', function (e) { // deneme yapiyorum
 		e.preventDefault();
 
     	var formData = {
 			username: document.getElementById('usernameLogin').value,
 			password: document.getElementById('passwordLogin').value
 		};
-		fetch('https://peng.com.tr/api42/auth/login/', {
+		fetch('https://peng.com.tr/api42/auth/newlogin/', {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json'
@@ -135,12 +139,12 @@ $(document).ready(function () {
 		.then(data => {
 		// Gelen veriyi kontrol et
 		if (data && data.message) {
-			var username=data.message;
-			console.log(data);
-			// console.log(data.message);
-			// console.log(data.email);
-			// console.log(data.username);
-			loginSuccess(username);
+			var username=data.message.username;
+			var email=data.message.email;
+			console.log("başarılı ve data:", data);
+			console.log("başarılı ve data:", data.data.token.access);
+
+			loginSuccess(data.data.token.access,username,email);
 			openIntro("profile");
 		} else {
 			console.log('No message found in response data.');
@@ -151,24 +155,24 @@ $(document).ready(function () {
 		});
 	});
 
-	
+
 	document.getElementById("emailRegister").addEventListener("focusout", function() {
 		var email = document.getElementById("emailRegister").value;
 		var emailFormat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 		var errorEmail = document.getElementById("errorEmail");
-	
+
 		if (!email.match(emailFormat)) {
 			errorEmail.textContent = "Lütfen geçerli bir eposta adresi girin.";
 		} else {
 			errorEmail.textContent = "";
 		}
 	});
-	
+
 	document.getElementById("passwordRegister").addEventListener("focusout", function() {
 		var password = document.getElementById("passwordRegister").value;
 		var passwordFormat = /^(?=.*\d)(?=.*[a-zA-Z]).{8,}$/;
 		var errorPassword = document.getElementById("errorPassword");
-	
+
 		if (!password.match(passwordFormat)) {
 			errorPassword.textContent = "Parolanız en az 8 karakter uzunluğunda olmalı ve en az 1 harf ve 1 sayı içermelidir.";
 		} else {
@@ -179,18 +183,18 @@ $(document).ready(function () {
 		e.preventDefault();
 		var errorEmail = document.getElementById("errorEmail");
 		var errorPassword = document.getElementById("errorPassword");
-		
+
 		if (errorEmail.textContent || errorPassword.textContent) {
 			alert("Lütfen formu doğru şekilde doldurun.");
 		}
 		else{
 			var formData = {
 				username: document.getElementById('usernameRegister').value,
-				//fullname: document.getElementById('fullnameRegister').value, 
+				fullname: document.getElementById('fullnameRegister').value,
 				email: document.getElementById('emailRegister').value,
 				password: document.getElementById('passwordRegister').value
 			};
-			fetch('https://peng.com.tr/api42/auth/signup/', {
+			fetch('https://peng.com.tr/api42/auth/newsignup/', { // deneme yapiyorum
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
@@ -208,7 +212,8 @@ $(document).ready(function () {
 			})
 			.then(data => {
 				if (data) {
-					console.log("başarılı",data.message);
+					console.log("başarılı ve data:", data);
+					console.log("başarılı ve message:", data.message);
 					$('#signupForm')[0].reset(); // jQuery ile formu resetleme
 					document.getElementById("loginSwitch").click();
 				}
@@ -217,7 +222,51 @@ $(document).ready(function () {
 				console.error('Error:', error);
 			});
 		}
-    	
+
+	});
+	$('#profileSettingForm').on('submit', function (e) {
+		e.preventDefault();
+
+    	var formData = {
+			profilePicture: document.getElementById('profilePicture').value,
+			username: document.getElementById('usernameSetting').value,
+			email: document.getElementById('emailSetting').value,
+			password: document.getElementById('passwordSetting').value
+		};
+		
+		//fetch('https://peng.com.tr/api42/auth/updateUser/', {
+		//method: 'POST',
+		//headers: {
+		//	'Content-Type': 'application/json'
+		//},
+		//body: JSON.stringify(formData),
+		//})
+		//.then(response => {
+		//if (response.ok) {
+		//	return response.json();
+		//} else {
+		//	if (response.status === 400) {
+		//		showErrorMessage('Invalid username or password.');
+		//	}
+		//	throw new Error('Network response was not ok.');
+		//}
+		//})
+		//.then(data => {
+		//// Gelen veriyi kontrol et
+		//if (data && data.message) {
+		//	var username=data.message.username;
+		//	var email=data.message.email;
+		//	console.log(data);
+//
+		//	loginSuccess(token,username,email);
+		//	openIntro("profile");
+		//} else {
+		//	console.log('No message found in response data.');
+		//}
+		//})
+		//.catch(error => {
+		//console.error('Error:', error);
+		//});
 	});
 });
 
@@ -233,8 +282,12 @@ function showErrorMessage(message) {
 	form.insertBefore(errorDiv, form.firstChild);
 }
 
-function loginSuccess(username){
-	data={"username":username}
+function loginSuccess(token, username, email){
+	data={
+		"token":token,
+		"username":username,
+		"email":email
+	}
 	localStorage['activeUser'] = JSON.stringify(data);
 	login_menu=document.getElementById("menuLogin");
 	profile_name=document.getElementById("profileName");
@@ -252,7 +305,7 @@ function chatExtend(reverse = false) {
 	const chatMessages = document.querySelector(".notifications");
 	const chatChilds = chatMessages.querySelectorAll('*');
 	const chatElement = document.querySelector("#chat");
-   
+
 
 		if (reverse) {
 			anime({
@@ -270,7 +323,7 @@ function chatExtend(reverse = false) {
 				duration: 1000,
 				delay: 200
 			});
-			
+
 			isChatExtended = false;
 		} else {
 			chatMessages.style.display = 'inline-block';
@@ -291,7 +344,7 @@ function chatExtend(reverse = false) {
 			});
 			isChatExtended = true;
 		}
-	
+
 }
 
 function toggleChatAnimation() {
@@ -305,7 +358,7 @@ function toggleChatAnimation() {
 function dragElement() {
 	const container = document.querySelector("#chat");
 	var isMoved = false;
-	
+
 	container.addEventListener("mousedown", (event) => {
 		isMoved = false;
 		//const initialX = event.clientX - container.getBoundingClientRect().left;
@@ -320,7 +373,7 @@ function dragElement() {
 		function onMouseUp() {
 			//document.removeEventListener('mousemove', onMouseMove);
 			document.removeEventListener('mouseup', onMouseUp);
-			
+
 			if (isMoved) {
 				var Temp = { chatPositionX: container.style.left, chatPositionY: container.style.top };
 				localStorage['chatPosition'] = JSON.stringify(Temp);
@@ -348,7 +401,7 @@ function showSentence(block) {
 }
 
 function titlesAnimation(titles) {
-	
+
 	//anime({
 	//	targets: titles,
 	//	background: [
@@ -381,17 +434,32 @@ function openIntro(block) {
 		$main_articles = $main.children('article'),
 		$article = $main_articles.filter('#' + block),
 		$activated = $(".active");
-	var time = 10;
-	var activeUser = localStorage['activeUser'];
-	if(block =="login" && activeUser){
-		openIntro("profile");
-		return;
-	}
-	if(block == "profile"  && !activeUser){
-		openIntro("login");
-		return;
-	}
-
+		var time = 10;
+		var activeUser = localStorage['activeUser'];
+		if(block =="login" && activeUser){
+			openIntro("profile");
+			return;
+		}
+		if(block == "profile"  && !activeUser){
+			openIntro("login");
+			return;
+		}
+		if(block == "profileSetting"){
+			const existingUsername = JSON.parse(activeUser)["username"];
+			const existingEmail = JSON.parse(activeUser)["email"];
+	
+			const usernameInput = document.getElementById('usernameSetting');
+			const emailInput = document.getElementById('emailSetting');
+	
+			// Username input alanına önceki kullanıcı adını doldur
+			if (usernameInput)
+				usernameInput.value = existingUsername;
+			if (emailInput)
+				emailInput.value = existingEmail;
+		}
+		if(block =="pong")
+			pong();
+		
 	data={"lastLocation":block}
 	localStorage['lastLocation'] = JSON.stringify(data);
 

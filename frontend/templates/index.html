@@ -40,7 +40,7 @@
 				
 				<ul class="dropdown-menu notifications" style="opacity: 0;" role="menu" aria-labelledby="dLabel">
 				  
-				  <div class="notification-heading"><h4 class="menu-title">Bildirimler</h4>
+				  <div class="notification-heading"><h4 class="menu-title">Notification</h4>
 				  </div>
 				  <li class="divider"></li>
 				 <div class="notifications-wrapper">
@@ -92,17 +92,17 @@
 							malesuada fames ac turpis egestas. In non lorem sit amet elit placerat maximus. Pellentesque
 							aliquam maximus risus, vel sed vehicula.</p>
 					</article>
-					<article id="work">
-						<h2 class="major">Work</h2>
-						<span class="image main"><img src="static/images/pic02.jpg" alt="" /></span>
-						<p>Adipiscing magna sed dolor elit. Praesent eleifend dignissim arcu, at eleifend sapien
-							imperdiet ac. Aliquam erat volutpat. Praesent urna nisi, fringila lorem et vehicula lacinia
-							quam. Integer sollicitudin mauris nec lorem luctus ultrices.</p>
-						<p>Nullam et orci eu lorem consequat tincidunt vivamus et sagittis libero. Mauris aliquet magna
-							magna sed nunc rhoncus pharetra. Pellentesque condimentum sem. In efficitur ligula tate
-							urna. Maecenas laoreet massa vel lacinia pellentesque lorem ipsum dolor. Nullam et orci eu
-							lorem consequat tincidunt. Vivamus et sagittis libero. Mauris aliquet magna magna sed nunc
-							rhoncus amet feugiat tempus.</p>
+					<article id="pong">
+						<div class="container" >
+							<div class="row" style="height: 25em;">
+								<div class="col-12" id="pongParent">
+									<div id="score">
+										<span id="player1-score">0</span> - <span id="player2-score">0</span>
+									</div>
+									<canvas id="gameCanvas" style="width: 100%; height: 95%;">Press 'Enter' to Start</canvas>
+								</div>
+							</div>
+						</div>
 					</article>
 
 					<!-- About -->
@@ -139,23 +139,23 @@
 									<div class="card " id="cardLogin">
 										<div class="login-card card__face card__face--front">
 											<div class="row d-flex justify-content-center">
-												<div class="col-12 d-flex justify-content-center"><h2 class="major">Giriş Yap</h2></div>
+												<div class="col-12 d-flex justify-content-center"><h2 class="major">Login</h2></div>
 												<div class="col-12">
 													<form id="loginForm">
 														<div class="fields">
 															<div class="field">
-																<label for="email">Kullanıcı Adı</label>
+																<label for="email">Username</label>
 																<input type="text" name="username" id="usernameLogin" />
 															</div>
 															<div class="field">
-																<label for="password">Şifre</label>
+																<label for="password">Password</label>
 																<input type="password" name="password" id="passwordLogin" />
 															</div>
 														</div>
 														<ul class="actions">
-															<li class="loginbuttons">
+															<li class="loginbuttons" style="display: flex; justify-content: space-between;">
 																<input type="submit" value="Login" class="button login">
-																<a href="#" class="button primary login">Şifreni mi unuttun?</a>
+																<a href="#" class="button primary login">Forgot Password</a>
 															</li>
 														</ul>
 														<ul class="actions stacked">
@@ -172,11 +172,11 @@
 													<form id="signupForm">
 														<div class="fields">
 															<div class="field">
-																<label for="email">username</label>
+																<label for="email">Username</label>
 																<input type="text" name="username" id="usernameRegister" />
 															</div>
 															<div class="field">
-																<label for="email">İsim Soyisim</label>
+																<label for="email">Full Name</label>
 																<input type="text" name="fullname" id="fullnameRegister" />
 															</div>
 															<div class="field">
@@ -194,9 +194,7 @@
 															<li class="loginbuttons"><input type="submit" value="SignUp" class="button primary register"></li>
 														</ul>
 														<ul class="actions stacked">
-															<li class=""><a href="https://peng.com.tr/api42/auth/ft_api" class="button primary apibutton"><img src="https://peng.com.tr/static/images/42icon.png" width="20vh"></a></li>
-															<li class=""><a href="#" class="button primary apibutton">Google</a></li>
-														</ul>
+															<li class=""><a href="https://peng.com.tr/api42/auth/ft_api" class="button primary apibutton"><img src="https://peng.com.tr/static/images/42icon.png" width="20vh"></a></li>														</ul>
 													</form>
 												</div>
 											</div>	
@@ -216,15 +214,15 @@
 								<div class="col-md-6" id="profileContent">
 									<h4 id="profileName">Ad Soyad</h4>
 									<ul class="alt">
-										<li>Turnuvalar: 0/0</li>
-										<li>Maçlar: 0/0</li>
-										<li>Arkadaş Sayısı: 0</li>
-										<li><ul class="actions stacked"><button type="submit" class="button primary login">Arkadaş Ekle</button></ul></li>
+										<li>Tournuments: 0/0</li>
+										<li>Matches: 0/0</li>
+										<li>Friends: 0</li>
+										<li><ul class="actions stacked"><button type="submit" class="button primary login">Add Friend</button></ul></li>
 										<li>
 											<ul class="actions stacked">
 											<li class="loginbuttons">
-												<button type="submit" value="Settings" class="button primary login">Ayarlar</button>
-												<button type="submit" id="logOut" value="Logout" class="button login">Çıkış Yap</button>
+												<a href="#" onclick="openIntro('profileSetting')"><button type="submit" value="Settings" class="button primary login">Settings</button></a>
+												<button type="submit" id="logOut" value="Logout" class="button login">Logout</button>
 												<button type="submit" id="logDeneme" value="Deneme" class="button login">deneme</button>
 	
 											</li>
@@ -236,12 +234,45 @@
 							</div>
 						</div>
 					</article>
+					<article id="profileSetting">
+						<div class="container">
+							<div class="row">
+								<div class="col-12">
+									<form id="profileSettingForm">
+										<div class="fields">
+											<div class="field">
+												<label for="profilePicture">Profile Picture</label>
+												<input type="file" name="profilePicture" id="profilePicture">
+											</div>
+											<div class="field">
+												<label for="usernameSetting">Username</label>
+												<input type="text" name="usernameSetting" id="usernameSetting">
+											</div>
+											<div class="field">
+												<label for="emailSetting">Email</label>
+												<input type="email" name="emailSetting" id="emailSetting">
+											</div>
+											<div class="field">
+												<label for="passwordSetting">Password</label>
+												<input type="password" name="passwordSetting" id="passwordSetting">
+											</div>
+										</div>
+										<ul class="actions">
+											<li class="loginbuttons" style="display: flex; justify-content: space-between;">
+												<button type="submit" class="button register primary">Save</button>
+											</li>
+										</ul>
+									</form>
+								</div>
+							</div>
+						</div>
+					</article>
 				</div>
 			</div>
 			<nav>
 				<ul>
 					<li><a href="#" onclick="openIntro('intro')">Intro</a></li>
-					<li><a href="#" onclick="openIntro('work')">Work</a></li>
+					<li><a href="#" onclick="openIntro('pong')">Pong</a></li>
 					<li><a href="#" onclick="openIntro('about')">About</a></li>
 					<li id="menuLogin"><a href="#" onclick="openIntro('login')">Login</a></li>
 					<!--<li><a href="#" onclick="openIntro('profile')">profile</a></li>-->
@@ -538,6 +569,7 @@ print 'It took ' + i + ' iterations to sort the deck.';</code></pre>
 	<script src="/static/assets/js/browser.min.js"></script>
 	<script src="/static/assets/js/breakpoints.min.js"></script>
 	<script src="/static/assets/js/util.js"></script>
+	<script src="/static/assets/js/pong.js"></script>
 	<script src="/static/assets/js/main.js"></script>
 
 </body>

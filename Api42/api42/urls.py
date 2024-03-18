@@ -10,5 +10,7 @@ urlpatterns = [
     path('ft_api/', AuthView.as_view(), name='apiStart'),
     path('logout/', UserLogoutAPIView.as_view(), name='logout'),
     path('query/', QueryUserData.as_view(), name='query'),
-    path('deneme/', UserLogDenemeAPIView.as_view(), name='deneme'),
+    path('newlogin/', UserLoginView.as_view(), name='newlogin'),
+    path('newsignup/', UserRegisterView.as_view(), name='newsignup'),
+    path('newdeneme/', MyProtectedView.as_view(), name='newdeneme'),
 ]

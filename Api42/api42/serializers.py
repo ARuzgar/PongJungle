@@ -1,20 +1,17 @@
 from rest_framework import serializers
-from django.contrib.auth.models import User
-from rest_framework.permissions import AllowAny
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework.status import HTTP_200_OK, HTTP_400_BAD_REQUEST
-from django.contrib.auth import authenticate
+# from django.contrib.auth.models import User
+from .models import User
 
-class UserLoginSerializer(serializers.Serializer):
-    email = serializers.EmailField()
-    password = serializers.CharField()
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('username', 'password', 'email')
-        extra_kwargs = {'password': {'write_only': True}}
+        fields = ("username", "password", "email", "fullname")
+        extra_kwargs = {
+            "password": {"write_only": True},
+            "email": {"required": True},
+            "fullname": {"required": True}
+        }
 
     def validate_email(self, value):
         if User.objects.filter(email=value).exists():
