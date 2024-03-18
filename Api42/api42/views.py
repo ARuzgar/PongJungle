@@ -22,7 +22,7 @@ from urllib.parse import urlparse, parse_qs
 from django.http import HttpResponseRedirect, HttpResponse
 from django.http import JsonResponse
 from django.urls import reverse
-import requests
+import requests, os
 import json
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
@@ -106,6 +106,18 @@ class Providers:
         return d
 
 
+
+# 
+# class save_png_file(APIView):
+#     def get(self, request):
+#         if request.FILES.get('profile_picture'):
+#             uploaded_file = request.FILES['profile_picture']
+#             upload_path = os.path.join('./images')
+#             os.makedirs(upload_path, exist_ok=True)
+#             with open(os.path.join(upload_path, uploaded_file.name), 'wb+') as destination:
+#                 for chunk in uploaded_file.chunks():
+#                     destination.write(chunk)
+
 # =========================== NEW DRF APIs ===========================
 
 
@@ -113,10 +125,16 @@ class UserRegisterView(APIView):
     serializer_class = UserSerializer
 
     def post(self, request):
+        print("#" * 20)
+        print(request.data["username"])
+        print(request.data["fullname"])
+        print(request.data["email"])
+        print("#" * 20)
+
         serializer = self.serializer_class(data=request.data)
 
         if serializer.is_valid():
-            account = serializer.save()
+            serializer.save()
             return Response(
                 Providers.JsonProviderBasic(
                     success="True",
@@ -125,6 +143,7 @@ class UserRegisterView(APIView):
                 status=HTTP_200_OK,
             )
         else:
+            print("Validation errors:", serializer.error_messages)
             return Response(
                 Providers.JsonProviderBasic(
                     success="False",
@@ -141,6 +160,16 @@ class UserLoginView(APIView):
         username = request.data["username"]
         password = request.data["password"]
 
+        print(username, ' ', password)
+        if username is None or password is None:
+            return Response(
+                Providers.JsonProviderBasic(
+                    success=False,
+                    message="User informations missing",
+                ),
+                status=HTTP_400_BAD_REQUEST,
+            )
+
         user = User.objects.filter(username=username).first()
 
         if user is not None:
@@ -153,11 +182,9 @@ class UserLoginView(APIView):
                         "refresh": str(refresh),
                         "access": str(refresh.access_token),
                     },
-                    "fullname": user.fullname,
-                    "email": user.email,
                 }
                 return Response(
-                    Providers.JsonProviderUserData(
+                    Providers.JsonProviderBasic(
                         success=True,
                         message="User login successfull",
                         data=data,
@@ -165,12 +192,11 @@ class UserLoginView(APIView):
                     status=HTTP_200_OK,
                 )
             else:
-                print("user logi nfail")
+                print("user login fail")
                 return Response(
                     Providers.JsonProviderBasic(
                         success=False,
                         message="User login fail",
-                        error="User login fail",
                     ),
                     status=HTTP_400_BAD_REQUEST,
                 )
@@ -180,23 +206,32 @@ class UserLoginView(APIView):
                 Providers.JsonProviderBasic(
                     success=False,
                     message="User not found",
-                    error="User not found",
                 ),
                 status=HTTP_400_BAD_REQUEST,
             )
 
 
-class MyProtectedView(APIView):
+class UserInfoQuery(APIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        user = request.user
+        user = User.objects.get(username=request.user.username)
         if user is not None:
+
+            # PROFILE PHOTO EKLEMEYI UNUTMA
+            print('#' * 20)
+            path = str(user.profile_picture)
+            data = {
+                "username": user.username,
+                "email": user.email,
+                "profile_picture": path,
+            }
             return Response(
                 Providers.JsonProviderBasic(
                     success=True,
-                    message="deneme okayy :D",
+                    message="User informations taken",
+                    data=data,
                 ),
                 status=HTTP_200_OK,
             )
@@ -204,10 +239,43 @@ class MyProtectedView(APIView):
             return Response(
                 Providers.JsonProviderBasic(
                     success=False,
-                    message="deneme asdasdasdasdasdasdasd D:",
+                    message="User not found",
                 ),
-                status=HTTP_200_OK,
+                status=status.HTTP_404_NOT_FOUND,
             )
+
+
+class UpdateProfilePictureView(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def put(self, request, pk):
+        try:
+            user = User.objects.get(pk=pk)
+        except User.DoesNotExist:
+            return Response(
+                {"error": "User not found"}, status=status.HTTP_404_NOT_FOUND
+            )
+
+        picture_url = request.data.get("picture_url")
+
+        if not picture_url:
+            return Response(
+                {"error": "Picture URL is required"}, status=status.HTTP_400_BAD_REQUEST
+            )
+
+        user.profile_picture = picture_url
+        user.save()
+
+        serializer = UserSerializer(user)
+
+        return Response(
+            Providers.JsonProviderBasic(
+                success="True",
+                message="User registeration successfull",
+            ),
+            status=HTTP_200_OK,
+        )
 
 
 # ====================================================================
@@ -223,11 +291,6 @@ class UserLogoutAPIView(APIView):
             Providers.JsonProviderBasic(True, message="success logout"),
             status=HTTP_200_OK,
         )
-        # else:
-        #     return Response(
-        #         Providers.JsonProviderBasic(False, message="fail logout"),
-        #         status=HTTP_400_BAD_REQUEST,
-        # )
 
 
 @method_decorator(csrf_exempt, name="dispatch")
@@ -337,6 +400,9 @@ class QueryUserData(APIView):
     permission_classes = [AllowAny]
 
     def get(self, request):
+        print("*" * 50)
+        print(request.user)
+        print("*" * 50)
         if request.user.is_authenticated:
             try:
                 user = User.objects.get(username=request.user.username)

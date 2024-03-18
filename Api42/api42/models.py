@@ -1,9 +1,12 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from django.conf import settings
+import PIL
 
 
 class User(AbstractUser):
+
     username = models.CharField(
         _("username"),
         max_length=150,
@@ -35,3 +38,7 @@ class User(AbstractUser):
             "Required. 250 characters or fewer. Letters, digits and @/./+/-/_ only."
         ),
     )
+    profile_picture = models.ImageField(
+        _("profile picture"),
+        upload_to="media/images/",
+        default="media/images/tyler.png")

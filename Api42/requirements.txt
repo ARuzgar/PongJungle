@@ -5,3 +5,4 @@ djangorestframework-simplejwt
 requests
 uvicorn
 serializers
+Pillow

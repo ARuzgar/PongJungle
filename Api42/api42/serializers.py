@@ -1,5 +1,4 @@
 from rest_framework import serializers
-# from django.contrib.auth.models import User
 from .models import User
 
 
@@ -8,9 +7,10 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = ("username", "password", "email", "fullname")
         extra_kwargs = {
+            "username": {"write_only": True},
             "password": {"write_only": True},
             "email": {"required": True},
-            "fullname": {"required": True}
+            "fullname": {"required": True},
         }
 
     def validate_email(self, value):

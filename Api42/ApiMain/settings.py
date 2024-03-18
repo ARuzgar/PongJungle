@@ -95,6 +95,8 @@ WSGI_APPLICATION = "ApiMain.wsgi.application"
 #     }
 # }
 
+
+
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
@@ -139,6 +141,8 @@ USE_TZ = True
 
 USE_L10N = True
 
+
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
@@ -152,6 +156,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 AUTH_USER_MODEL = "api42.User"
 
+USE_X_FORWARDED_HOST = True
 
 # JWT SECTION
 

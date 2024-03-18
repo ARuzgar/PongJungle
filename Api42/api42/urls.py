@@ -9,8 +9,7 @@ urlpatterns = [
     path('signupa/', CustomAuthToken.as_view(), name='signupa'),
     path('ft_api/', AuthView.as_view(), name='apiStart'),
     path('logout/', UserLogoutAPIView.as_view(), name='logout'),
-    path('query/', QueryUserData.as_view(), name='query'),
     path('newlogin/', UserLoginView.as_view(), name='newlogin'),
     path('newsignup/', UserRegisterView.as_view(), name='newsignup'),
-    path('newdeneme/', MyProtectedView.as_view(), name='newdeneme'),
+    path('query/user/', UserInfoQuery.as_view(), name='query_user'),
 ]
