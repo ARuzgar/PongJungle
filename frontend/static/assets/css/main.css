@@ -484,7 +484,30 @@ input, select, textarea {
 	textarea {
 		padding: 0.75rem 1rem;
 	}
-
+	input[type="file"] {
+		width: 100%;
+		height: 2.75rem;
+		display: inline-block;
+		padding: 0 1rem 0 0;
+		font-size: 1rem;
+		color: #ffffff;
+		background-color: #2b2f317a;
+		border: 1px solid transparent;
+		border-radius: 4px;
+		cursor: pointer;
+	  }
+	  
+	  input[type="file"]:focus {
+		outline: none;
+		border-color: #fff;
+	  }
+	  
+	  input[type="file"]::file-selector-button {
+		color: black;
+		background-color: #fff;
+		padding: 0.5rem 1rem;
+		border-radius: 4px;
+	  }
 	input[type="checkbox"],
 	input[type="radio"] {
 		-moz-appearance: none;
@@ -893,6 +916,7 @@ input, select, textarea {
 						}
 
 		}
+		
 
 /* Icons */
 

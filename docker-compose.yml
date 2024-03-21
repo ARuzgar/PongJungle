@@ -8,6 +8,8 @@ services:
   api42:
     container_name: api42
     build: ./Api42
+    entrypoint: /entrypoint.sh
+    command: uvicorn ApiMain.asgi:application --host 0.0.0.0 --port 8080 --reload
     environment:
       - POSTGRES_PASSWORD_API=${POSTGRES_PASSWORD_API}
       - POSTGRES_USER_API=${POSTGRES_USER_API}
@@ -15,7 +17,6 @@ services:
       - POSTGRES_HOST_API=${POSTGRES_HOST_API}
       - JWT_SIGNKEY=${JWT_SIGNKEY}
       - POSTGRES_PORT_API=${POSTGRES_PORT_API}
-    command: uvicorn ApiMain.asgi:application --host 0.0.0.0 --port 8080 --reload
     volumes:
       - ./Api42:/code
       - ./images:/code/images
@@ -27,9 +28,10 @@ services:
       - dbapi42
 
   backend:
-    build: ./Backend
-    command: uvicorn Backend.asgi:application --host 0.0.0.0 --port 9191 --reload
     container_name: backend
+    build: ./Backend
+    entrypoint: /entrypoint.sh
+    command: uvicorn Backend.asgi:application --host 0.0.0.0 --port 9191 --reload
     environment:
       - POSTGRES_PASSWORD_BACKEND=${POSTGRES_PASSWORD_BACKEND}
       - POSTGRES_USER_BACKEND=${POSTGRES_USER_BACKEND}

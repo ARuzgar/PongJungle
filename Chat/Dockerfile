@@ -22,3 +22,4 @@ COPY . .
 
 # Uygulama için gerekli portu aç
 EXPOSE 9090
+

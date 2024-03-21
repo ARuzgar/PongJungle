@@ -1,7 +1,13 @@
-all: clean re
+all: clean cloudfree down build up
 
 cloudfree:
 	sh cloudflare_cache_clear.sh
+
+login_api42:
+	sudo docker exec -it dbapi42 bash -c "psql -h dbapi42 -U api -d apiusers"
+
+login_backend:
+	sudo docker exec -it dbbackend bash -c "psql -h dbbackend -U user1 -d backend"
 
 clean:
 	clear
@@ -20,8 +26,6 @@ down:
 
 ps:
 	sudo docker compose ps
-
-re: cloudfree down build up
 
 logs:
 	sudo docker compose logs -f

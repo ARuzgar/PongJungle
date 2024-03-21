@@ -1,6 +1,4 @@
 $(document).ready(function () {
-    var $canvas = $("#gameCanvas");
-    var $parent = document.getElementById("pongParent");
     const canvas = document.getElementById('gameCanvas');
     const ctx = canvas.getContext('2d');
     const text = "Press 'Enter' to Start";
@@ -10,17 +8,21 @@ $(document).ready(function () {
     canvas.width = Math.floor(600 * scale); 
     canvas.height = Math.floor(400 * scale); 
 
-    ctx.font = '50px Source Sans Pro';
-    ctx.fillStyle = 'white';
-    ctx.imageSmoothingQuality = 'high'; // Pürüzsüz çizim kalitesi
-    const textWidth = ctx.measureText(text).width;
-    const textHeight = ctx.measureText(text).height;
-    const x = (canvas.width - textWidth) / 2;
-    const y = 50; // Ortalamak için hesaplanmış y değeri
-    
-    ctx.fillText(text, x, y);
+    writeText(canvas,ctx,text);
     
 });
+function writeText(canvas,ctx,text){
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    ctx.font = '50px Source Sans Pro';
+    ctx.fillStyle = 'white';
+    ctx.imageSmoothingQuality = 'high';
+    const textWidth = ctx.measureText(text).width;
+    const x = (canvas.width - textWidth) / 2;
+    const y = 50;
+    
+    ctx.fillText(text, x, y);
+}
 function pong(){
     const canvas = document.getElementById('gameCanvas');
     const ctx = canvas.getContext('2d');
@@ -39,10 +41,11 @@ function pong(){
     let ballY = canvas.height / 2;
     let ballSpeedX = 3;
     let ballSpeedY = 3;
+    let gameEnded = false;
     
 
 
-    window.draw=function() {
+    function draw() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         // Draw paddles
@@ -86,13 +89,31 @@ function pong(){
         requestAnimationFrame(draw);
     }
 
-    window.updateScore=function (player) {
+    function updateScore(player) {
+        if (gameEnded) {
+            return; // Oyun zaten bitmişse skor güncellemelerini engelle
+        }
+    
         if (player === 1) {
             player1Score++;
             scoreElement1.textContent = player1Score;
         } else {
             player2Score++;
             scoreElement2.textContent = player2Score;
+        }
+    
+        if (player1Score === 10 || player2Score === 10) {
+            gameEnded = true;
+            endGame();
+        }
+    }
+
+    function endGame() {
+        // Oyun bittiğinde yapılacak işlemler
+        if (player1Score === 10) {
+            writeText(canvas,ctx,"Player 1 won!");
+        } else {
+            writeText(canvas,ctx,"Player 2 won!");
         }
     }
 
@@ -105,29 +126,28 @@ function pong(){
                 event.preventDefault();
                 break;
         }
-        switch(event.key) {
-            case 'w':
-                if(paddle1Y - paddleHeight / 2 > 0)
-                    paddle1Y -= paddleSpeed;
-                break;
-            case 's':
-                if(paddle1Y + (paddleHeight / 2 + 30) < canvas.height)
-                    paddle1Y += paddleSpeed;
-                break;
-            case 'ArrowUp':
-                if(paddle2Y - paddleHeight / 2 > 0)
-                    paddle2Y -= paddleSpeed;
-                break;
-            case 'ArrowDown':
-                if(paddle2Y + (paddleHeight / 2 + 30) < canvas.height)
-                    paddle2Y += paddleSpeed;
-                break;
-            case 'Enter':
-                draw();
-                break;
-            case 'Escape':
-                cancelAnimationFrame(window.draw);
-                break;
+        if (event.key === 'w') {
+            if (paddle1Y - paddleHeight / 2 > 0) {
+                paddle1Y -= paddleSpeed;
+            }
+        } else if (event.key === 's') {
+            if (paddle1Y + (paddleHeight / 2 + 30) < canvas.height) {
+                paddle1Y += paddleSpeed;
+            }
+        } if (event.key === 'ArrowUp') {
+            if (paddle2Y - paddleHeight / 2 > 0) {
+                paddle2Y -= paddleSpeed;
+            }
+        } else if (event.key === 'ArrowDown') {
+            if (paddle2Y + (paddleHeight / 2 + 30) < canvas.height) {
+                paddle2Y += paddleSpeed;
+            }
+        } else if (event.key === 'Enter') {
+            draw();
+        } else if (event.key === 'Escape') {
+            cancelAnimationFrame(window.draw);
         }
+        
     });
 }
+

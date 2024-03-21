@@ -93,7 +93,7 @@ $('#signupForm').on('submit', function (e) {
         email: document.getElementById('emailRegister').value,
         password: document.getElementById('passwordRegister').value
     };
-    fetch('https://peng.com.tr/api42/auth/newsignup/', {
+    fetch('https://peng.com.tr/api42/auth/signup/', {
     method: 'POST',
     headers: {
         'Content-Type': 'application/json'
@@ -102,14 +102,15 @@ $('#signupForm').on('submit', function (e) {
     })
     .then(response => {
     if (response.ok) {
-        return response.json();
+		return response.json();
     } else {
         throw new Error('register failed');
     }
     })
     .then(data => {
     // Gelen veriyi kontrol et
-    if (data && data.message) {
+    if (data) {
+		console.log(data);
 		document.getElementById("loginSwitch").click();
 		$('#signupForm').reset();
     } else {
@@ -129,7 +130,7 @@ $('#loginForm').on('submit', function (e) {
         username: document.getElementById('usernameLogin').value,
         password: document.getElementById('passwordLogin').value
     };
-    fetch('https://peng.com.tr/api42/auth/newlogin/', {
+    fetch('https://peng.com.tr/api42/auth/login/', {
     method: 'POST',
     headers: {
         'Content-Type': 'application/json'
@@ -189,42 +190,65 @@ $("#logOut").on('click',function(e){
 //Profile Update
 $('#profileSettingForm').on('submit', function (e) {
     e.preventDefault();
-    const token = JSON.parse(localStorage.getItem('activeUser').token);
-    checkImage();
+    const token = JSON.parse(localStorage.getItem('activeUser')).token;
+	console.log(token);
 
-    const fileInput = document.getElementById('profilePicture');
-    const file = fileInput.files[0];
-    const maxDimension = 200;
+    const fileInput = document.getElementById('profilePictureSetting');
+	if(fileInput.files.length > 0){
+		checkImage();
 
-    const img = new Image();
-    img.src = URL.createObjectURL(file);
-    img.onload = function() {
-        let width = this.width;
-        let height = this.height;
+		const file = fileInput.files[0];
+		const maxDimension = 200;
 
-        let canvas = document.createElement('canvas');
-        let ctx = canvas.getContext('2d');
+    	const img = new Image();
+    	img.src = URL.createObjectURL(file);
+    	img.onload = function() {
+    	    let width = this.width;
+    	    let height = this.height;
 
-        if (width !== height) {
-            if (width > height) {
-                let offsetX = (width - height) / 2;
-                ctx.drawImage(this, offsetX, 0, height, height, 0, 0, maxDimension, maxDimension);
-            } else {
-                let offsetY = (height - width) / 2;
-                ctx.drawImage(this, 0, offsetY, width, width, 0, 0, maxDimension, maxDimension);
-            }
-        } else {
-            ctx.drawImage(this, 0, 0, maxDimension, maxDimension);
-        }
+    	    let canvas = document.createElement('canvas');
+    	    let ctx = canvas.getContext('2d');
 
-        canvas.toBlob((blob) => {
-            const formData = new FormData();
-            formData.append('profilePicture', blob);
-            formData.append('username', document.getElementById('usernameSetting').value);
-            formData.append('email', document.getElementById('emailSetting').value);
-            formData.append('password', document.getElementById('passwordSetting').value);
+    	    if (width !== height) {
+				if (width > height) {
+					let offsetX = (width - height) / 2;
+					ctx.drawImage(this, offsetX, 0, height, height, 0, 0, maxDimension, maxDimension);
+				} else {
+					let offsetY = (height - width) / 2;
+					ctx.drawImage(this, 0, offsetY, width, width, 0, 0, maxDimension, maxDimension);
+				}
+			} else {
+				let offset = (width - maxDimension) / 2;
+				ctx.drawImage(this, offset, offset, maxDimension, maxDimension, 0, 0, maxDimension, maxDimension);
+			}
 
-            fetch('https://peng.com.tr/api42/auth/updateUser/', {
+    	    canvas.toBlob((blob) => {
+    	        const formData = new FormData();
+    	        formData.append('profile_picture', blob);
+				formData.append('type', file.type);
+    	        formData.append('fullname', document.getElementById('fullNameSetting').value);
+    	        formData.append('email', document.getElementById('emailSetting').value);
+    	        formData.append('password', document.getElementById('passwordSetting').value);
+
+    	        updateUserAPI(token,formData);
+    	    }, file.type);
+    	}
+	}
+	else{
+		const formData = new FormData();
+    	formData.append('profile_picture', "");
+		formData.append('type', "");
+    	formData.append('fullname', document.getElementById('fullNameSetting').value);
+    	formData.append('email', document.getElementById('emailSetting').value);
+    	formData.append('password', document.getElementById('passwordSetting').value);
+
+    	updateUserAPI(token,formData);
+	}
+	
+});
+
+function updateUserAPI(token,formData){
+	fetch('https://peng.com.tr/api42/auth/update/user/', {
                 method: 'PUT',
                 headers: {
                     'Authorization': 'Bearer ' + token
@@ -235,20 +259,17 @@ $('#profileSettingForm').on('submit', function (e) {
                 if (response.ok) {
                     return response.json();
                 } else {
-                    throw new Error('Network response was not ok.');
+                    throw new Error(data.message);
                 }
             })
             .then(data => {
                 console.log(data);
-                alert('User information updated successfully!');
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert('An error occurred while updating user information.');
+                console.log('message:', message);
             });
-        }, file.type);
-    }
-});
+}
 //Get User İnfo
 async function getUserInfo() {
     const activeUserData = JSON.parse(localStorage.getItem('activeUser'));
@@ -285,12 +306,14 @@ async function loginSuccess(token){
 	}
 	localStorage['activeUser'] = JSON.stringify(data);
 	const user=await getUserInfo();
-	console.log("~/repo/Api42/"+user.profile_picture);
+	console.log(user);
 	login_menu=document.getElementById("menuLogin");
+	Profile_picture=document.getElementById("profilePicture");
 	profile_name=document.getElementById("profileName");
 	if(login){
 		login_menu.innerHTML="<a href='#' onclick=\"openIntro('profile')\">Profile</a>"
 		profile_name.innerHTML=user.username;
+		Profile_picture.src="/static/pofiles/image/"+user.profile_picture;
 	}
 
 }
@@ -500,14 +523,15 @@ function openIntro(block) {
 }
 
 function checkImage(){
-	const fileInput = document.getElementById('profilePicture');
-    const profilePicture = fileInput.files[0];
+	const fileInput = document.getElementById('profilePictureSetting');
+    
 
-    if (!profilePicture) {
+    if (!fileInput.files) {
         alert('Lütfen bir dosya seçin.');
         return;
     }
-
+	
+	const profilePicture = fileInput.files[0];
     const imageType = /image.*/;
 
     if (!profilePicture.type.match(imageType)) {

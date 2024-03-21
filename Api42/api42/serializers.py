@@ -1,3 +1,4 @@
+from django.contrib.auth.hashers import make_password
 from rest_framework import serializers
 from .models import User
 
@@ -5,11 +6,10 @@ from .models import User
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ("username", "password", "email", "fullname")
+        fields = ("username", "password", "email", "fullname", "profile_picture", "ft_api_registered")
         extra_kwargs = {
             "username": {"write_only": True},
             "password": {"write_only": True},
-            "email": {"required": True},
             "fullname": {"required": True},
         }
 

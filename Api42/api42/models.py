@@ -11,6 +11,7 @@ class User(AbstractUser):
         _("username"),
         max_length=150,
         unique=True,
+        blank=False,
         help_text=_(
             "Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only."
         ),
@@ -18,9 +19,10 @@ class User(AbstractUser):
             "unique": _("A user with that username already exists."),
         },
     )
-    email = models.EmailField(
+    email = models.CharField(
         _("email address"),
-        unique=True,
+        max_length=128,
+        unique=False,
         blank=False,
         error_messages={
             "unique": _("A user with that email already exists."),
@@ -29,7 +31,7 @@ class User(AbstractUser):
     password = models.CharField(
         _("password"),
         max_length=128,
-        blank=False,
+        blank=True,
     )
     fullname = models.CharField(
         _("fullname"),
@@ -38,7 +40,13 @@ class User(AbstractUser):
             "Required. 250 characters or fewer. Letters, digits and @/./+/-/_ only."
         ),
     )
-    profile_picture = models.ImageField(
+    profile_picture = models.CharField(
         _("profile picture"),
-        upload_to="media/images/",
-        default="media/images/tyler.png")
+        max_length=300,
+        default="Default Profile Picture.jpg"
+    )
+    ft_api_registered = models.BooleanField(
+        _("ft_api_registered"),
+        blank=False,
+        default=False,
+	)

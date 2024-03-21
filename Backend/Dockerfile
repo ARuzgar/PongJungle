@@ -8,8 +8,10 @@ ENV PYTHONUNBUFFERED=1 \
 # Çalışma dizinini oluştur
 WORKDIR /code
 
-# PostgreSQL client'ı kur
-RUN apt-get update && apt-get install -y postgresql-client
+# PostgreSQL client'ı (pg_isready için) ve diğer bağımlılıkları yükle
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends postgresql-client && \
+    rm -rf /var/lib/apt/lists/*
 
 # Bağımlılıkları kur
 COPY requirements.txt .
@@ -21,7 +23,13 @@ RUN pip install --upgrade pip && \
 COPY . .
 
 # Veritabanı migrasyonlarını yap
-#RUN python3 manage.py makemigrations
+RUN python3 manage.py makemigrations
 
 # Uygulama için gerekli portu aç
 EXPOSE 9191
+
+COPY entrypoint.sh /entrypoint.sh
+
+RUN chmod +x /entrypoint.sh
+
+ENTRYPOINT ["/entrypoint.sh"]
