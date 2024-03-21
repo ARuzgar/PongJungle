@@ -105,13 +105,10 @@ function cloudFlareCacheClear(){
 	})
 	.then(response => {
 	  if (response.ok) {
-	    console.log('Tüm cache temizleme işlemi başarılı!');
 	  } else {
-	    console.error('Tüm cache temizleme işlemi başarısız!');
 	  }
 	})
 	.catch(error => {
-	  console.error('Hata oluştu:', error);
 	});
 }
 
