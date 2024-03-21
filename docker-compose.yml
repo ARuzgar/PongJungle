@@ -30,8 +30,8 @@ services:
   backend:
     container_name: backend
     build: ./Backend
-    entrypoint: /entrypoint.sh
     command: uvicorn Backend.asgi:application --host 0.0.0.0 --port 9191 --reload
+    entrypoint: /entrypoint.sh
     environment:
       - POSTGRES_PASSWORD_BACKEND=${POSTGRES_PASSWORD_BACKEND}
       - POSTGRES_USER_BACKEND=${POSTGRES_USER_BACKEND}
@@ -47,23 +47,17 @@ services:
     networks:
       - nw
 
-  chat:
-    build: ./Chat
-    container_name: chat
-    command: uvicorn Chat.asgi:application --host 0.0.0.0 --port 9090 --reload
-    volumes:
-      - ./Chat:/code
-      - /etc/letsencrypt/ssl/fullchain.pem:/etc/nginx/ssl/fullchain.pem
-      - /etc/letsencrypt/ssl/privkey.pem:/etc/nginx/ssl/privkey.pem
-    ports:
-      - "9090:9090"
-    networks:
-      - nw
-
   game:
     build: ./Game
     container_name: game
     command: uvicorn Game.asgi:application --host 0.0.0.0 --port 5050 --reload
+    entrypoint: /entrypoint.sh
+    environment:
+      - POSTGRES_PASSWORD_GAME=${POSTGRES_PASSWORD_GAME}
+      - POSTGRES_USER_GAME=${POSTGRES_USER_GAME}
+      - POSTGRES_DB_GAME=${POSTGRES_DB_GAME}
+      - POSTGRES_HOST_GAME=${POSTGRES_HOST_GAME}
+      - POSTGRES_PORT_GAME=${POSTGRES_PORT_GAME}
     volumes:
       - ./Game:/code
       - /etc/letsencrypt/ssl/fullchain.pem:/etc/nginx/ssl/fullchain.pem
@@ -72,6 +66,8 @@ services:
       - "5050:5050"
     networks:
       - nw
+    depends_on:
+      - dbgame
 
   nginx:
     build: ./frontend
@@ -86,7 +82,6 @@ services:
       - /etc/letsencrypt/ssl/fullchain.pem:/etc/nginx/ssl/fullchain.pem
       - /etc/letsencrypt/ssl/privkey.pem:/etc/nginx/ssl/privkey.pem
     depends_on:
-      - chat
       - backend
       - game
     networks:
@@ -124,6 +119,23 @@ services:
     networks:
       - nw
 
+  dbgame:
+    image: postgres:latest
+    container_name: dbgame
+    environment:
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD_GAME}
+      - POSTGRES_USER=${POSTGRES_USER_GAME}
+      - POSTGRES_DB=${POSTGRES_DB_GAME}
+    volumes:
+      - ./init/init-game:/docker-entrypoint-initdb.d
+      - postgres_data_game:/var/lib/postgresql/data
+      - ./postgres/postgresql_game/postgresql.conf:/etc/postgresql/postgresql.conf
+    ports:
+      - "5431:5432"
+    networks:
+      - nw
+
 volumes:
   postgres_data_backend:
   postgres_data_api42:
+  postgres_data_game:

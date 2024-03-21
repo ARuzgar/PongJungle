@@ -32,7 +32,10 @@ $(document).ready(function () {
 	$("#login42").on('click',function(e){
 		window.location.href="https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-272a7d972a922c63919b4411aff1da6abf64ec93eb38804b51427a0c0fbf86ea&redirect_uri=https%3A%2F%2Fpeng.com.tr%2Flogin%2F&response_type=code";
 	});
-	
+	$("#searchUser").on('click',function(e){
+		var activeUser = localStorage['activeUser'];
+		SearchUser(JSON.parse(activeUser)["token"]);
+	})
 	
 
 
@@ -113,6 +116,119 @@ function cloudFlareCacheClear(){
 }
 
 //apies
+
+//Friend add
+
+function addFriend(token){
+	var data = {
+		"friend_username":"anargul"
+	};
+	fetch('https://peng.com.tr/api42/auth/friend/add/', {
+                method: 'POST',
+                headers: {
+                    'Authorization': 'Bearer ' + token,
+					'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data),
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    throw new Error(data.message);
+                }
+            })
+            .then(data => {
+				console.log(data);
+				listFriend(token);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+}
+// List Friend
+
+function listFriend(token){
+	fetch('https://peng.com.tr/api42/auth/friend/list/', {
+        method: 'GET',
+        headers: {
+            'Authorization': 'Bearer ' + token,
+			'Content-Type': 'application/json'
+        },
+    })
+    .then(response => {
+        if (response.ok) {
+            return response.json();
+        } else {
+            throw new Error(data.message);
+        }
+    })
+    .then(data => {
+		console.log(data);
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+}
+
+//Search User
+
+// function SearchUser(token){
+// 	//addFriend(JSON.parse(activeUser)["token"]);
+
+// 	var data = {
+// 		"query":document.getElementById("searchUserText").value
+// 	}
+// 	fetch('https://peng.com.tr/api42/auth/search/user/', {
+//         method: 'GET',
+//         headers: {
+//             'Authorization': 'Bearer ' + token,
+// 			'Content-Type': 'application/json',
+// 			"query":document.getElementById("searchUserText").value
+//         },
+// 		//body : JSON.stringify(data),
+//     })
+//     .then(response => {
+//         if (response.ok) {
+//             return response.json();
+//         } else {
+//             throw new Error(data.message);
+//         }
+//     })
+//     .then(data => {
+// 		console.log(data);
+//     })
+//     .catch(error => {
+//         console.error('Error:', error);
+//     });
+// }
+
+function SearchUser(token) {
+    var queryValue = document.getElementById("searchUserText").value;
+    var url = 'https://peng.com.tr/api42/auth/search/user/?query=' + encodeURIComponent(queryValue);
+
+    fetch(url, {
+        method: 'GET',
+        headers: {
+            'Authorization': 'Bearer ' + token,
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => {
+        if (response.ok) {
+            return response.json();
+        } else {
+            throw new Error('Failed to fetch');
+        }
+    })
+    .then(data => {
+        console.log(data);
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+}
+
 //42 Auth
 
 function auth42API(code){

@@ -1,5 +1,8 @@
 all: clean cloudfree down build up
 
+prune:
+	sudo docker system prune -a -f
+
 cloudfree:
 	sh cloudflare_cache_clear.sh
 
@@ -9,8 +12,11 @@ login_api42:
 login_dbapi42:
 	sudo docker exec -it dbapi42 bash -c "psql -h dbapi42 -U api -d apiusers"
 
-login_backend:
+login_dbbackend:
 	sudo docker exec -it dbbackend bash -c "psql -h dbbackend -U user1 -d backend"
+
+login_dbgame:
+	sudo docker exec -it dbgame bash -c "psql -h dbgame -U gameuser -d game"
 
 clean:
 	clear

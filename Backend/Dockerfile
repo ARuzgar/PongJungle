@@ -22,9 +22,6 @@ RUN pip install --upgrade pip && \
 # Uygulama kodunu kopyala
 COPY . .
 
-# Veritabanı migrasyonlarını yap
-RUN python3 manage.py makemigrations
-
 # Uygulama için gerekli portu aç
 EXPOSE 9191
 

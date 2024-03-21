@@ -18,8 +18,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-RUN python3 manage.py makemigrations
-
 EXPOSE 8080
 
 COPY entrypoint.sh /entrypoint.sh

@@ -1,12 +1,21 @@
 from django.contrib.auth.hashers import make_password
 from rest_framework import serializers
 from .models import User
+from .models import Friendship
 
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ("username", "password", "email", "fullname", "profile_picture", "ft_api_registered")
+        fields = (
+            "username",
+            "password",
+            "email",
+            "fullname",
+            "profile_picture",
+            "ft_api_registered",
+            "online_status",
+        )
         extra_kwargs = {
             "username": {"write_only": True},
             "password": {"write_only": True},
@@ -26,7 +35,15 @@ class UserSerializer(serializers.ModelSerializer):
 class UserUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ("username", "password", "email", "fullname", "profile_picture", "ft_api_registered")
+        fields = (
+            "username",
+            "password",
+            "email",
+            "fullname",
+            "profile_picture",
+            "ft_api_registered",
+            "online_status",
+        )
         extra_kwargs = {
             "username": {"required": False},
             "password": {"required": False},
@@ -34,6 +51,7 @@ class UserUpdateSerializer(serializers.ModelSerializer):
             "email": {"required": False},
             "profile_picture": {"required": False},
             "ft_api_registered": {"required": False},
+            "online_status": {"required": False},
         }
 
     def validate_email(self, value):
@@ -42,8 +60,38 @@ class UserUpdateSerializer(serializers.ModelSerializer):
         return value
 
     def create(self, validated_data):
-        password = validated_data.get('password')
+        password = validated_data.get("password")
         if password is not None:  # Şifre değişikliği istenmişse
-            validated_data['password'] = make_password(password)
+            validated_data["password"] = make_password(password)
         user = User.objects.create_user(**validated_data)
         return user
+
+
+# ============================= FRIENDSHIP SERIALIZERS =============================
+
+
+class FriendshipSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Friendship
+        fields = "__all__"
+
+
+class AddFriendSerializer(serializers.Serializer):
+    friend_username = serializers.CharField()
+
+
+class CheckFriendshipSerializer(serializers.Serializer):
+    friend_username = serializers.CharField()
+
+
+class FriendSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = (
+            "username",
+            "email",
+            "fullname",
+            "profile_picture",
+            "ft_api_registered",
+            "online_status",
+        )

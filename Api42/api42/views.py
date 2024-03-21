@@ -1,38 +1,20 @@
 from rest_framework_simplejwt.authentication import JWTAuthentication
-from rest_framework.authtoken.models import Token
 from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authentication import SessionAuthentication
 from django.views.decorators.csrf import csrf_exempt
-from django.contrib.auth.models import AbstractUser
-from django.contrib.auth.models import AbstractBaseUser
+from django.contrib.auth.hashers import make_password
 from rest_framework.permissions import IsAuthenticated
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from rest_framework.serializers import *
 from rest_framework.permissions import AllowAny
-from rest_framework.exceptions import NotFound
-from rest_framework.renderers import JSONRenderer
 from django.utils.decorators import method_decorator
 from rest_framework.response import Response
-from django.core.files.base import ContentFile
-from rest_framework.status import HTTP_400_BAD_REQUEST
-from rest_framework.status import HTTP_200_OK
 from rest_framework.views import APIView
 from django.contrib.auth import authenticate
-from django.contrib.auth import logout
-from django.contrib.auth import login
-from django.shortcuts import redirect
+from django.db.models import Q
 from rest_framework import status
-from django.views import View
 from .serializers import *
-from urllib.parse import urlparse, parse_qs
-from django.http import HttpResponseRedirect, HttpResponse
-from django.http import JsonResponse
-from django.urls import reverse
-import requests, os, base64, time
-import json
-from django.contrib.auth.hashers import make_password
+import requests, os
 
 
 UID = "u-s4t2ud-272a7d972a922c63919b4411aff1da6abf64ec93eb38804b51427a0c0fbf86ea"
@@ -103,7 +85,7 @@ class UserFtRegisterView(APIView):
                         success="False",
                         message="42 API failed1",
                     ),
-                    status=HTTP_400_BAD_REQUEST,
+                    status=status.HTTP_400_BAD_REQUEST,
                 )
             user = User.objects.filter(username=ft_user_informations["login"]).first()
             if user is None:  # user kayitli degilse
@@ -115,6 +97,7 @@ class UserFtRegisterView(APIView):
                     "fullname": ft_user_informations["usual_full_name"],
                     "profile_picture": ft_user_informations["image"]["link"],
                     "ft_api_registered": "True",
+                    "online_status": "True",
                 }
                 serializer = self.serializer_class(data=data)
                 if serializer.is_valid():
@@ -133,7 +116,7 @@ class UserFtRegisterView(APIView):
                             message="User registeration successfull",
                             data=new_data,
                         ),
-                        status=HTTP_200_OK,
+                        status=status.HTTP_200_OK,
                     )
                 else:
                     print("Validation errors:", serializer.error_messages)
@@ -165,7 +148,7 @@ class UserFtRegisterView(APIView):
                 success="False",
                 message="42 API failed",
             ),
-            status=HTTP_400_BAD_REQUEST,
+            status=status.HTTP_400_BAD_REQUEST,
         )
 
 
@@ -182,7 +165,7 @@ class UserRegisterView(APIView):
                     success="True",
                     message="User registeration successfull",
                 ),
-                status=HTTP_200_OK,
+                status=status.HTTP_200_OK,
             )
         else:
             print("Validation errors:", serializer.error_messages)
@@ -191,7 +174,7 @@ class UserRegisterView(APIView):
                     success="False",
                     message=serializer.error_messages,
                 ),
-                status=HTTP_400_BAD_REQUEST,
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
 
@@ -208,7 +191,7 @@ class UserLoginView(APIView):
                     success=False,
                     message="User informations missing",
                 ),
-                status=HTTP_400_BAD_REQUEST,
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
         user = User.objects.filter(username=username).first()
@@ -230,7 +213,7 @@ class UserLoginView(APIView):
                         message="User login successfull",
                         data=data,
                     ),
-                    status=HTTP_200_OK,
+                    status=status.HTTP_200_OK,
                 )
             else:
                 print("user login fail")
@@ -239,7 +222,7 @@ class UserLoginView(APIView):
                         success=False,
                         message="User login fail",
                     ),
-                    status=HTTP_400_BAD_REQUEST,
+                    status=status.HTTP_400_BAD_REQUEST,
                 )
         else:
             print("user not found")
@@ -248,7 +231,7 @@ class UserLoginView(APIView):
                     success=False,
                     message="User not found",
                 ),
-                status=HTTP_400_BAD_REQUEST,
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
 
@@ -272,7 +255,7 @@ class UserInfoQuery(APIView):
                     message="User informations taken",
                     data=data,
                 ),
-                status=HTTP_200_OK,
+                status=status.HTTP_200_OK,
             )
         else:
             return Response(
@@ -290,9 +273,6 @@ class UserUpdateView(APIView):
 
     def save_image_to_path(self, image_data, image_path):
         if os.path.exists(image_path):
-            print("#" * 20)
-            print("image bulundu")
-            print("#" * 20)
             os.remove(image_path)
         with open(image_path, "wb") as file:
             for (
@@ -322,8 +302,11 @@ class UserUpdateView(APIView):
         type = req_data["type"]
         del req_data["type"]
         if user is not None:
-            if req_data['password'] != '' and make_password(req_data['password']) != user.password:
-                req_data.update({'password':make_password(req_data['password'])})
+            if (
+                req_data["password"] != ""
+                and make_password(req_data["password"]) != user.password
+            ):
+                req_data.update({"password": make_password(req_data["password"])})
             if type != "":
                 image_data = req_data["profile_picture"]
                 image_type = type
@@ -370,14 +353,124 @@ class UserLogoutAPIView(APIView):
     authentication_classes = [SessionAuthentication]
 
     def post(self, request):
+        user = request.user
+        user.online_status = False
         return Response(
             Providers.JsonProviderBasic(True, message="success logout"),
-            status=HTTP_200_OK,
+            status=status.HTTP_200_OK,
         )
 
 
-class AuthView(View):
+# =========================== FRIENDSHIP APIs ===========================
+
+
+class AddFriendAPIView(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        user = User.objects.get(username=request.user.username)
+        friend_username = request.data.get("friend_username")
+        try:
+            friend = User.objects.get(username=friend_username)
+        except User.DoesNotExist:
+            return Response(
+                Providers.JsonProviderBasic(
+                    success=False,
+                    message="User not found",
+                ),
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        friendship = Friendship.objects.create(user1=user, user2=friend)
+
+        return Response(
+            Providers.JsonProviderBasic(
+                success=True,
+                message="Friendship done",
+            ),
+            status=status.HTTP_200_OK,
+        )
+
+
+class UserSearchAPIView(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
     def get(self, request):
-        return redirect(
-            "https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-272a7d972a922c63919b4411aff1da6abf64ec93eb38804b51427a0c0fbf86ea&redirect_uri=https%3A%2F%2Fpeng.com.tr%2Flogin%2F&response_type=code"
+        query = request.GET.get('query', 's')
+        print('query', query)
+        if query:
+            users = User.objects.filter(username__icontains=query)
+            serializer = UserSerializer(users, many=True)
+            return Response(
+                Providers.JsonProviderBasic(
+                    success=True,
+                    message="successfull search",
+                    data=serializer.data,
+                ),
+                status=status.HTTP_200_OK,
+            )
+        return Response(
+            Providers.JsonProviderBasic(
+                success=False,
+                message="failed search",
+            ),
+            status=status.HTTP_404_NOT_FOUND,
+        )
+
+
+class CheckFriendshipAPIView(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, friend_username):
+        user = request.user
+
+        # Arkadaşın kullanıcı adı ile kullanıcıyı bul
+        try:
+            friend = User.objects.get(username=friend_username)
+        except User.DoesNotExist:
+            return Response(
+                Providers.JsonProviderBasic(
+                    success=False,
+                    message="User not found",
+                ),
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        # Arkadaşlık ilişkisini kontrol et
+        is_friends = Friendship.objects.filter(
+            (Q(user1=user, user2=friend) | Q(user1=friend, user2=user))
+        ).exists()
+
+        return Response(
+            {"is_friends": is_friends}
+        )  # ===== == = = = = = = = == = = = = == = = = = == = = = = =
+
+
+class FriendListAPIView(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+
+        # Kullanıcının arkadaşlarını bul
+        friends = User.objects.filter(
+            id__in=Friendship.objects.filter(Q(user1=user) | Q(user2=user)).values_list(
+                "user2", flat=True
+            )
+        )
+
+        # Arkadaşların kullanıcı adlarını listele
+        friend_usernames = [friend.username for friend in friends]
+
+        return Response(
+            Providers.JsonProviderBasic(
+                success=True,
+                message="Successfull request",
+                data={"friend_list": friend_usernames},
+            ),
+            status=status.HTTP_200_OK,
         )

@@ -236,7 +236,7 @@
 										<li>Tournuments: 0/0</li>
 										<li>Matches: 0/0</li>
 										<li>Friends: 0</li>
-										<li><ul class="actions stacked"><button type="submit" class="button primary login">Add Friend</button></ul></li>
+										<li><ul class="actions stacked"><button type="submit" class="button primary login" id="addFriendButton">Add Friend</button></ul></li>
 										<li>
 											<ul class="actions stacked">
 											<li class="loginbuttons">
@@ -251,7 +251,51 @@
 								
 							</div>
 						</div>
+						<div class="modal fade" id="addFriendModal" tabindex="9" role="dialog" aria-labelledby="addFriendModalLabel" aria-hidden="true">
+							<div class="modal-dialog" role="document">
+							  <div class="modal-content">
+								<div class="modal-header">
+								  <h5 class="modal-title" id="addFriendModalLabel">Add Friend</h5>
+								  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+									<span aria-hidden="true">&times;</span>
+								  </button>
+								</div>
+								<div class="modal-body">
+								  <input id="searchUserText" type="text" class="form-control mb-2" placeholder="Arama...">
+								  <button id="searchUser" type="button" class="btn btn-primary mb-2">Ara</button>
+								  <table class="table">
+									<thead>
+									  <tr>
+										<th>Column 1</th>
+										<th>Column 2</th>
+									  </tr>
+									</thead>
+									<tbody>
+									  <tr>
+										<td>Data 1</td>
+										<td>Data 2</td>
+									  </tr>
+									</tbody>
+								  </table>
+								</div>
+							  </div>
+							</div>
+						  </div>
 					</article>
+					<script>
+						// "Add Friend" butonuna tıklandığında pop-up modal'i açma işlemi
+						const addFriendButton = document.querySelector('#addFriendButton');
+						addFriendButton.addEventListener('click', function() {
+						  $('#addFriendModal').modal('show');
+						  $('.modal-backdrop').remove();
+						});
+						
+						// Pop-up modal kapatılacakken
+						$('#addFriendModal').on('hidden.bs.modal', function (e) {
+						  // Modal kapatıldığında textbox içeriğini sıfırla
+						  $(this).find('input[type="text"]').val('');
+						});
+					</script>
 					<article id="profileSetting">
 						<div class="container">
 							<div class="row">

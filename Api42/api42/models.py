@@ -2,7 +2,6 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django.conf import settings
-import PIL
 
 
 class User(AbstractUser):
@@ -50,3 +49,15 @@ class User(AbstractUser):
         blank=False,
         default=False,
 	)
+    online_status = models.BooleanField(
+        _("online_status"),
+        blank=False,
+        default=False,
+    )
+
+
+class Friendship(models.Model):
+    user1 = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='friends')
+    user2 = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='friends_of')
+    created_at = models.DateTimeField(auto_now_add=True)
+    # Diğer alanlar eklenebilir, örneğin arkadaşlık durumu (onaylanmış, bekleyen vb.)

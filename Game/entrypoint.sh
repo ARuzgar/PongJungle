@@ -1,8 +1,8 @@
 #!/bin/sh
 
 # Veritabanının hazır olup olmadığını kontrol et
-until pg_isready -h ${POSTGRES_HOST_BACKEND} -p ${POSTGRES_PORT_BACKEND} -U ${POSTGRES_USER_BACKEND}; do
-  >&2 echo "Veritabanı Backend hazır değil - bekleniyor..."
+until pg_isready -h ${POSTGRES_HOST_GAME} -p ${POSTGRES_PORT_GAME} -U ${POSTGRES_USER_GAME}; do
+  >&2 echo "Veritabanı Game hazır değil - bekleniyor..."
   sleep 2
 done
 

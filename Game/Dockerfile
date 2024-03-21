@@ -3,19 +3,30 @@ FROM python:3.9-slim
 
 # Ortam değişkenlerini ayarla
 ENV PYTHONUNBUFFERED=1 \
-    PYTHONDONTWRITEBYTECODE=1
+	PYTHONDONTWRITEBYTECODE=1
 
-# Çalışma dizinini oluştur ve ayarla
+# Çalışma dizinini oluştur
 WORKDIR /code
 
-# Önce requirements.txt ve automation.sh dosyasını kopyala
-COPY requirements.txt ./
+# PostgreSQL client'ı (pg_isready için) ve diğer bağımlılıkları yükle
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends postgresql-client && \
+    rm -rf /var/lib/apt/lists/*
 
-# Bağımlılıkları kur ve automation.sh betiğini çalıştır
-RUN pip install --no-cache-dir -r requirements.txt 
+# Bağımlılıkları kur
+COPY requirements.txt .
+
+RUN pip install --upgrade pip && \
+	pip install --no-cache-dir -r requirements.txt
 
 # Uygulama kodunu kopyala
 COPY . .
 
 # Uygulama için gerekli portu aç
 EXPOSE 5050
+
+COPY entrypoint.sh /entrypoint.sh
+
+RUN chmod +x /entrypoint.sh
+
+ENTRYPOINT ["/entrypoint.sh"]
