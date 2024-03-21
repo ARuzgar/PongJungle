@@ -30,59 +30,14 @@ from urllib.parse import urlparse, parse_qs
 from django.http import HttpResponseRedirect, HttpResponse
 from django.http import JsonResponse
 from django.urls import reverse
-import requests, os, base64
+import requests, os, base64, time
 import json
 from django.contrib.auth.hashers import make_password
 
 
-
 UID = "u-s4t2ud-272a7d972a922c63919b4411aff1da6abf64ec93eb38804b51427a0c0fbf86ea"
 SECRET = "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"
-REDIRECT_URI = "https://peng.com.tr/backend/"
-
-
-
-
-# def get_access_token(code):
-#     url = "https://api.intra.42.fr/oauth/token"
-#     payload = {
-#         "grant_type": "authorization_code",
-#         "client_id": UID,
-#         "client_secret": SECRET,
-#         "code": code,
-#         "redirect_uri": REDIRECT_URI,
-#     }
-#     try:
-#         response = requests.post(url, data=payload)
-#         response.raise_for_status()
-#         return response.json().get("access_token")
-#     except requests.exceptions.RequestException as e:
-#         print(f"Failed to retrieve access token: {e}")
-#         return None
-
-
-# def get_user_info(access_token):
-#     url = "https://api.intra.42.fr/v2/me"
-#     headers = {"Authorization": f"Bearer {access_token}"}
-#     try:
-#         response = requests.get(url, headers=headers)
-#         response.raise_for_status()
-#         return response.json()
-#     except requests.exceptions.RequestException as e:
-#         print(f"Failed to retrieve user information: {e}") 
-#         return None
-
-
-# def getUserInfo(auth_code):
-#     access_token = get_access_token(auth_code)
-#     if access_token:
-#         user_info = get_user_info(access_token)
-#         if user_info:
-#             return user_info
-#         else:
-#             raise Exception("Failed to retrieve user information.")
-#     else:
-#         raise Exception("Failed to obtain access token.")
+REDIRECT_URI = "https://peng.com.tr/login/"
 
 
 class Providers:
@@ -112,122 +67,107 @@ class Providers:
 
 
 # =========================== NEW DRF APIs ===========================
-@method_decorator(csrf_exempt, name="dispatch")
-class FtLoginAuthView(APIView):
-    permission_classes = [AllowAny]
-    serializer_class = UserSerializer
-    authentication_classes = [SessionAuthentication]
 
-    def post(self, request, *args, **kwargs):
-        code = request.data.get("code")
-        if code:
-            user_info = getUserInfo(code)
-            if user_info and user_info["login"]:
-                var = user_info["login"]
-                existing_user = User.objects.filter(username=var).first()
-                data = {
-                    "username": user_info["login"],
-                    "password": "pass",
-                }
-                if existing_user:
-                    print("#" * 20)
-                    print("   existing user   ")
-                    print("#" * 20)
-                    login(request, existing_user)
-                    print("user authenticated?: ", request.user.is_authenticated)
-                    print("user activate?: ", request.user.is_active)
-                    return Response(
-                        Providers.JsonProviderBasic(
-                            True, data={"message": "logged in"}
-                        ),
-                        status=HTTP_200_OK,
-                    )
-                serializer = self.serializer_class(data=data)
-                if serializer.is_valid():
-                    serializer.save()
-                    print("#" * 20)
-                    print("  asdasd user   ")
-                    print("#" * 20)
-                    existing_user = User.objects.filter(username=var).first()
-                    login(request, request.user)
-                    print("user authenticated?: ", request.user.is_authenticated)
-                    print("user activate?: ", request.user.is_active)
-                    return Response(
-                        Providers.JsonProviderBasic(
-                            True, data={"message": "user registered"}
-                        ),
-                        status=HTTP_200_OK,
-                    )
-                return Response(
-                    Providers.JsonProviderBasic(
-                        False, error={"message": "serializer error"}
-                    ),
-                    status=HTTP_400_BAD_REQUEST,
-                )
-            else:
-                return Response(
-                    Providers.JsonProviderBasic(
-                        False, error={"message": "42 api error"}
-                    ),
-                    status=HTTP_400_BAD_REQUEST,
-                )
-                # After saving the user, make a POST request to UserLoginAPIView
-                # login_response = requests.post('http://peng.com.tr/api42/api/login', data={'username': data['username'], 'password': data['password']})
-                # if login_response.status_code == status.HTTP_200_OK:
-                #     return HttpResponseRedirect(reverse('root'))
-                # else:
-                #     return JsonResponse({'error': 'Failed to login after signup.'}, status=400)
-        return Response(
-            Providers.JsonProviderBasic(
-                False, error={"error": "Bad Request"}, status=HTTP_400_BAD_REQUEST
-            )
-        )
 
 class UserFtRegisterView(APIView):
-    
+    serializer_class = UserSerializer
+
     def getFtInformations(self, authentication_code):
-        access_token_response = requests.post("https://api.intra.42.fr/oauth/token", data = {
-        	"grant_type": "authorization_code",
-        	"client_id": UID,
-        	"client_secret": SECRET,
-        	"code": authentication_code,
-        	"redirect_uri": REDIRECT_URI
-        })
+        access_token_response = requests.post(
+            "https://api.intra.42.fr/oauth/token",
+            data={
+                "grant_type": "authorization_code",
+                "client_id": UID,
+                "client_secret": SECRET,
+                "code": authentication_code,
+                "redirect_uri": REDIRECT_URI,
+            },
+        )
 
         access_token_response.raise_for_status()
         access_token = access_token_response.json().get("access_token")
         me_api_headers = {"Authorization": f"Bearer {access_token}"}
-        me_api_response = requests.get("https://api.intra.42.fr/v2/me", headers=me_api_headers).json()
+        me_api_response = requests.get(
+            "https://api.intra.42.fr/v2/me", headers=me_api_headers
+        ).json()
 
-        print('#', 10)
-        print("userdata: ", me_api_response)
-        print('#', 10)
         return me_api_response
-    
+
     def post(self, request):
         code = request.data.get("code")
         if code is not None:
             ft_user_informations = self.getFtInformations(code)
             if ft_user_informations is None:
-                return
-            user = User.objects.filter(username=ft_user_informations['login']).first()
-            if user is None:
+                return Response(
+                    Providers.JsonProviderBasic(
+                        success="False",
+                        message="42 API failed1",
+                    ),
+                    status=HTTP_400_BAD_REQUEST,
+                )
+            user = User.objects.filter(username=ft_user_informations["login"]).first()
+            if user is None:  # user kayitli degilse
+                print(ft_user_informations["image"]["link"])
                 data = {
-					'username':ft_user_informations['login'],
-					'password':'pass',
-					'email':ft_user_informations['asd@asd.com'],
-					'fullname':ft_user_informations['login'],
-					'profile_picture':'asd.png',
-					'is_ft_registered':True,
-				}
-                return Response(Providers.JsonProviderBasic(
-                    success="False",
-                    message="42 API failed",
+                    "username": ft_user_informations["login"],
+                    "password": "pass",
+                    "email": ft_user_informations["email"],
+                    "fullname": ft_user_informations["usual_full_name"],
+                    "profile_picture": ft_user_informations["image"]["link"],
+                    "ft_api_registered": "True",
+                }
+                serializer = self.serializer_class(data=data)
+                if serializer.is_valid():
+                    serializer.save()
+                    new_user = User.objects.filter(username=data["username"]).first()
+                    refresh = RefreshToken.for_user(new_user)
+                    new_data = {
+                        "token": {
+                            "refresh": str(refresh),
+                            "access": str(refresh.access_token),
+                        },
+                    }
+                    return Response(
+                        Providers.JsonProviderBasic(
+                            success="True",
+                            message="User registeration successfull",
+                            data=new_data,
+                        ),
+                        status=HTTP_200_OK,
+                    )
+                else:
+                    print("Validation errors:", serializer.error_messages)
+                    return Response(
+                        Providers.JsonProviderBasic(
+                            success="False",
+                            message=serializer.error_messages,
+                        ),
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
+            else:
+                refresh = RefreshToken.for_user(user)
+                data = {
+                    "token": {
+                        "refresh": str(refresh),
+                        "access": str(refresh.access_token),
+                    },
+                }
+            return Response(
+                Providers.JsonProviderBasic(
+                    success="True",
+                    message="User registeration successfull",
+                    data=data,
                 ),
-                status=HTTP_400_BAD_REQUEST,
+                status=status.HTTP_200_OK,
             )
-            
-        return Response()
+        return Response(
+            Providers.JsonProviderBasic(
+                success="False",
+                message="42 API failed",
+            ),
+            status=HTTP_400_BAD_REQUEST,
+        )
+
 
 class UserRegisterView(APIView):
     serializer_class = UserSerializer
@@ -272,7 +212,7 @@ class UserLoginView(APIView):
             )
 
         user = User.objects.filter(username=username).first()
-
+        #  and user.ft_api_registered == 'False'
         if user is not None:
             user = authenticate(request, username=username, password=password)
 
@@ -320,8 +260,6 @@ class UserInfoQuery(APIView):
         user = User.objects.get(username=request.user.username)
         if user is not None:
 
-            # PROFILE PHOTO EKLEMEYI UNUTMA
-            print("#" * 20)
             path = str(user.profile_picture)
             data = {
                 "username": user.username,
@@ -351,8 +289,15 @@ class UserUpdateView(APIView):
     permission_classes = [IsAuthenticated]
 
     def save_image_to_path(self, image_data, image_path):
+        if os.path.exists(image_path):
+            print("#" * 20)
+            print("image bulundu")
+            print("#" * 20)
+            os.remove(image_path)
         with open(image_path, "wb") as file:
-            for chunk in image_data.chunks():
+            for (
+                chunk
+            ) in image_data.chunks():  # Assuming image_data is a Django File object
                 file.write(chunk)
 
     def create_data(self, user, data):
@@ -365,9 +310,9 @@ class UserUpdateView(APIView):
             "profile_picture": user.profile_picture,
         }
         for key, value in data.items():
-            if value != '':
-                created_data.update({key:value})
-        if data["password"] != user.password and data["password"] != '':
+            if value != "":
+                created_data.update({key: value})
+        if data["password"] != user.password and data["password"] != "":
             created_data["password"] = make_password(data["password"])
         return created_data
 
@@ -375,27 +320,25 @@ class UserUpdateView(APIView):
         user = User.objects.get(username=request.user.username)
         req_data = request.data.copy()
         type = req_data["type"]
-        print('type', req_data["type"])
         del req_data["type"]
-        print(req_data)
         if user is not None:
-            ready_data = self.create_data(user, req_data)
-            if type != '':
-                image_data = ready_data["profile_picture"]
+            if req_data['password'] != '' and make_password(req_data['password']) != user.password:
+                req_data.update({'password':make_password(req_data['password'])})
+            if type != "":
+                image_data = req_data["profile_picture"]
                 image_type = type
                 image_path = "images/" + user.username + "." + image_type.split("/")[1]
                 self.save_image_to_path(image_data, image_path)
                 # del ready_data["profile_picture"]
-                ready_data.update({"profile_picture": image_path.split("/")[1]})
-
-
-            serializer = UserSerializer(
-                user,
-                data=ready_data,
-                partial=True,
+                req_data.update(
+                    {
+                        "profile_picture": "/static/pofiles/image/"
+                        + image_path.split("/")[1]
+                    }
+                )
+            serializer = UserUpdateSerializer(
+                instance=user, data=req_data, partial=True
             )
-
-            print('initial_data', serializer.initial_data)
             if serializer.is_valid():
                 serializer.save()
                 return Response(
@@ -406,7 +349,7 @@ class UserUpdateView(APIView):
                     status=status.HTTP_200_OK,
                 )
             else:
-                print('error', serializer.error_messages)
+                print("error", serializer.error_messages)
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         else:
             return Response(
@@ -433,10 +376,8 @@ class UserLogoutAPIView(APIView):
         )
 
 
-
-
 class AuthView(View):
     def get(self, request):
         return redirect(
-            "https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-272a7d972a922c63919b4411aff1da6abf64ec93eb38804b51427a0c0fbf86ea&redirect_uri=https%3A%2F%2Fpeng.com.tr%2Fbackend%2F&response_type=code"
+            "https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-272a7d972a922c63919b4411aff1da6abf64ec93eb38804b51427a0c0fbf86ea&redirect_uri=https%3A%2F%2Fpeng.com.tr%2Flogin%2F&response_type=code"
         )

@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Veritabanının hazır olup olmadığını kontrol et
-until pg_isready -h ${POSTGRES_HOST_API} -p ${POSTGRES_PORT_API} -U ${POSTGRES_USER_API}; do
+until pg_isready -h ${POSTGRES_HOST_API} -U ${POSTGRES_USER_API} -p ${POSTGRES_PORT_API}; do
   >&2 echo "Veritabanı hazır değil - bekleniyor..."
   sleep 2
 done

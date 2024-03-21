@@ -31,7 +31,7 @@ class User(AbstractUser):
     password = models.CharField(
         _("password"),
         max_length=128,
-        blank=True,
+        blank=False,
     )
     fullname = models.CharField(
         _("fullname"),
@@ -43,7 +43,7 @@ class User(AbstractUser):
     profile_picture = models.CharField(
         _("profile picture"),
         max_length=300,
-        default="Default Profile Picture.jpg"
+        default="/static/pofiles/image/Default Profile Picture.jpg"
     )
     ft_api_registered = models.BooleanField(
         _("ft_api_registered"),

@@ -4,6 +4,9 @@ cloudfree:
 	sh cloudflare_cache_clear.sh
 
 login_api42:
+	sudo docker exec -it api42 bash
+
+login_dbapi42:
 	sudo docker exec -it dbapi42 bash -c "psql -h dbapi42 -U api -d apiusers"
 
 login_backend:
@@ -45,4 +48,4 @@ logs-frontend:
 logs-chat:
 	sudo docker logs --tail 100 -f chat
 
-.PHONY: all clean git build up down logs ps logs-backend logs-api42 logs-game logs-frontend logs-chat cloudfree
+.PHONY: all clean git build up down logs ps login_api42 login_dbapi42 login_backend logs-backend logs-api42 logs-game logs-frontend logs-chat cloudfree

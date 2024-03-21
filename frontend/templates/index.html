@@ -105,15 +105,34 @@
 						</div>
 					</article>
 
-					<!-- About -->
-					<article id="about">
-						<h2 class="major">About</h2>
-						<span class="image main"><img src="static/images/pic03.jpg" alt="" /></span>
-						<p>Lorem ipsum dolor sit amet, consectetur et adipiscing elit. Praesent eleifend dignissim arcu,
-							at eleifend sapien imperdiet ac. Aliquam erat volutpat. Praesent urna nisi, fringila lorem
-							et vehicula lacinia quam. Integer sollicitudin mauris nec lorem luctus ultrices. Aliquam
-							libero et malesuada fames ac ante ipsum primis in faucibus. Cras viverra ligula sit amet ex
-							mollis mattis lorem ipsum dolor sit amet.</p>
+					<!-- Friend List-->
+					<article id="friends">
+						<h2 class="major">Friend List</h2>
+						<p>Looks like someone doesn't have any friends. <span style="font-size:2em">&#128546;</span></p>
+						<div class="table-wrapper">
+							<table>
+								<thead>
+									<tr>
+										<th>Username</th>
+										<th>Online Status</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td>Penguen</td>
+										<td>Online</td>
+									</tr>
+									<tr>
+										<td>Pala</td>
+										<td>Offline</td>
+									</tr>
+									<tr>
+										<td>rdeyirme</td>
+										<td>online</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
 					</article>
 
 					<!-- Contact-->
@@ -159,7 +178,7 @@
 															</li>
 														</ul>
 														<ul class="actions stacked">
-															<li class=""><a href="https://peng.com.tr/api42/auth/ft_api/" class="button primary apibutton" id="login42"><img src="https://peng.com.tr/static/images/42icon.png" width="20vh"></a></li>
+															<li class=""><a href="#" class="button primary apibutton" id="login42"><img src="https://peng.com.tr/static/images/42icon.png" width="20vh"></a></li>
 														</ul>
 													</form>
 												</div>
@@ -250,10 +269,13 @@
 											<div class="field">
 												<label for="emailSetting">Email</label>
 												<input type="email" name="emailSetting" id="emailSetting">
+												<div id="errorEmailUpdate" class="error-message"></div>
 											</div>
 											<div class="field">
 												<label for="passwordSetting">Password</label>
 												<input type="password" name="passwordSetting" id="passwordSetting">
+												<div id="errorPasswordUpdate" class="error-message"></div>
+
 											</div>
 										</div>
 										<ul class="actions">
@@ -272,11 +294,8 @@
 				<ul>
 					<li><a href="#" onclick="openIntro('intro')">Intro</a></li>
 					<li><a href="#" onclick="openIntro('pong')">Pong</a></li>
-					<li><a href="#" onclick="openIntro('about')">About</a></li>
+					<li id="menuFriendList" ><a href="#" onclick="openIntro('friends')">Friends</a></li>
 					<li id="menuLogin"><a href="#" onclick="openIntro('login')">Login</a></li>
-					<!--<li><a href="#" onclick="openIntro('profile')">profile</a></li>-->
-
-					<li><a href="#elements">Elements</a></li>
 				</ul>
 			</nav>
 		</header>

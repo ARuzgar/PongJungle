@@ -21,19 +21,16 @@ $(document).ready(function () {
 		var t_activeUser = JSON.parse(activeUser);
 		loginSuccess(t_activeUser["token"]);
 	}
-	var auth42 = localStorage["42auth"];
-	if(auth42)
+	
+	var Curl = window.location.href;
+	const urlParams = new URLSearchParams(new URL(Curl).search);
+	const code = urlParams.get('code');
+	if(code)
 	{
-		var t_auth42 = JSON.parse(auth42);
-		if(t_auth42["42auth"] )
-		{
-			auth42();
-		}
+		auth42API(code);
 	}
-	
-	
 	$("#login42").on('click',function(e){
-		localStorage["42auth"] = JSON.stringify({"42auth": true});
+		window.location.href="https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-272a7d972a922c63919b4411aff1da6abf64ec93eb38804b51427a0c0fbf86ea&redirect_uri=https%3A%2F%2Fpeng.com.tr%2Flogin%2F&response_type=code";
 	});
 	
 	
@@ -62,25 +59,94 @@ $(document).ready(function () {
 			errorPassword.textContent = "";
 		}
 	});
+	document.getElementById("emailSetting").addEventListener("focusout", function() {
+		var email = document.getElementById("emailSetting").value;
+		var emailFormat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+		var errorEmail = document.getElementById("errorEmailUpdate");
+
+		if (!email.match(emailFormat)) {
+			errorEmail.textContent = "Lütfen geçerli bir eposta adresi girin.";
+		} else {
+			errorEmail.textContent = "";
+		}
+	});
+
+	document.getElementById("passwordSetting").addEventListener("focusout", function() {
+		var password = document.getElementById("passwordSetting").value;
+		var passwordFormat = /^(?=.*\d)(?=.*[a-zA-Z]).{8,}$/;
+		var errorPassword = document.getElementById("errorPasswordUpdate");
+
+		if (!password.match(passwordFormat)) {
+			errorPassword.textContent = "Parolanız en az 8 karakter uzunluğunda olmalı ve en az 1 harf ve 1 sayı içermelidir.";
+		} else {
+			errorPassword.textContent = "";
+		}
+	});
 });
+//cloudflare cache 
+
+function cloudFlareCacheClear(){
+
+	const url = `https://api.cloudflare.com/client/v4/zones/eed6a2806913e672377543c42a10462c/purge_cache`;
+
+	const data = {
+	  purge_everything: true,
+	};
+
+	fetch(url, {
+	  method: 'POST',
+	  mode: 'no-cors',
+	  headers: {
+		"X-Auth-Email": "alperenruzgar@gmail.com",
+	    'X-Auth-Key': `17cd06f5b17982b00fac2cac259022d786e47`,
+	    'Content-Type': 'application/json',
+	  },
+	  body: JSON.stringify(data),
+	})
+	.then(response => {
+	  if (response.ok) {
+	    console.log('Tüm cache temizleme işlemi başarılı!');
+	  } else {
+	    console.error('Tüm cache temizleme işlemi başarısız!');
+	  }
+	})
+	.catch(error => {
+	  console.error('Hata oluştu:', error);
+	});
+}
 
 //apies
 //42 Auth
 
-function auth42(){
-    fetch('https://peng.com.tr/api42/auth/query/')
-    		.then(response => response.json())
-    		.then(data => {
-				if(data.success=="true")
-    		    	loginSuccess(data.data.token);
-				else if(activeUser)
-					localStorage.removeItem("activeUser");
-
-    		})
-    		.catch(error => {
-    		    console.error('Veri alınamadı: ', error);
-    		});
-			localStorage.removeItem("42auth");
+function auth42API(code){
+	data ={
+		code: encodeURIComponent(code)
+	};
+    fetch('https://peng.com.tr/api42/auth/ft_auth/',{
+		method: 'POSt',
+    	headers: {
+    	    'Content-Type': 'application/json'
+    	},
+		body: JSON.stringify(data)
+	})
+	.then(response => {
+		if (response.ok) {
+			return response.json();
+		} else {
+			throw new Error('42 failed');
+		}
+		})
+    	.then(data => {
+			if(data.success=="True")
+			{
+    	    	loginSuccess(data.data.token.access);
+				openIntro("profile");
+				window.location.href="https://peng.com.tr";
+			}
+    	})
+    	.catch(error => {
+    	    console.error('Veri alınamadı: ', error);
+    	});
 }
 //Register
 
@@ -110,9 +176,7 @@ $('#signupForm').on('submit', function (e) {
     .then(data => {
     // Gelen veriyi kontrol et
     if (data) {
-		console.log(data);
 		document.getElementById("loginSwitch").click();
-		$('#signupForm').reset();
     } else {
         console.log('No message found in response data.');
     }
@@ -191,7 +255,6 @@ $("#logOut").on('click',function(e){
 $('#profileSettingForm').on('submit', function (e) {
     e.preventDefault();
     const token = JSON.parse(localStorage.getItem('activeUser')).token;
-	console.log(token);
 
     const fileInput = document.getElementById('profilePictureSetting');
 	if(fileInput.files.length > 0){
@@ -208,19 +271,20 @@ $('#profileSettingForm').on('submit', function (e) {
 
     	    let canvas = document.createElement('canvas');
     	    let ctx = canvas.getContext('2d');
+			let finalWidth, finalHeight;
 
-    	    if (width !== height) {
-				if (width > height) {
-					let offsetX = (width - height) / 2;
-					ctx.drawImage(this, offsetX, 0, height, height, 0, 0, maxDimension, maxDimension);
-				} else {
-					let offsetY = (height - width) / 2;
-					ctx.drawImage(this, 0, offsetY, width, width, 0, 0, maxDimension, maxDimension);
-				}
+			if (width > height) {
+				finalWidth = maxDimension;
+				finalHeight = Math.round(maxDimension * height / width);
 			} else {
-				let offset = (width - maxDimension) / 2;
-				ctx.drawImage(this, offset, offset, maxDimension, maxDimension, 0, 0, maxDimension, maxDimension);
+				finalHeight = maxDimension;
+				finalWidth = Math.round(maxDimension * width / height);
 			}
+		
+			canvas.width = finalWidth;
+			canvas.height = finalHeight;
+		
+			ctx.drawImage(this, 0, 0, width, height, 0, 0, finalWidth, finalHeight);
 
     	    canvas.toBlob((blob) => {
     	        const formData = new FormData();
@@ -244,7 +308,7 @@ $('#profileSettingForm').on('submit', function (e) {
 
     	updateUserAPI(token,formData);
 	}
-	
+	cloudFlareCacheClear();
 });
 
 function updateUserAPI(token,formData){
@@ -263,11 +327,10 @@ function updateUserAPI(token,formData){
                 }
             })
             .then(data => {
-                console.log(data);
+				openIntro("profile");
             })
             .catch(error => {
                 console.error('Error:', error);
-                console.log('message:', message);
             });
 }
 //Get User İnfo
@@ -306,14 +369,13 @@ async function loginSuccess(token){
 	}
 	localStorage['activeUser'] = JSON.stringify(data);
 	const user=await getUserInfo();
-	console.log(user);
 	login_menu=document.getElementById("menuLogin");
 	Profile_picture=document.getElementById("profilePicture");
 	profile_name=document.getElementById("profileName");
 	if(login){
 		login_menu.innerHTML="<a href='#' onclick=\"openIntro('profile')\">Profile</a>"
 		profile_name.innerHTML=user.username;
-		Profile_picture.src="/static/pofiles/image/"+user.profile_picture;
+		Profile_picture.src=user.profile_picture;
 	}
 
 }
@@ -448,18 +510,6 @@ function titlesAnimation(titles) {
 	});
 }
 
-async function profileSettings(){
-	const existingUser = await getUserInfo();
-	const usernameInput = document.getElementById('usernameSetting');
-	const emailInput = document.getElementById('emailSetting');
-	console.log(existingUser);
-
-	if (usernameInput)
-		usernameInput.value = existingUser.username;
-	if (emailInput)
-		emailInput.value = existingUser.email;
-}
-
 function openIntro(block) {
 	var $content = $('#content'),
 		$main = $('#main'),
@@ -475,9 +525,6 @@ function openIntro(block) {
 		if(block == "profile"  && !activeUser){
 			openIntro("login");
 			return;
-		}
-		if(block == "profileSetting"){
-			profileSettings();
 		}
 		if(block =="pong")
 			pong();
@@ -563,14 +610,12 @@ function checkImage(){
             }
 
             const dataURL = canvas.toDataURL('image/png');
-			console.log("dataURL:",dataURL);
 
 		};
 
     };
 
     reader.readAsDataURL(profilePicture);
-	console.log("reader:",reader);
 }
 
 (function ($) {
