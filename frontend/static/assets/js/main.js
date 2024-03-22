@@ -1,4 +1,16 @@
 $(document).ready(function () {
+	const key = 'remeaningTime';
+	const expirationTimeInMinutes = 45;
+	const storedTimestamp = localStorage.getItem(key);
+
+	if (storedTimestamp) {
+	    const currentTime = new Date().getTime();
+	    const storedTime = new Date(parseInt(storedTimestamp, 10));
+	    const diffInMinutes = Math.floor((currentTime - storedTime.getTime()) / 60000);
+
+	    if (diffInMinutes >= expirationTimeInMinutes)
+	        localStorage.removeItem(key);
+	}
 	var chatLocation =localStorage['chatPosition'];
 	if(chatLocation){
 		var chatPosition=JSON.parse(chatLocation);
@@ -20,6 +32,10 @@ $(document).ready(function () {
 	{
 		var t_activeUser = JSON.parse(activeUser);
 		loginSuccess(t_activeUser["token"]);
+	}
+	else if(JSON.parse(lastLocation)["lastLocation"] != "login"){
+		openIntro("login");
+
 	}
 	
 	var Curl = window.location.href;
@@ -119,7 +135,7 @@ function cloudFlareCacheClear(){
 
 //Friend add
 
-function addFriend(token){
+function addFriend(token,){
 	var data = {
 		"friend_username":"anargul"
 	};
@@ -171,38 +187,6 @@ function listFriend(token){
     });
 }
 
-//Search User
-
-// function SearchUser(token){
-// 	//addFriend(JSON.parse(activeUser)["token"]);
-
-// 	var data = {
-// 		"query":document.getElementById("searchUserText").value
-// 	}
-// 	fetch('https://peng.com.tr/api42/auth/search/user/', {
-//         method: 'GET',
-//         headers: {
-//             'Authorization': 'Bearer ' + token,
-// 			'Content-Type': 'application/json',
-// 			"query":document.getElementById("searchUserText").value
-//         },
-// 		//body : JSON.stringify(data),
-//     })
-//     .then(response => {
-//         if (response.ok) {
-//             return response.json();
-//         } else {
-//             throw new Error(data.message);
-//         }
-//     })
-//     .then(data => {
-// 		console.log(data);
-//     })
-//     .catch(error => {
-//         console.error('Error:', error);
-//     });
-// }
-
 function SearchUser(token) {
     var queryValue = document.getElementById("searchUserText").value;
     var url = 'https://peng.com.tr/api42/auth/search/user/?query=' + encodeURIComponent(queryValue);
@@ -222,13 +206,30 @@ function SearchUser(token) {
         }
     })
     .then(data => {
-        console.log(data);
+		var table = document.getElementById("searchUserTable");
+		var users = data.data;
+		var html="<tbody>\n"
+	  					
+		for(var i=0; i< users.length;i++){
+			html+="<tr><td id=user"+i+">"+users[i].fullname+"</td>"+"<td><button type='submit' id='userButton"+i+"' class='btn btn-primary'>Add Friend</button></td></tr>\n"
+		}
+		html +="</tbody>"
+		console.log(html);
+		table.innerHTML=html;
+		const buttons = document.querySelectorAll("[id^='userButton']");
+
+		buttons.forEach(button => {
+		    button.addEventListener('click', function() {
+		        const userId = parseInt(this.id.replace('userButton', ''), 10);
+		        console.log(`Tıklanan buton: userButton${userId}`);
+				var friend_user=document.getElementById("user"+userId).innerHTML;
+    		});
+		});
     })
     .catch(error => {
         console.error('Error:', error);
     });
 }
-
 //42 Auth
 
 function auth42API(code){
@@ -343,6 +344,7 @@ $('#loginForm').on('submit', function (e) {
 //Logout
 $("#logOut").on('click',function(e){
 	localStorage.removeItem("activeUser");
+	localStorage.removeItem("remeaningTime");
 	openIntro("login");
 	login_menu=document.getElementById("menuLogin");
 	login_menu.innerHTML="<a href='#' onclick=\"openIntro('login')\">Login</a>"
@@ -481,6 +483,7 @@ async function loginSuccess(token){
 		"token":token
 	}
 	localStorage['activeUser'] = JSON.stringify(data);
+	localStorage['remeaningTime'] = new Date().getTime().toString();
 	const user=await getUserInfo();
 	login_menu=document.getElementById("menuLogin");
 	Profile_picture=document.getElementById("profilePicture");
