@@ -10,7 +10,7 @@
 	<noscript>
 		<link rel="stylesheet" href="/static/assets/css/noscript.css" />
 	</noscript>
-	<script src="/static/assets/js/anime.js"></script>
+	<script src="/static/assets/js/animations.js"></script>
 	<script src="/static/assets/bootstrap/js/bootstrap.min.js"></script>
 	<link rel="stylesheet" href="/static/assets/css/main.css" />
 	<script type="text/javascript">
@@ -31,7 +31,7 @@
 		{% endfor %} -->
 	<!-- Wrapper -->
 	<div id="wrapper">
-		<div class="chat row" id="chat">
+		<!--<div class="chat row" id="chat">
 			
 			<div class="dropdown">
 				<button type="button" class="btn btn-info chatMain" id="chatMain"><img class="img-fluid"
@@ -55,51 +55,93 @@
 				 </div>
 				
 			  </div>
-		</div>
+		</div>-->
 		<!-- Header -->
 		<header id="header">
 			<div class="logo">
-				<a href="#" onclick="openIntro('home')" style="border-bottom: none"><span
-						class="icon fa-diamond"></span></a>
+				<a href="#" style="border-bottom: none"><img class="img-fluid" src="https://peng.com.tr/static/images/Chat-Icon.png"></a>
 			</div>
 			<div class="content">
 				<div id="main">
-					<article id="home">
-						<h1 class="animationText" >Dimension</h1>
-						<ul>
-							<li class="animationText">Biz</li>
-							<li class="animationText">Pong</li>
-							<li class="animationText">Sign in -> Proje</li>
-							<li class="animationText">Chat(Popup) -> design kaydırma</li>
-							<li class="animationText">User page -> Popup</li>
-							<li class="animationText">Erişilebilirlik sidebar</li>
-							<li class="animationText">Yazılar tek tek || beyaz üstüne renk</li>
+					<article id="pong">
+						<ul class="actions stacked">
+							<li class=""><a href="#" onclick="openIntro('pongClassic')" class="button primary apibutton">Classic Pong</a></li>
+							<li class=""><a href="#" onclick="openIntro('pongFour')" class="button primary apibutton">OMG Pong</a></li>
+							<li class=""><a href="#" onclick="openIntro('pongTournamentForm')" class="button primary apibutton">Pong Tournament</a></li>
 						</ul>
 					</article>
-					<article id="intro">
-						<h2 class="major animationText">Intro</h2>
-						<span class="image main"><img src="static/images/pic01.jpg" alt="" /></span>
-						<p class="animationText">Aenean ornare velit lacus, ac varius enim ullamcorper eu. Proin aliquam
-							facilisis ante interdum congue. Integer mollis, nisl amet convallis, porttitor magna
-							ullamcorper, amet egestas mauris. Ut magna finibus nisi nec lacinia. Nam maximus erat id
-							euismod egestas. By the way, check out my <a href="#work">awesome work</a>.</p>
-						<p class="animationText">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis dapibus
-							rutrum facilisis. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per
-							inceptos himenaeos. Etiam tristique libero eu nibh porttitor fermentum. Nullam venenatis
-							erat id vehicula viverra. Nunc ultrices eros ut ultricies condimentum. Mauris risus lacus,
-							blandit sit amet venenatis non, bibendum vitae dolor. Nunc lorem mauris, fringilla in
-							aliquam at, euismod in lectus. Pellentesque habitant morbi tristique senectus et netus et
-							malesuada fames ac turpis egestas. In non lorem sit amet elit placerat maximus. Pellentesque
-							aliquam maximus risus, vel sed vehicula.</p>
+					<article id="pongTournamentForm">
+						<div class="container" >
+							<div class="row" style="height: 25em;">
+								<div class="col-12" id="pongParent">
+									<h3 class="major">Select Player Names</h3>
+									<form id="tournamentForm">
+										<div class="fields">
+											<div class="field half">
+												<input type="text" name="" id="Player1Name" value="Player1Name" placeholder="Player 1 Name">
+											</div>
+											<div class="field half">
+												<input type="text" name="" id="Player2Name" value="Player2Name" placeholder="Player 2 Name">
+											</div>
+											<div class="field half">
+												<input type="text" name="" id="Player3Name" value="Player3Name" placeholder="Player 3 Name">
+											</div>
+											<div class="field half">
+												<input type="text" name="" id="Player4Name" value="Player4Name" placeholder="Player 4 Name">
+											</div>
+											<div class="field half">
+												<input type="text" name="" id="Player5Name" value="Player5Name" placeholder="Player 5 Name">
+											</div>
+											<div class="field half">
+												<input type="text" name="" id="Player6Name" value="Player6Name" placeholder="Player 6 Name">
+											</div>
+											<div class="field half">
+												<input type="text" name="" id="Player7Name" value="Player7Name" placeholder="Player 7 Name">
+											</div>
+											<div class="field half">
+												<input type="text" name="" id="Player8Name" value="Player8Name" placeholder="Player 8 Name">
+											</div>
+										</div>
+										<ul class="actions">
+											<li style="width: 100%;"><input type="submit" style="width: 100%;" value="Start Tournament" class="primary apibutton"></li>
+										</ul>
+									</form>
+								</div>
+							</div>
+						</div>
 					</article>
-					<article id="pong">
+					<article id="pongTournament">
 						<div class="container" >
 							<div class="row" style="height: 25em;">
 								<div class="col-12" id="pongParent">
 									<div id="score">
-										<p>Player 1 Score: <span id="player1-score">0</span> - Player 2 Score: <span id="player2-score">0</span>
+										<p style="margin: 0;"><span id="player1Name">Player 1</span>: <span id="player1-score">0</span> - <span id="player2Name">Player 2</span>: <span id="player2-score">0</span></p>
+									</div>
+									<canvas id="gameCanvasT" style="width: 100%; height: 95%;">Press 'Enter' to Start</canvas>
+								</div>
+							</div>
+						</div>
+					</article>
+					<article id="pongClassic">
+						<div class="container" >
+							<div class="row" style="height: 25em;">
+								<div class="col-12" id="pongParent">
+									<div id="score">
+										<span id="player1NameC">Player 1</span>: <span id="player1-scoreC">0</span> - <span id="player2NameC">Player 2</span>: <span id="player2-scoreC">0</span></p>
 									</div>
 									<canvas id="gameCanvas" style="width: 100%; height: 95%;">Press 'Enter' to Start</canvas>
+								</div>
+							</div>
+						</div>
+					</article>
+					<article id="pongFour">
+						<div class="container" >
+							<div class="row" style="height: 25em;">
+								<div class="col-12" id="pongParent">
+									<div id="score">
+										<p style="margin: 0;">Player 1: <span id="player1-scoreF">0</span> - Player 2: <span id="player2-scoreF">0</span> - Player 3: <span id="player3-scoreF">0</span> - Player 4: <span id="player4-scoreF">0</span></p>
+									</div>
+									<canvas id="gameCanvasF" style="width: 100%; height: 95%;">Press 'Enter' to Start</canvas>
 								</div>
 							</div>
 						</div>
@@ -107,9 +149,12 @@
 
 					<!-- Friend List-->
 					<article id="friends">
-						<h2 class="major">Friend List</h2>
-						<p>Looks like someone doesn't have any friends. <span style="font-size:2em">&#128546;</span></p>
-						<div class="table-wrapper">
+						<div id="noFriend">
+							<h2 class="major">Friend List</h2>
+							<p>Looks like someone doesn't have any friends. <span style="font-size:2em">&#128546;</span></p>
+						</div>
+						
+						<div class="table-wrapper" id="friendTable" style="display: none;">
 							<table>
 								<thead>
 									<tr>
@@ -117,24 +162,33 @@
 										<th>Online Status</th>
 									</tr>
 								</thead>
-								<tbody>
-									<tr>
-										<td>Penguen</td>
-										<td>Online</td>
-									</tr>
-									<tr>
-										<td>Pala</td>
-										<td>Offline</td>
-									</tr>
-									<tr>
-										<td>rdeyirme</td>
-										<td>online</td>
-									</tr>
+								<tbody id="friendTableBody">
+									
 								</tbody>
 							</table>
 						</div>
 					</article>
-
+					<article id="matchHistory">
+						<div id="noMatch">
+							<h2 class="major">Match History</h2>
+							<p>No games found. Don't you want some fun?</p>
+						</div>
+						
+						<div class="table-wrapper" id="matchTable" style="display: none;">
+							<table>
+								<thead>
+									<tr>
+										<th>Winner</th>
+										<th>Date</th>
+										<th>Game Type</th>
+									</tr>
+								</thead>
+								<tbody id="matchTableBody">
+									
+								</tbody>
+							</table>
+						</div>
+					</article>
 					<!-- Contact-->
 
 					<article id="login">
@@ -173,8 +227,7 @@
 														</div>
 														<ul class="actions">
 															<li class="loginbuttons" style="display: flex; justify-content: space-between;">
-																<input type="submit" value="Login" class="button login">
-																<a href="#" class="button primary login">Forgot Password</a>
+																<input type="submit" value="Login" class="button apibutton">
 															</li>
 														</ul>
 														<ul class="actions stacked">
@@ -213,7 +266,8 @@
 															<li class="loginbuttons"><input type="submit" value="SignUp" class="button primary register"></li>
 														</ul>
 														<ul class="actions stacked">
-															<li class=""><a href="https://peng.com.tr/api42/auth/ft_api" class="button primary apibutton"><img src="https://peng.com.tr/static/images/42icon.png" width="20vh"></a></li>														</ul>
+															<li class=""><a href="#" class="button primary apibutton" id="login42"><img src="https://peng.com.tr/static/images/42icon.png" width="20vh"></a></li>
+														</ul>
 													</form>
 												</div>
 											</div>	
@@ -246,6 +300,8 @@
 											</li>
 	
 										</ul></li>
+										<li><ul class="actions stacked"><button type="submit" class="button primary login" id="MatchHistory">MatchHistory</button></ul></li>
+
 									</ul>
 								</div>
 								
@@ -330,7 +386,6 @@
 			</div>
 			<nav>
 				<ul>
-					<li><a href="#" onclick="openIntro('intro')">Intro</a></li>
 					<li><a href="#" onclick="openIntro('pong')">Pong</a></li>
 					<li id="menuFriendList" ><a href="#" onclick="openIntro('friends')">Friends</a></li>
 					<li id="menuLogin"><a href="#" onclick="openIntro('login')">Login</a></li>
@@ -595,7 +650,7 @@ print 'It took ' + i + ' iterations to sort the deck.';</code></pre>
 
 		<!-- Footer -->
 		<footer id="footer">
-			<p class="copyright">&copy; Untitled. Design: <a href="oh">HTML5 UP</a>.</p>
+			<p class="copyright">&copy; Design by<a href="#">Penguins</a>.</p>
 		</footer>
 
 	</div>
@@ -626,6 +681,8 @@ print 'It took ' + i + ' iterations to sort the deck.';</code></pre>
 	<script src="/static/assets/js/breakpoints.min.js"></script>
 	<script src="/static/assets/js/util.js"></script>
 	<script src="/static/assets/js/pong.js"></script>
+	<script src="/static/assets/js/pongfour.js"></script>
+	<script src="/static/assets/js/tournament.js"></script>
 	<script src="/static/assets/js/main.js"></script>
 
 </body>

@@ -1,40 +1,39 @@
 $(document).ready(function () {
-	const key = 'remeaningTime';
-	const expirationTimeInMinutes = 45;
-	const storedTimestamp = localStorage.getItem(key);
-
-	if (storedTimestamp) {
-	    const currentTime = new Date().getTime();
-	    const storedTime = new Date(parseInt(storedTimestamp, 10));
-	    const diffInMinutes = Math.floor((currentTime - storedTime.getTime()) / 60000);
-
-	    if (diffInMinutes >= expirationTimeInMinutes)
-	        localStorage.removeItem(key);
-	}
-	var chatLocation =localStorage['chatPosition'];
-	if(chatLocation){
-		var chatPosition=JSON.parse(chatLocation);
-		const container = document.querySelector("#chat");
-		container.style.left = chatPosition["chatPositionX"];
-		container.style.top = chatPosition["chatPositionY"];
-	}
+	
+	//var chatLocation =localStorage['chatPosition'];
+	//if(chatLocation){
+	//	var chatPosition=JSON.parse(chatLocation);
+	//	const container = document.querySelector("#chat");
+	//	container.style.left = chatPosition["chatPositionX"];
+	//	container.style.top = chatPosition["chatPositionY"];
+	//}
+	var activeUser = localStorage['activeUser'];
 	var lastLocation = localStorage['lastLocation'];
 	if(lastLocation)
 	{
-		var Location = JSON.parse(lastLocation);
-		openIntro(Location["lastLocation"]);
+		if(activeUser){
+			checkToken();
+			var Location = JSON.parse(lastLocation);
+			openIntro(Location["lastLocation"]);
+		}
+		else{
+			openIntro("login");
+
+		}
+		
 	}
 	else{
-		openIntro("home");
+		console.log("lel");
+		openIntro("login");
 	}
-	var activeUser = localStorage['activeUser'];
 	if(activeUser)
 	{
+		checkToken();
 		var t_activeUser = JSON.parse(activeUser);
 		loginSuccess(t_activeUser["token"]);
 	}
 	else if(JSON.parse(lastLocation)["lastLocation"] != "login"){
-		openIntro("login");
+		//openIntro("login");
 
 	}
 	
@@ -50,10 +49,13 @@ $(document).ready(function () {
 	});
 	$("#searchUser").on('click',function(e){
 		var activeUser = localStorage['activeUser'];
-		SearchUser(JSON.parse(activeUser)["token"]);
+		SearchUser(JSON.parse(activeUser)["token"].access);
+	})
+	$("#MatchHistory").on('click',function(e){
+		openIntro("matchHistory")
+		MatchHistory();
 	})
 	
-
 
 	document.getElementById("emailRegister").addEventListener("focusout", function() {
 		var email = document.getElementById("emailRegister").value;
@@ -102,42 +104,77 @@ $(document).ready(function () {
 		}
 	});
 });
-//cloudflare cache 
+async function MatchHistory(username){
 
-function cloudFlareCacheClear(){
+	var user = await getUserInfo();
+    var player = username || user.username; // Eğer username belirtilmemişse user.username kullan
 
-	const url = `https://api.cloudflare.com/client/v4/zones/eed6a2806913e672377543c42a10462c/purge_cache`;
-
-	const data = {
-	  purge_everything: true,
-	};
-
-	fetch(url, {
-	  method: 'POST',
-	  mode: 'no-cors',
-	  headers: {
-		"X-Auth-Email": "alperenruzgar@gmail.com",
-	    'X-Auth-Key': `17cd06f5b17982b00fac2cac259022d786e47`,
-	    'Content-Type': 'application/json',
-	  },
-	  body: JSON.stringify(data),
+	fetch('https://peng.com.tr/backend/match/?username='+encodeURIComponent(player), {	
+		method: 'GET',
+        headers: {},
+		
 	})
-	.then(response => {
-	  if (response.ok) {
-	  } else {
-	  }
+    .then(response => {
+        if (response.ok) {
+            return response.json();
+        } else {
+            throw new Error(data.message);
+        }
+    })
+    .then(data => {
+		if(data.data.length > 0){
+			document.getElementById("noMatch").style.display="none";
+			document.getElementById("matchTable").style.display="";
+			var table= document.getElementById("matchTableBody");
+			var html="";
+			for(var i=0; i< data.data.length;i++){
+				html+="<tr><td>"+data.data[i].who_win+"</td>\n"+"<td>"+data.data[i].date_played+"</td>\n"+"<td>"+data.data[i].game_type+"</td></tr>\n"
+			}
+			table.innerHTML=html;
+		}
+		else
+		{
+			document.getElementById("matchTable").style.display="none";
+			document.getElementById("noMatch").style.display="";
+		}
+		
+    })
+    .catch(error => {
+        console.error('Error:', error);
+		document.getElementById("matchTable").style.display="none";
+		document.getElementById("noMatch").style.display="";
+    });
+
+}
+function checkToken(){
+	
+	const activeUserData = JSON.parse(localStorage.getItem('activeUser'));
+
+	fetch('https://peng.com.tr/api42/auth/check/user/', {	
+		method: 'POST',
+        headers: {
+            'Authorization': 'Bearer ' + activeUserData.token.access,
+			'Content-Type': 'application/json',
+        },
+		body: {"refresh_token": activeUserData.token.refresh}
 	})
-	.catch(error => {
-	});
+    .then(response => {
+        if (response.ok) {
+            return response.json();
+        } else {
+			
+			localStorage.removeItem("activeUser");
+        }
+    });
 }
 
 //apies
 
 //Friend add
 
-function addFriend(token,){
+function addFriend(token,friend_user){
 	var data = {
-		"friend_username":"anargul"
+		"friend_username":friend_user
 	};
 	fetch('https://peng.com.tr/api42/auth/friend/add/', {
                 method: 'POST',
@@ -155,8 +192,6 @@ function addFriend(token,){
                 }
             })
             .then(data => {
-				console.log(data);
-				listFriend(token);
             })
             .catch(error => {
                 console.error('Error:', error);
@@ -169,7 +204,6 @@ function listFriend(token){
         method: 'GET',
         headers: {
             'Authorization': 'Bearer ' + token,
-			'Content-Type': 'application/json'
         },
     })
     .then(response => {
@@ -180,7 +214,22 @@ function listFriend(token){
         }
     })
     .then(data => {
-		console.log(data);
+		if(data.data.length > 0){
+			document.getElementById("noFriend").style.display="none";
+			document.getElementById("friendTable").style.display="";
+			var table= document.getElementById("friendTableBody");
+			var html="";
+			for(var i=0; i< data.data.length;i++){
+				html+="<tr><td><a onclick=\"openIntro(\'matchHistory\');MatchHistory(\'"+data.data[i].username+"\')\">"+data.data[i].username+"</a></td>\n"+"<td>"+data.data[i].online_status+"</td></tr>\n"
+			}
+			table.innerHTML=html;
+		}
+		else
+		{
+			document.getElementById("friendTable").style.display="none";
+			document.getElementById("noFriend").style.display="";
+		}
+		
     })
     .catch(error => {
         console.error('Error:', error);
@@ -211,18 +260,18 @@ function SearchUser(token) {
 		var html="<tbody>\n"
 	  					
 		for(var i=0; i< users.length;i++){
-			html+="<tr><td id=user"+i+">"+users[i].fullname+"</td>"+"<td><button type='submit' id='userButton"+i+"' class='btn btn-primary'>Add Friend</button></td></tr>\n"
+			html+="<tr><td id=user"+i+" name="+data.data[i].username+">"+users[i].username+"</td>"+"<td><button type='submit' id='userButton"+i+"' class='btn btn-primary'>Add Friend</button></td></tr>\n"
 		}
 		html +="</tbody>"
-		console.log(html);
 		table.innerHTML=html;
 		const buttons = document.querySelectorAll("[id^='userButton']");
 
 		buttons.forEach(button => {
 		    button.addEventListener('click', function() {
+				button.disabled=true;
 		        const userId = parseInt(this.id.replace('userButton', ''), 10);
-		        console.log(`Tıklanan buton: userButton${userId}`);
 				var friend_user=document.getElementById("user"+userId).innerHTML;
+				addFriend(token,friend_user);
     		});
 		});
     })
@@ -253,7 +302,7 @@ function auth42API(code){
     	.then(data => {
 			if(data.success=="True")
 			{
-    	    	loginSuccess(data.data.token.access);
+    	    	loginSuccess(data.data.token);
 				openIntro("profile");
 				window.location.href="https://peng.com.tr";
 			}
@@ -328,7 +377,7 @@ $('#loginForm').on('submit', function (e) {
     .then(data => {
     // Gelen veriyi kontrol et
     if (data && data.message) {
-        var token=data.data.token.access;
+        var token=data.data.token;
 
         loginSuccess(token);
         openIntro("profile");
@@ -343,16 +392,16 @@ $('#loginForm').on('submit', function (e) {
 
 //Logout
 $("#logOut").on('click',function(e){
-	localStorage.removeItem("activeUser");
-	localStorage.removeItem("remeaningTime");
-	openIntro("login");
+	const activeUserData = JSON.parse(localStorage.getItem('activeUser'));
 	login_menu=document.getElementById("menuLogin");
 	login_menu.innerHTML="<a href='#' onclick=\"openIntro('login')\">Login</a>"
 	fetch('https://peng.com.tr/api42/auth/logout/', {	
 		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json'
-		},
+        headers: {
+            'Authorization': 'Bearer ' + activeUserData.token.access,
+			'Content-Type': 'application/json',
+        },
+		body: JSON.stringify({"refresh_token": activeUserData.token.refresh})
 	})
 	.then(response => {
 		if (response.ok) {
@@ -364,12 +413,15 @@ $("#logOut").on('click',function(e){
 	.catch(error => {
 		console.error('Error:', error);
 	});
+	
+	localStorage.removeItem("activeUser");
+	openIntro("login");
 
 });
 //Profile Update
 $('#profileSettingForm').on('submit', function (e) {
     e.preventDefault();
-    const token = JSON.parse(localStorage.getItem('activeUser')).token;
+    const token = JSON.parse(localStorage.getItem('activeUser')).token.access;
 
     const fileInput = document.getElementById('profilePictureSetting');
 	if(fileInput.files.length > 0){
@@ -378,61 +430,64 @@ $('#profileSettingForm').on('submit', function (e) {
 		const file = fileInput.files[0];
 		const maxDimension = 200;
 
-    	const img = new Image();
-    	img.src = URL.createObjectURL(file);
-    	img.onload = function() {
-    	    let width = this.width;
-    	    let height = this.height;
+		const img = new Image();
+		img.src = URL.createObjectURL(file);
+		img.onload = function() {
+    		let width = this.width;
+    		let height = this.height;
 
-    	    let canvas = document.createElement('canvas');
-    	    let ctx = canvas.getContext('2d');
-			let finalWidth, finalHeight;
+    	let canvas = document.createElement('canvas');
+    	let ctx = canvas.getContext('2d');
+    	let finalWidth, finalHeight;
 
-			if (width > height) {
-				finalWidth = maxDimension;
-				finalHeight = Math.round(maxDimension * height / width);
-			} else {
-				finalHeight = maxDimension;
-				finalWidth = Math.round(maxDimension * width / height);
-			}
-		
-			canvas.width = finalWidth;
-			canvas.height = finalHeight;
-		
-			ctx.drawImage(this, 0, 0, width, height, 0, 0, finalWidth, finalHeight);
-
-    	    canvas.toBlob((blob) => {
-    	        const formData = new FormData();
-    	        formData.append('profile_picture', blob);
-				formData.append('type', file.type);
-    	        formData.append('fullname', document.getElementById('fullNameSetting').value);
-    	        formData.append('email', document.getElementById('emailSetting').value);
-    	        formData.append('password', document.getElementById('passwordSetting').value);
-
-    	        updateUserAPI(token,formData);
-    	    }, file.type);
+    	if (width > height) {
+    	    finalWidth = maxDimension;
+    	    finalHeight = Math.round(maxDimension * height / width);
+    	} else {
+    	    finalHeight = maxDimension;
+    	    finalWidth = Math.round(maxDimension * width / height);
     	}
-	}
-	else{
-		const formData = new FormData();
-    	formData.append('profile_picture', "");
-		formData.append('type', "");
-    	formData.append('fullname', document.getElementById('fullNameSetting').value);
-    	formData.append('email', document.getElementById('emailSetting').value);
-    	formData.append('password', document.getElementById('passwordSetting').value);
 
-    	updateUserAPI(token,formData);
+    	canvas.width = finalWidth;
+    	canvas.height = finalHeight;
+
+    	ctx.drawImage(this, 0, 0, width, height, 0, 0, finalWidth, finalHeight);
+
+		canvas.toBlob((blob) => {
+			const file = blobToFile(blob, 'profile_image.jpg');
+			const formData = new FormData();
+			formData.append("profile_picture", file);
+			formData.append("type", file.type);
+			formData.append("fullname", document.getElementById("fullNameSetting").value);
+			formData.append("email", document.getElementById("emailSetting").value);
+			formData.append("password", document.getElementById("passwordSetting").value);		
+			updateUserAPI(token, formData);
+		}, file.type);
+    };
+	} else {
+		const formData = new FormData();
+		formData.append('profile_picture', "");
+		formData.append('type', "");
+		formData.append('fullname', document.getElementById('fullNameSetting').value);
+		formData.append('email', document.getElementById('emailSetting').value);
+		formData.append('password', document.getElementById('passwordSetting').value);
+	
+		updateUserAPI(token,formData);
 	}
-	cloudFlareCacheClear();
+	function blobToFile(blob, fileName) {
+		const file = new File([blob], fileName, { type: blob.type });
+		return file;
+	}
 });
 
 function updateUserAPI(token,formData){
+	
 	fetch('https://peng.com.tr/api42/auth/update/user/', {
                 method: 'PUT',
                 headers: {
-                    'Authorization': 'Bearer ' + token
+                    'Authorization': 'Bearer ' + token,
                 },
-                body: formData,
+                body: formData
             })
             .then(response => {
                 if (response.ok) {
@@ -455,7 +510,7 @@ async function getUserInfo() {
     const response =await fetch('https://peng.com.tr/api42/auth/query/user/', {
         method: 'GET',
         headers: {
-            'Authorization': "Bearer " + activeUserData.token,
+            'Authorization': "Bearer " + activeUserData.token.access,
             'Content-Type': 'application/json'
         },
     })
@@ -466,7 +521,7 @@ async function getUserInfo() {
 //apies ends
 
 
-dragElement();
+//dragElement();
 
 
 function showErrorMessage(message) {
@@ -483,7 +538,6 @@ async function loginSuccess(token){
 		"token":token
 	}
 	localStorage['activeUser'] = JSON.stringify(data);
-	localStorage['remeaningTime'] = new Date().getTime().toString();
 	const user=await getUserInfo();
 	login_menu=document.getElementById("menuLogin");
 	Profile_picture=document.getElementById("profilePicture");
@@ -634,6 +688,11 @@ function openIntro(block) {
 		$activated = $(".active");
 		var time = 10;
 		var activeUser = localStorage['activeUser'];
+		if(!activeUser && block !="login")
+		{
+			openIntro("login");
+			return;
+		}
 		if(block =="login" && activeUser){
 			openIntro("profile");
 			return;
@@ -642,8 +701,12 @@ function openIntro(block) {
 			openIntro("login");
 			return;
 		}
-		if(block =="pong")
+		if(block == "friends")
+			listFriend(JSON.parse(localStorage.getItem('activeUser')).token.access);
+		if(block =="pongClassic")
 			pong();
+		if(block =="pongFour")
+			pongfour();
 		
 	data={"lastLocation":block}
 	localStorage['lastLocation'] = JSON.stringify(data);

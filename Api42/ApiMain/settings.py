@@ -102,7 +102,7 @@ DATABASES = {
         "ENGINE": "django.db.backends.postgresql",
         "NAME": os.getenv("POSTGRES_DB_API"),
         "USER": os.getenv("POSTGRES_USER_API"),
-        "PASSWORD": os.getenv("POSTGRES_PASSWORD_API"),
+        "PASSWORD": os.getenv("POSTGRES_PASSWORD"),
         "HOST": os.getenv("POSTGRES_HOST_API"),
         "PORT": os.getenv("POSTGRES_PORT_API"),
     }
@@ -161,8 +161,8 @@ USE_X_FORWARDED_HOST = True
 # JWT SECTION
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=45),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+    "ACCESS_TOKEN_LIFETIME": timedelta(days=10),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=10),
     # "ROTATE_REFRESH_TOKENS": False,
     # "BLACKLIST_AFTER_ROTATION": False,
     # "UPDATE_LAST_LOGIN": False,

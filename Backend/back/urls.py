@@ -2,6 +2,5 @@ from django.urls import path
 from .views import *
 
 urlpatterns = [
-    path("", HomeRedirectView.as_view(), name="home"),
-    path("home/", HomeRedirectView.as_view(), name="homeRedirect"),
+    path("match/", MatchCreateAndList.as_view(), name="match-create"),
 ]

@@ -15,9 +15,6 @@ login_dbapi42:
 login_dbbackend:
 	sudo docker exec -it dbbackend bash -c "psql -h dbbackend -U user1 -d backend"
 
-login_dbgame:
-	sudo docker exec -it dbgame bash -c "psql -h dbgame -U gameuser -d game"
-
 clean:
 	clear
 

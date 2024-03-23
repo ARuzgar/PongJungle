@@ -42,7 +42,6 @@ class UserUpdateSerializer(serializers.ModelSerializer):
             "fullname",
             "profile_picture",
             "ft_api_registered",
-            "online_status",
         )
         extra_kwargs = {
             "username": {"required": False},
@@ -51,7 +50,6 @@ class UserUpdateSerializer(serializers.ModelSerializer):
             "email": {"required": False},
             "profile_picture": {"required": False},
             "ft_api_registered": {"required": False},
-            "online_status": {"required": False},
         }
 
     def validate_email(self, value):

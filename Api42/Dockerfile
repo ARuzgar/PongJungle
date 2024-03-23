@@ -15,6 +15,8 @@ RUN apt-get update && \
 COPY requirements.txt .
 
 RUN pip install --no-cache-dir -r requirements.txt
+RUN apt-get update && apt-get install -y curl
+
 
 COPY . .
 
@@ -23,5 +25,9 @@ EXPOSE 8080
 COPY entrypoint.sh /entrypoint.sh
 
 RUN chmod +x /entrypoint.sh
+
+COPY cloudflare_cache_clear.sh /cloudflare_cache_clear.sh
+
+RUN chmod +x /cloudflare_cache_clear.sh
 
 ENTRYPOINT ["/entrypoint.sh"]

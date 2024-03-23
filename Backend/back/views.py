@@ -1,46 +1,64 @@
-import json
-import requests
-from django.shortcuts import render
-from rest_framework.views import APIView, View
 from rest_framework.response import Response
-from django.views.generic.base import TemplateView
-from django.http import HttpResponseRedirect
+from rest_framework import status
+from rest_framework.views import APIView
+from .serializers import MatchSerializer
+from .models import Match
 
 
+def JsonProviderBasic(success, message, **kwargs):
+    d = {
+        "success": success,
+        "data": None,
+        "message": message,
+        "error": None,
+    }
+    if "data" in kwargs and kwargs["data"] is not None:
+        d.update({"data": kwargs["data"]})
+    if "error" in kwargs and kwargs["error"] is not None:
+        d.update({"error": kwargs["error"]})
+    return d
 
 
-class Providers:
-    def JsonProviderBasic(success, **kwargs):
-        d = {
-            "success": success,
-            "message": None,
-            "error": None,
-        }
-        if "message" in kwargs and kwargs["message"] is not None:
-            d.update({"message": kwargs["message"]})
-            return d
-        elif "error" in kwargs and kwargs["error"] is not None:
-            d.update({"error": kwargs["error"]})
-            return d
+class MatchCreateAndList(APIView):
 
-    def JsonProviderUserData(username, email, message, **kwargs):
-        d = {
-            "message": message,
-            "username": username,
-            "email": email,
-            "phone": None,
-            "photo": None,
-        }
-        if "photo" in kwargs and "phone" in kwargs:
-            d.update({"photo": kwargs["photo"]})
-            d.update({"phone": kwargs["phone"]})
-        return d
+    def get(self, request):
+        print('matches: ', request.GET.get('username'))
+        matches = Match.objects.filter(username=request.GET.get('username'))
+        serializer = MatchSerializer(matches, many=True)
+        if not matches:
+            return Response(
+                JsonProviderBasic(
+                    False,
+                    "No matches found.",
+                ),
+                status=status.HTTP_404_NOT_FOUND,
+            )
+        return Response(
+            JsonProviderBasic(
+                True,
+                "Matches retrieved successfully.",
+                data=serializer.data,
+            ),
+            status=status.HTTP_200_OK,
+        )
 
-
-class HomeRedirectView(View):
-    def get(self, request, *args, **kwargs):
-        code = request.GET.get('code', None)
-        if code:
-            requests.post('https://peng.com.tr/api42/auth/ft_auth/', data={'code': code})
-        return HttpResponseRedirect('https://peng.com.tr/')
-    
+    def post(self, request):
+        serializer = MatchSerializer(data=request.data)
+        print('request.data: ', request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(
+                JsonProviderBasic(
+                    True,
+                    "Match created successfully.",
+                ),
+                status=status.HTTP_200_OK,
+            )
+        return Response(
+            JsonProviderBasic(
+                False,
+                "Match could not be created.",
+                error=serializer.errors,
+            ),
+            status=status.HTTP_400_BAD_REQUEST,
+        )

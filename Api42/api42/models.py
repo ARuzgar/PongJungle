@@ -61,3 +61,12 @@ class Friendship(models.Model):
     user2 = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='friends_of')
     created_at = models.DateTimeField(auto_now_add=True)
     # Diğer alanlar eklenebilir, örneğin arkadaşlık durumu (onaylanmış, bekleyen vb.)
+
+
+
+class BlacklistedToken(models.Model):
+    token = models.CharField(max_length=255, unique=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.token
